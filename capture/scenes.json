@@ -96,7 +96,7 @@
       ],
       "ready_after": "text=numbered pins mark issues",
       "settle_ms": 1500,
-      "alt": "A finished Design Critique of a four-screen library hold flow: the left panel has the overall read, the counts of major, minor and cosmetic findings, What's working and the first Across the flow finding; the right shows the first screen, Find a book, with numbered pins on the issues"
+      "alt": "A finished Design Critique of a four-screen library hold flow: the left panel has the overall read, the counts of major, minor and cosmetic findings, What's working and the first Across the flow finding, about the same action having different names on different steps; the right shows the first screen, Find a book, with numbered pins on the issues"
     },
     {
       "name": "use-case-single",
@@ -126,7 +126,7 @@
       ],
       "ready_after": "text=numbered pins mark issues",
       "settle_ms": 1500,
-      "alt": "A critique of one pick-up form screen: an overall read that calls it calm and tidy, 4 minor and 1 cosmetic findings, What's working, and the first finding, Hold-time note sits under the wrong field, opened beside the screen with five numbered pins"
+      "alt": "A critique of one pick-up form screen: an overall read that calls it a calm, clear short form with good defaults, 4 minor and 1 cosmetic findings, What's working, and the first finding, Hold-length note is faint and sits under the wrong field, opened beside the screen with five numbered pins"
     },
     {
       "name": "use-case-flow",
@@ -169,7 +169,7 @@
       ],
       "ready_after": "text=numbered pins mark issues",
       "settle_ms": 1500,
-      "alt": "A four-screen flow critique with step 3, Pick-up, on screen: the Across the flow section's major finding says the 'reserve' link leads to a details page that asks you to 'Place hold', so the same action has a different name on each step"
+      "alt": "A four-screen flow critique with step 3, Pick-up, on screen: the Across the flow section's major finding says the pick-up form loses track of which book is being held, because step 3 shows no title, cover or availability and the book only comes back on step 4"
     },
     {
       "name": "use-case-ask",
@@ -221,7 +221,7 @@
         }
       ],
       "settle_ms": 1500,
-      "alt": "A follow-up question about one selected line of a search-page critique: the quoted line about the availability line and the 'reserve' link, the question Why does this matter for someone reserving a book?, and the answer that available and on-loan books look and act the same, with a box to ask another follow-up"
+      "alt": "A follow-up question about one selected line of a search-page critique: the quoted line Where Right edge of each result card, the question Why does this matter for someone reserving a book?, and the answer that the reserve link sits far from the availability line it depends on, citing Gestalt proximity and Fitts's Law, with a box to ask another follow-up"
     }
   ],
   "walkthrough": {
@@ -229,7 +229,7 @@
     "theme": "light",
     "path": "/apps/design-critique",
     "live": true,
-    "alt": "A walkthrough of Design Critique: four screens of a library hold flow are added in order, Critique this flow starts the run, the report appears with an overall read, What's working and an Across the flow finding, and choosing step 3 shows the Pick-up screen with its numbered pins",
+    "alt": "A walkthrough of Design Critique: four screens of a library hold flow are added in order, Critique this flow starts the run, the report appears with an overall read, What's working and an Across the flow finding about key facts set in very faint grey text, and choosing step 3 shows the Pick-up screen with its numbered pins",
     "tail_ms": 3500,
     "steps": [
       {

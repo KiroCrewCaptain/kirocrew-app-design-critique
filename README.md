@@ -2,7 +2,7 @@
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="docs/media/hero-dark.png">
-  <img src="docs/media/hero-light.png" alt="A finished Design Critique of a four-screen library hold flow: the left panel has the overall read, the counts of major, minor and cosmetic findings, What's working and the first Across the flow finding; the right shows the first screen, Find a book, with numbered pins on the issues">
+  <img src="docs/media/hero-light.png" alt="A finished Design Critique of a four-screen library hold flow: the left panel has the overall read, the counts of major, minor and cosmetic findings, What's working and the first Across the flow finding, about the same action having different names on different steps; the right shows the first screen, Find a book, with numbered pins on the issues">
 </picture>
 
 **A design review you can run before you ask a colleague: what works, what to tighten, and why.**
@@ -48,7 +48,7 @@ screenshot into the page and choose **Critique this screen**. In about half a
 minute you get the overall read, what is working, and the findings ranked by
 severity. Choose a finding to open it; its pin is on the screen beside it.
 
-![A critique of one pick-up form screen: an overall read that calls it calm and tidy, 4 minor and 1 cosmetic findings, What's working, and the first finding, Hold-time note sits under the wrong field, opened beside the screen with five numbered pins](docs/media/use-case-single-light.png)
+![A critique of one pick-up form screen: an overall read that calls it a calm, clear short form with good defaults, 4 minor and 1 cosmetic findings, What's working, and the first finding, Hold-length note is faint and sits under the wrong field, opened beside the screen with five numbered pins](docs/media/use-case-single-light.png)
 
 ### 2. Check a whole flow for the gaps between screens
 
@@ -56,10 +56,11 @@ Some problems only show up across screens: a button that changes its name, a ste
 with no way back, an ending that leads nowhere. Add the screens of the flow in
 order and choose **Critique this flow**. Besides the per-screen findings, the
 report has an **Across the flow** section, and the strip of screens at the top
-lets you switch between them. Here the critic noticed that the same action is
-called "reserve", "Place hold" and "Hold placed" on different steps.
+lets you switch between them. Here the critic noticed that the pick-up form on
+step 3 no longer says which book is being held: the title only comes back on the
+confirmation.
 
-![A four-screen flow critique with step 3, Pick-up, on screen: the Across the flow section's major finding says the 'reserve' link leads to a details page that asks you to 'Place hold', so the same action has a different name on each step](docs/media/use-case-flow-light.png)
+![A four-screen flow critique with step 3, Pick-up, on screen: the Across the flow section's major finding says the pick-up form loses track of which book is being held, because step 3 shows no title, cover or availability and the book only comes back on step 4](docs/media/use-case-flow-light.png)
 
 ### 3. Ask about one line of the report
 
@@ -68,20 +69,23 @@ the report with the mouse, choose **Ask about this**, and type your question. Th
 answer appears in place, and you can keep asking follow-ups. Your questions stay
 with that critique in your history.
 
-![A follow-up question about one selected line of a search-page critique: the quoted line about the availability line and the 'reserve' link, the question Why does this matter for someone reserving a book?, and the answer that available and on-loan books look and act the same, with a box to ask another follow-up](docs/media/use-case-ask-light.png)
+![A follow-up question about one selected line of a search-page critique: the quoted line Where Right edge of each result card, the question Why does this matter for someone reserving a book?, and the answer that the reserve link sits far from the availability line it depends on, citing Gestalt proximity and Fitts's Law, with a box to ask another follow-up](docs/media/use-case-ask-light.png)
 
 ## Watch it
 
-![A walkthrough of Design Critique: four screens of a library hold flow are added in order, Critique this flow starts the run, the report appears with an overall read, What's working and an Across the flow finding, and choosing step 3 shows the Pick-up screen with its numbered pins](docs/media/walkthrough.gif)
+![A walkthrough of Design Critique: four screens of a library hold flow are added in order, Critique this flow starts the run, the report appears with an overall read, What's working and an Across the flow finding about key facts set in very faint grey text, and choosing step 3 shows the Pick-up screen with its numbered pins](docs/media/walkthrough.gif)
 
 [Watch the walkthrough as a video (MP4)](docs/media/walkthrough.mp4).
 
-<sub>Recorded from a real Kiro Crew dashboard (Kiro Crew `390c5315be`, the copy of
-this app that comes with it) on a throwaway home. The screens it critiques are
+<sub>Recorded from a real Kiro Crew dashboard on a throwaway home, running this
+repository's own copy of the app (commit `d481b0a`), installed from a clone. The
+Kiro Crew was the App Kit level-1 commit `99161724c0` with only its built-in copy
+of this app removed, because a Kiro Crew that ships it refuses a second
+install. The screens it critiques are
 made-up mockups of a fictional library app, written for this README. Every report
 and the follow-up answer come from a live AI model and will vary from run to run:
 the light and dark pictures at the top are two separate critiques of the same
-screens. The wait while the critique runs (about 50 seconds) is shortened in the
+screens. The wait while the critique runs (about 45 seconds) is shortened in the
 video.</sub>
 
 ## Install
@@ -121,7 +125,7 @@ into, and a field for a link or a folder. **See an example** shows a finished
 critique of a sample checkout flow, so you can see what you will get before
 giving it anything of your own.
 
-![The Design Critique page before a run: No critiques yet in the left panel, and on the right What should I critique? with a drop zone for screenshots, a field for a link or a folder, and the Critique button](docs/media/start-light.png)
+![The Design Critique page before a run: the left panel offers See an example and says No critiques yet; the right asks What should I critique? above a drop zone for screenshots, a field for a Figma link, a repository, a folder or a running URL, and the Critique button](docs/media/start-light.png)
 
 ## How to use it
 
