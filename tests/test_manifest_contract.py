@@ -91,6 +91,10 @@ LEVEL0_EXPORTS = {
     },
 }
 
+# The first Kiro Crew release line with App Kit level 1 (ctx.require_owner,
+# ctx.sdk_level, structural route records). 0.12.0 has none of them.
+FIRST_LEVEL1_RELEASE = (0, 13, 0)
+
 # Directories git ignores here (see .gitignore): never part of a clone.
 _UNTRACKED_DIRS = {".git", "node_modules", "__pycache__", ".pytest_cache", ".venv"}
 _WINDOWS_RESERVED = re.compile(r"^(con|prn|aux|nul|com[1-9]|lpt[1-9])$", re.IGNORECASE)
@@ -173,7 +177,11 @@ class TestTheBundle(unittest.TestCase):
 
 class TestTheManifest(unittest.TestCase):
     def test_declares_the_first_kiro_crew_with_the_seams(self) -> None:
-        self.assertRegex(_manifest().get("minKiroCrewVersion", ""), r"^\d+\.\d+\.\d+$")
+        # 0.12.0 has no App Kit level 1: its route registry skips the app's own
+        # Route records, so every route answers 404 there. The seams land in 0.13.0.
+        declared = _manifest().get("minKiroCrewVersion", "")
+        self.assertRegex(declared, r"^\d+\.\d+\.\d+$")
+        self.assertGreaterEqual(tuple(int(p) for p in declared.split(".")), FIRST_LEVEL1_RELEASE)
 
     def test_what_adoption_compares_is_the_builtins(self) -> None:
         manifest, builtin = _manifest(), _builtin()

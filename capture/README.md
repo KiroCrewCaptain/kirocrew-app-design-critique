@@ -122,9 +122,22 @@ no machine-specific path goes into `scenes.json`:
 {"name": "turn it on", "method": "POST", "path": "/api/apps/my-app/enable"}
 ```
 
-This app's `scenes.json` carries the same steps under
-`setup_when_not_built_in`. Say which copy was photographed in
-`"provenance_note"`, which is copied into `media.json`.
+This app's `scenes.json` runs those steps in `setup`, so the pictures show this
+repository's bundle and backend, not the built-in copy. While Kiro Crew still
+ships a built-in `design-critique`, the install step is refused on a stock
+checkout (`app 'design-critique' is already installed`), so capture on a Kiro
+Crew tree that carries App Kit level 1 with only the built-in removed:
+
+```bash
+git -C /path/to/KiroCrew worktree add --detach /tmp/kc-capture <level-1 commit>
+cd /tmp/kc-capture
+git rm -rq src/kiro_crew/apps/builtins/design_critique
+sed -i '/^    "design_critique",$/d' src/kiro_crew/apps/builtins/__init__.py
+# then build and stage the dashboard as above, and pass --kirocrew /tmp/kc-capture
+```
+
+`media.json` then records `kirocrew_tree_dirty: true`. Say which copy was
+photographed in `"provenance_note"`, which is copied into `media.json`.
 
 ## `scenes.json` reference
 

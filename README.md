@@ -121,12 +121,14 @@ into, and a field for a link or a folder. **See an example** shows a finished
 critique of a sample checkout flow, so you can see what you will get before
 giving it anything of your own.
 
-![The Design Critique page before a run: a drop zone for screenshots, a field for a link or a folder, and a list of what the critique will return](docs/media/start-light.png)
+![The Design Critique page before a run: No critiques yet in the left panel, and on the right What should I critique? with a drop zone for screenshots, a field for a link or a folder, and the Critique button](docs/media/start-light.png)
 
 ## How to use it
 
-1. **Add your screens.** Drop screenshots (PNG, JPG or WebP) on **Drop
-   screenshots — or click to browse**, or click it to choose files. For a flow,
+1. **Add your screens.** Drop screenshots on **Drop screenshots — or click to
+   browse**, or click it to choose files. Any image file is taken; PNG, JPG and
+   WebP work best, because other formats (a HEIC photo, for example) are sent to
+   the model as they are, without converting them. For a flow,
    add them in the order a person goes through them; use the arrows under each
    one to reorder, and **Add screens** to add more. Up to 20 screens.
 2. **Or point it at something.** Instead of screenshots, paste a Figma link, a
@@ -175,8 +177,8 @@ giving it anything of your own.
 ## Troubleshooting / FAQ
 
 **"Those weren't image files."**
-Only PNG, JPG and WebP screenshots can be critiqued. Export or save the screen as
-one of those and drop it in again.
+None of the files you dropped was an image (a PDF or a document, for example).
+Save the screen as a picture, preferably PNG, JPG or WebP, and drop it in again.
 
 **"That's more than 20 screens — send fewer."**
 One critique reads at most 20 screens. Split a long flow into parts.
@@ -234,15 +236,30 @@ place this copy differs from the built-in, and why.
 
 ### What it needs from Kiro Crew
 
-Kiro Crew 0.12.0 or later (`minKiroCrewVersion`): App Kit level 1, which gives an
-app's hooks an owner gate (`ctx.require_owner`) and structural route records. No
-backend module imports `kiro_crew`. The app also uses a few gateway functions that
+Kiro Crew 0.13.0 or later (`minKiroCrewVersion`), for App Kit level 1: an owner
+gate for an app's hooks (`ctx.require_owner`), the seam level (`ctx.sdk_level`)
+and route records the app defines itself. These seams are not in Kiro Crew 0.12.0,
+whose route registry skips this app's routes, so on 0.12.0 every route answers 404
+and folder, repository and site critiques cannot start; Kiro Crew refuses to
+install the app there. The seams come with Kiro Crew pull request
+[#27517](https://github.com/kirodotdev/KiroCrew/pull/27517), which is still open:
+this app needs the first release that includes it. No backend module imports
+`kiro_crew`. The app also uses a few gateway functions that
 have no App Kit seam yet: the sandbox every `git` and `node` child runs in, the
 public-address rule, the credential-path check and the data home.
 `backend/_host.py` resolves those by name, each with a stand-in that refuses, and
-`tests/test_no_host_imports.py` pins the list. On a gateway without them the page
-still works for screenshots, while folder, repository and site critiques answer
-`host_unsupported` and the app reports degraded health.
+`tests/test_no_host_imports.py` pins the list. When one is missing the app
+reports degraded health and screenshots still work, but the other modes refuse,
+each in its own way:
+
+- no sandbox or no data home: discover and render answer 503 `host_unsupported`
+  before touching a file;
+- no public-address rule: every repository and site address is refused with
+  "that URL can't be reviewed", except a site on this computer typed as
+  `localhost`;
+- no credential-path check: every folder is refused with "that path is
+  protected";
+- no trusted `git` resolver: a repository cannot be copied.
 
 ### Install from a clone
 
@@ -286,6 +303,15 @@ installed `kiro_crew`, and `tests/host_double.py` stands in for the gateway
 functions; `tests/test_host_stand_ins.py` runs without it, to pin that every
 stand-in refuses. The skill-script tests run the scripts under `node` and skip
 when it is missing.
+
+`tests/test_manifest_host_parser.py` checks `app.json` with Kiro Crew's own
+manifest parser, from a Kiro Crew checkout you name; without one it is skipped.
+CI's `host-parser` job runs it against a pinned Kiro Crew commit:
+
+```bash
+python -m pip install -r tests/requirements-host.txt
+KIROCREW_SRC=/path/to/KiroCrew python -m pytest tests/test_manifest_host_parser.py
+```
 
 UI (Node 24, from `ui/`):
 

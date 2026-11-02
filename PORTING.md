@@ -6,7 +6,7 @@ its dashboard page at `website/src/apps/design-critique/`, its store art and
 example screens at `website/public/app-assets/design-critique/`, its catalog
 strings (`apps.designCritique.*` in `website/src/i18n/locales/*.json`), and its
 tests: the four under the app's own `tests/`, the three
-`test/test_design_critique_*.py` files, and the eleven `website` tests
+`test/test_design_critique_*.py` files, and the twelve `website` tests
 (`src/apps/design-critique/api.coverage.test.ts`,
 `src/test/DesignCritique*.test.ts(x)`, `src/test/designCritiqueSendReceipt.test.ts`).
 
@@ -49,7 +49,7 @@ is a Kiro Crew change, not a change here.
 | "See an example" images at `/app-assets/design-critique/samples/*.png` (`website/src/apps/design-critique/constants.ts:283`) | `ui/samples/*.png`, resolved against the bundle's own URL (`/apps/design-critique/ui/samples/`) | The gateway serves an app's `ui/` tree beside its bundle. |
 | App Store copy keys in the dashboard catalogs (`website/src/components/appstore/appManifest.ts:178-195`) | `l10n` block in `app.json` for the 11 non-English locales | The listing copy travels with the app. It is the `manifest` subtree of `ui/i18n/<locale>.json`, kept equal by a test. |
 | `"license": "MIT"` (`app.json:7`) | `"license": "Apache-2.0"` | The built-in's code shipped under Kiro Crew's Apache-2.0 licence, which is this repository's `LICENSE`; the manifest now says the same. Adoption does not compare it. |
-| No `minKiroCrewVersion` | `"minKiroCrewVersion": "0.12.0"` | The first Kiro Crew with App Kit level 1. |
+| No `minKiroCrewVersion` | `"minKiroCrewVersion": "0.13.0"` | The first release line that can carry App Kit level 1 (PR #27517, still open when this was written). Kiro Crew 0.12.0 has none of it: its `RouteRegistry.register_app_routes` skips any item that is not its own `AppRoute` ("skipping non-AppRoute item"), so every route of this app answers 404 there, the page loses its checklist and folder, repository and site critiques cannot start. The floor makes 0.12.0 refuse the install instead. |
 
 ## Gateway functions with no App Kit seam: reached through `backend/_host.py`
 
@@ -158,10 +158,10 @@ committed `ui/dist/index.mjs`; CI rebuilds it and fails on a difference.
 |---|---|---|
 | `tests/test_backend_routes.py`, `tests/test_backend_routes_probe_cache.py`, `tests/backend_routes_helpers.py` | same names | Handlers are called as `handler(request, ctx)` (`H` in the helpers). The mount test became `test_register_routes_returns_the_builtins_route_table`. The host functions are `tests/host_double.py`, installed for every test by `conftest.py`, which also blocks any installed `kiro_crew`. `kiro_crew.testing.links.make_dir_link` became a local helper. |
 | `tests/test_windows_portability.py` | same | Reads the constants off the host surface; also pins the stand-ins' values. |
-| `tests/test_manifest.py` | same | The cases that asked Kiro Crew's loader (`AppManifest.validate`, `discover_builtin_apps`) and the built-in router's single-segment rule are host-side and were dropped; the external contract is `tests/test_manifest_contract.py`. |
+| `tests/test_manifest.py` | same, plus `tests/test_manifest_host_parser.py` | The built-in router's single-segment rule (`test_ui_route_is_single_path_segment`, `test_route_guard_regex_rejects_nested_paths`) and the `/app-assets` URL check (`test_declared_asset_urls_present`) were about the built-in's own page route and asset URLs, which this copy does not have; `tests/test_manifest_contract.py` checks the `/apps/<name>` page and the repo-relative PNG art instead. The cases that asked Kiro Crew's own parser (`test_manifest_validates_with_no_errors`, `test_discovery_includes_design_critique`, `test_default_enabled_is_false_in_discovery`) moved to `tests/test_manifest_host_parser.py`, which runs `AppManifest.validate` and the parsed fields from a real Kiro Crew checkout named by `KIROCREW_SRC`; CI's `host-parser` job runs it against a pinned Kiro Crew commit, and a plain offline run skips it. |
 | `test/test_design_critique_owner_gate.py` | `tests/test_owner_gate.py` | The gate is `FakeCtx.require_owner`; the token middleware's scope rule is restated. Adds: bare operation names, the host's refusal returned unchanged, no seam refuses the owner, an app token never asks. |
 | `test/test_design_critique_ssrf_guard_fail_closed.py`, `test/test_design_critique_capture_site_resolver_rule.py` | `tests/test_ssrf_guard_fail_closed.py`, `tests/test_capture_site_resolver_rule.py` | Paths point at this repository's `skills/`. |
-| `website` tests (11 files) | `ui/tests/` | Run by vitest with SDK stand-ins (`ui/tests/stubs/`). The i18n tests use `ui/tests/i18nTestKit.ts` over the app's catalogs instead of i18next. `DesignCritiquePromptImages` parses with `micromark` (CommonMark) instead of the dashboard's `MarkdownRenderer`. |
+| `website` tests (12 files: `api.coverage.test.ts`, ten `DesignCritique*.test.ts(x)`, `designCritiqueSendReceipt.test.ts`) | `ui/tests/`, all twelve with the same cases | Run by vitest with SDK stand-ins (`ui/tests/stubs/`). The i18n tests use `ui/tests/i18nTestKit.ts` over the app's catalogs instead of i18next. `DesignCritiquePromptImages` parses with `micromark` (CommonMark) instead of the dashboard's `MarkdownRenderer`. |
 | (none) | `tests/test_no_host_imports.py`, `tests/test_host_stand_ins.py`, `tests/test_manifest_contract.py`, `ui/tests/i18n.test.ts`, `ui/tests/hostBoundary.test.tsx` | The pinned host table and that every stand-in refuses; the bundle's imports, the manifest's parity with the built-in and its `l10n` block, an adoptable tree; catalog coverage; the scoped client, uploads and the animations. |
 
 Kiro Crew tests that use the `design-critique` name as a fixture or slot-mode

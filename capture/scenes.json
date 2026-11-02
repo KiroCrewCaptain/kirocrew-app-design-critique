@@ -3,7 +3,7 @@
   "fixture": "minimal",
   "locale": "en-US",
   "timezone": "UTC",
-  "provenance_note": "The isolated gateway served the design-critique app built into the Kiro Crew checkout (src/kiro_crew/apps/builtins/design_critique, website/src/apps/design-critique): Kiro Crew still ships it built in, and a second install under the same name is refused. This repository is the externally packaged copy of that app, with the same page markup; PORTING.md lists where the two differ.",
+  "provenance_note": "The isolated gateway served this repository's own copy of the app: capture.py's setup installed it from this checkout (POST /api/apps/install), trusted it and enabled it, and every picture shows its committed bundle (ui/dist/index.mjs) and backend. Kiro Crew still ships a built-in design-critique and refuses a second install under the same name, so the Kiro Crew tree the capture ran on is that release's App Kit level-1 commit with only the built-in copy removed (src/kiro_crew/apps/builtins/design_critique and its BUILTIN_NAMES row); kirocrew_tree_dirty records that.",
   "data_notes": [
     "The screens the critic reads are fictional mockups of a made-up library app (Fernleaf Library), written for this README as HTML and rendered to PNG (capture/fixtures/). Every name, card number and the .example email address in them is invented.",
     "They are handed to the page's own file picker, exactly as choosing them in the browser would; the page uploads them through the dashboard's upload endpoint.",
@@ -19,23 +19,6 @@
     "Still working on this one"
   ],
   "setup": [
-    {
-      "name": "turn the app on",
-      "method": "POST",
-      "path": "/api/apps/design-critique/enable"
-    },
-    {
-      "name": "retire the host's one-time startup intro",
-      "method": "POST",
-      "path": "/api/feature-videos/feedback",
-      "body": {
-        "id": "crewmates",
-        "status": "dismissed"
-      },
-      "optional": true
-    }
-  ],
-  "setup_when_not_built_in": [
     {
       "name": "install this repository",
       "method": "POST",
@@ -53,21 +36,30 @@
       "name": "turn the app on",
       "method": "POST",
       "path": "/api/apps/design-critique/enable"
+    },
+    {
+      "name": "retire the host's one-time startup intro",
+      "method": "POST",
+      "path": "/api/feature-videos/feedback",
+      "body": {
+        "id": "crewmates",
+        "status": "dismissed"
+      },
+      "optional": true
     }
   ],
-  "_setup_when_not_built_in_note": "capture.py ignores the key above. Once Kiro Crew no longer ships this app built in, replace the 'turn the app on' step in setup with these three steps.",
   "screenshots": [
     {
       "name": "start",
-      "path": "/design-critique",
+      "path": "/apps/design-critique",
       "themes": [
         "light"
       ],
-      "alt": "The Design Critique page before a run: a drop zone for screenshots, a field for a link or a folder, and a list of what the critique will return"
+      "alt": "The Design Critique page before a run: the left panel offers See an example and says No critiques yet; the right asks What should I critique? above a drop zone for screenshots, a field for a Figma link, a repository, a folder or a running URL, and the Critique button"
     },
     {
       "name": "hero",
-      "path": "/design-critique",
+      "path": "/apps/design-critique",
       "themes": [
         "light",
         "dark"
@@ -108,7 +100,7 @@
     },
     {
       "name": "use-case-single",
-      "path": "/design-critique",
+      "path": "/apps/design-critique",
       "themes": [
         "light"
       ],
@@ -138,7 +130,7 @@
     },
     {
       "name": "use-case-flow",
-      "path": "/design-critique",
+      "path": "/apps/design-critique",
       "themes": [
         "light"
       ],
@@ -181,7 +173,7 @@
     },
     {
       "name": "use-case-ask",
-      "path": "/design-critique",
+      "path": "/apps/design-critique",
       "themes": [
         "light"
       ],
@@ -235,7 +227,7 @@
   "walkthrough": {
     "name": "walkthrough",
     "theme": "light",
-    "path": "/design-critique",
+    "path": "/apps/design-critique",
     "live": true,
     "alt": "A walkthrough of Design Critique: four screens of a library hold flow are added in order, Critique this flow starts the run, the report appears with an overall read, What's working and an Across the flow finding, and choosing step 3 shows the Pick-up screen with its numbered pins",
     "tail_ms": 3500,
@@ -301,5 +293,6 @@
         "wait_ms": 1500
       }
     ]
-  }
+  },
+  "_setup_note": "The first three steps install, trust and enable THIS repository. On a Kiro Crew that still ships the built-in design-critique the install answers 409/400 (already installed): capture on a Kiro Crew tree without the built-in (capture/README.md)."
 }

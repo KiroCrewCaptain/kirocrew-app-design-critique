@@ -61,6 +61,43 @@ jobs:
       - name: Run tests
         run: python -m pytest
 
+  # app.json read by Kiro Crew's own manifest parser (AppManifest.validate and
+  # the fields adoption maps), from the public Kiro Crew repository at a pinned
+  # commit. Only this job reaches beyond the test dependencies: it checks out
+  # that one public repository, read-only, and runs none of its code but the
+  # manifest parser.
+  host-parser:
+    name: Manifest against the Kiro Crew parser
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          path: app
+          persist-credentials: false
+
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          repository: kirodotdev/KiroCrew
+          ref: 41ce27daad5ec22b776fa13597d2e4741d977b94
+          path: kirocrew
+          sparse-checkout: src/kiro_crew
+          persist-credentials: false
+
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: "3.12"
+
+      - name: Install pinned test dependencies
+        working-directory: app
+        run: python -m pip install -r tests/requirements.txt -r tests/requirements-host.txt
+
+      - name: Validate app.json with the host parser
+        working-directory: app
+        env:
+          KIROCREW_SRC: ${{ github.workspace }}/kirocrew
+        run: python -m pytest tests/test_manifest_host_parser.py
+
   # The dashboard page is a committed ESM bundle (ui/dist/index.mjs): a Kiro Crew
   # install is a plain clone with no build step. This job proves the committed
   # bundle is exactly what the committed source builds.
