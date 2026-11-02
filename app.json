@@ -1,0 +1,254 @@
+{
+  "name": "design-critique",
+  "version": "1.0.0",
+  "displayName": "Design Critique",
+  "description": "A design critique you can run before you ask a colleague. Give it one screenshot, a whole multi-screen flow, a Figma file, a git repo, or a URL that is already serving, and it finds the candidate screens, lets you choose what to look at, then reports back the way an experienced designer would: an overall read, what is working, and the things worth tightening, each tied to a named heuristic. Multi-screen flows also get cross-screen findings that a single screen cannot show — inconsistent controls, missing progress, no way back, dead ends. It renders code and Figma before judging them, so it never critiques visuals it has not actually seen, and it says plainly which screens it could not get to instead of guessing.",
+  "author": "kirocrew",
+  "license": "Apache-2.0",
+  "minKiroCrewVersion": "0.12.0",
+  "tags": [
+    "design",
+    "ux",
+    "critique",
+    "accessibility",
+    "usability",
+    "heuristic-evaluation"
+  ],
+  "highlights": [
+    "Takes screenshots, a Figma link, a git repo, a local folder, or a running URL — and says back what it found before it starts",
+    "Measures contrast and hit-target sizes from the rendered page rather than estimating them from an image",
+    "Multi-screen flows get cross-screen checks: control consistency, progress, a way back, repeated asks, dead ends",
+    "Every finding names the heuristic behind it (Nielsen 1-10, WCAG, Gestalt, Fitts) and carries a severity on the NN/g 1-4 scale",
+    "Select any line of the report and ask a follow-up question about it, in place",
+    "Tells you what it could not see instead of critiquing a blank or blocked screen",
+    "Hands off the work it reviews: it never installs that project's dependencies, runs its scripts, starts its dev server, or edits its files",
+    "To take pictures it uses a headless browser, downloaded once into a cache in your home directory on first use and never into the project"
+  ],
+  "defaultEnabled": false,
+  "platform": {
+    "os": [
+      "macos",
+      "linux",
+      "windows"
+    ]
+  },
+  "iconPath": "assets/icon.png",
+  "heroImage": "assets/hero-light.png",
+  "heroImageDark": "assets/hero-dark.png",
+  "heroImageDetail": "assets/hero-detail-light.png",
+  "heroImageDetailDark": "assets/hero-detail-dark.png",
+  "permissions": {
+    "api": [
+      "/api/chat",
+      "/api/chat/slots",
+      "/api/upload/file",
+      "/api/file-raw",
+      "/api/status",
+      "/api/apps/design-critique",
+      "/api/apps/design-critique/*"
+    ],
+    "events": [
+      "chat_chunk",
+      "chat_done",
+      "chat_message",
+      "chat_error",
+      "slots"
+    ],
+    "storage": false,
+    "cron": false,
+    "network": false
+  },
+  "skills": [
+    "skills/design-critique"
+  ],
+  "backend": {
+    "hooks": {
+      "routes": "backend.routes:register_routes"
+    }
+  },
+  "ui": {
+    "entry": "dist/index.mjs",
+    "pages": [
+      {
+        "route": "/apps/design-critique",
+        "label": "Design Critique"
+      }
+    ]
+  },
+  "useCases": [
+    "Critique one screen or a complete product flow with severity-ranked, heuristic-backed findings tied to visible regions."
+  ],
+  "configuration": [
+    "Drop in screenshots for zero-setup review, or provide a Figma file, repository, local folder, or already-running URL; private GitHub sources may require gh auth login."
+  ],
+  "screenshots": [
+    "assets/screenshot-main.png"
+  ],
+  "l10n": {
+    "bn": {
+      "displayName": "Design Critique",
+      "description": "সহকর্মীকে জিজ্ঞেস করার আগেই চালিয়ে নেওয়ার মতো একটি ডিজাইন পর্যালোচনা। একটি স্ক্রিনশট, পুরো একটি বহু-স্ক্রিনের ফ্লো, একটি Figma ফাইল, একটি git রিপো, বা চালু আছে এমন একটি URL দাও — এটি সম্ভাব্য স্ক্রিনগুলো খুঁজে বের করে, কোনটা দেখা হবে তা তোমাকে বেছে নিতে দেয়, তারপর অভিজ্ঞ ডিজাইনারের মতোই জানায়: সামগ্রিক একটি পাঠ, কী কাজ করছে, আর কী কী আঁটসাঁট করা দরকার — প্রতিটির সঙ্গে একটি নামধারী হিউরিস্টিক জোড়া থাকে। বহু-স্ক্রিনের ফ্লোতে এমন আন্তঃ-স্ক্রিন ফলাফলও আসে যা একটি স্ক্রিন দেখে বোঝা যায় না — অসংগত কন্ট্রোল, অগ্রগতির খবর না থাকা, ফিরে যাওয়ার পথ না থাকা, মুখবন্ধ গলি। কোড আর Figma বিচার করার আগে সেগুলো রেন্ডার করে নেয়, তাই যা সত্যিই দেখেনি তার সমালোচনা কখনও করে না; আর কোন স্ক্রিনে পৌঁছাতে পারেনি তা অনুমান না করে স্পষ্ট করেই বলে দেয়।",
+      "pageLabel": "Design Critique",
+      "highlights": [
+        "স্ক্রিনশট, একটি Figma লিঙ্ক, একটি git রিপো, একটি লোকাল ফোল্ডার বা চালু থাকা একটি URL নেয় — আর শুরু করার আগে কী পেল তা জানিয়ে দেয়",
+        "ছবি দেখে অনুমান না করে রেন্ডার হওয়া পেজ থেকেই কনট্রাস্ট আর ট্যাপ-লক্ষ্যের আকার মাপে",
+        "বহু-স্ক্রিনের ফ্লোতে আন্তঃ-স্ক্রিন পরীক্ষা হয়: কন্ট্রোলের সংগতি, অগ্রগতি, ফিরে যাওয়ার পথ, একই জিনিস বারবার চাওয়া, মুখবন্ধ গলি",
+        "প্রতিটি ফলাফলের পেছনের হিউরিস্টিকের নাম দেওয়া থাকে (Nielsen 1-10, WCAG, Gestalt, Fitts) এবং NN/g 1-4 স্কেলে তার তীব্রতা বলা থাকে",
+        "রিপোর্টের যেকোনো লাইন বেছে নিয়ে সেখানেই সেটি নিয়ে বাড়তি প্রশ্ন করো",
+        "ফাঁকা বা আটকে থাকা স্ক্রিনের সমালোচনা না করে, কী দেখতে পারেনি সেটাই জানায়",
+        "যে কাজ রিভিউ করে তাতে হাত দেয় না: ওই প্রজেক্টের ডিপেন্ডেন্সি ইনস্টল করে না, তার স্ক্রিপ্ট চালায় না, ডেভ সার্ভার চালু করে না, ফাইলও সম্পাদনা করে না",
+        "ছবি তুলতে এটি একটি হেডলেস ব্রাউজার ব্যবহার করে — প্রথম ব্যবহারে একবার তোমার হোম ডিরেক্টরির ক্যাশে নামে, প্রজেক্টের ভেতরে কখনও নয়"
+      ]
+    },
+    "de": {
+      "displayName": "Design Critique",
+      "description": "Eine Design-Kritik, die du einholen kannst, bevor du jemanden im Team fragst. Gib ihr einen einzelnen Screenshot, einen ganzen Ablauf über mehrere Screens, eine Figma-Datei, ein Git-Repository oder eine URL, die schon ausgeliefert wird, und sie findet die möglichen Screens, lässt dich auswählen, was angesehen wird, und meldet dann so zurück, wie es erfahrene Designer tun: ein Gesamteindruck, was funktioniert, und die Punkte, die zu schärfen sind, jeder an eine benannte Heuristik gebunden. Abläufe über mehrere Screens erhalten zusätzlich Ergebnisse über Screens hinweg, die ein einzelner Screen nicht zeigen kann — inkonsistente Bedienelemente, fehlender Fortschritt, kein Weg zurück, Sackgassen. Code und Figma werden gerendert, bevor sie beurteilt werden, damit nie Visuelles kritisiert wird, das nicht wirklich gesehen wurde, und sie sagt klar, welche Screens sie nicht erreicht hat, statt zu raten.",
+      "pageLabel": "Design Critique",
+      "highlights": [
+        "Nimmt Screenshots, einen Figma-Link, ein Git-Repository, einen lokalen Ordner oder eine laufende URL — und sagt vor dem Start, was sie gefunden hat",
+        "Misst Kontrast und Größen von Klickzielen an der gerenderten Seite, statt sie aus einem Bild zu schätzen",
+        "Abläufe über mehrere Screens erhalten Prüfungen über Screens hinweg: Konsistenz der Bedienelemente, Fortschritt, ein Weg zurück, wiederholte Abfragen, Sackgassen",
+        "Jedes Ergebnis nennt die dahinterliegende Heuristik (Nielsen 1-10, WCAG, Gestalt, Fitts) und trägt einen Schweregrad auf der NN/g-Skala 1-4",
+        "Markiere eine beliebige Zeile des Berichts und stelle direkt dort eine Folgefrage dazu",
+        "Sagt dir, was sie nicht sehen konnte, statt einen leeren oder blockierten Screen zu kritisieren",
+        "Fasst das geprüfte Projekt nicht an: installiert dessen Abhängigkeiten nie, führt seine Skripte nicht aus, startet seinen Dev-Server nicht und bearbeitet seine Dateien nicht",
+        "Für Aufnahmen nutzt sie einen Headless-Browser, der bei der ersten Verwendung einmalig in einen Cache in deinem Home-Verzeichnis geladen wird, nie in das Projekt"
+      ]
+    },
+    "es": {
+      "displayName": "Design Critique",
+      "description": "Una crítica de diseño que puedes ejecutar antes de pedírsela a un colega. Le das una captura, un flujo completo de varias pantallas, un archivo de Figma, un repositorio git o una URL que ya esté sirviendo, y encuentra las pantallas candidatas, te deja elegir qué revisar y luego responde como lo haría un diseñador con experiencia: una lectura general, lo que funciona y lo que vale la pena ajustar, cada punto ligado a una heurística con nombre. Los flujos de varias pantallas también reciben hallazgos entre pantallas que una sola no puede mostrar — controles inconsistentes, falta de indicación de avance, ninguna forma de volver, callejones sin salida. Renderiza el código y Figma antes de juzgarlos, así que nunca critica elementos visuales que no vio de verdad, y dice con claridad a qué pantallas no pudo llegar en lugar de adivinar.",
+      "pageLabel": "Design Critique",
+      "highlights": [
+        "Acepta capturas, un enlace de Figma, un repositorio git, una carpeta local o una URL en ejecución — y te dice qué encontró antes de empezar",
+        "Mide el contraste y el tamaño de las áreas táctiles desde la página renderizada en vez de estimarlos a partir de una imagen",
+        "Los flujos de varias pantallas reciben comprobaciones entre pantallas: consistencia de los controles, indicación de avance, una forma de volver, peticiones repetidas y callejones sin salida",
+        "Cada hallazgo nombra la heurística en la que se basa (Nielsen 1-10, WCAG, Gestalt, Fitts) y lleva una severidad en la escala 1-4 de NN/g",
+        "Selecciona cualquier línea del informe y haz una pregunta de seguimiento sobre ella, ahí mismo",
+        "Te dice qué no pudo ver en lugar de criticar una pantalla vacía o bloqueada",
+        "No toca el proyecto que revisa: nunca instala sus dependencias, ejecuta sus scripts, inicia su servidor de desarrollo ni edita sus archivos",
+        "Para tomar las capturas usa un navegador headless, que se descarga una vez en una caché de tu directorio home en el primer uso y nunca dentro del proyecto"
+      ]
+    },
+    "fr": {
+      "displayName": "Design Critique",
+      "description": "Une critique de design que tu peux lancer avant de solliciter un collègue. Donne-lui une capture d’écran, tout un parcours multi-écrans, un fichier Figma, un dépôt git ou une URL déjà servie, et il repère les écrans candidats, te laisse choisir ce qu’il doit examiner, puis rend son compte rendu comme le ferait un designer expérimenté : une lecture d’ensemble, ce qui fonctionne et ce qui mérite d’être resserré, chaque point rattaché à une heuristique nommée. Les parcours multi-écrans reçoivent en plus des conclusions transversales qu’un écran seul ne peut pas révéler — contrôles incohérents, progression absente, aucun retour possible, impasses. Il rend le code et Figma avant de les juger, donc il ne critique jamais un visuel qu’il n’a pas réellement vu, et il dit clairement quels écrans il n’a pas pu atteindre plutôt que de deviner.",
+      "pageLabel": "Design Critique",
+      "highlights": [
+        "Accepte des captures d’écran, un lien Figma, un dépôt git, un dossier local ou une URL en service — et te dit ce qu’il a trouvé avant de commencer",
+        "Mesure le contraste et la taille des zones cliquables sur la page rendue plutôt que de les estimer depuis une image",
+        "Les parcours multi-écrans reçoivent des vérifications transversales : cohérence des contrôles, progression, retour possible, demandes répétées, impasses",
+        "Chaque conclusion nomme l’heuristique qui la fonde (Nielsen 1-10, WCAG, Gestalt, Fitts) et porte une gravité sur l’échelle NN/g 1-4",
+        "Sélectionne n’importe quelle ligne du rapport et pose une question complémentaire à son sujet, sur place",
+        "Te dit ce qu’il n’a pas pu voir plutôt que de critiquer un écran vide ou bloqué",
+        "Ne touche pas au projet qu’il examine : il n’installe jamais ses dépendances, n’exécute pas ses scripts, ne démarre pas son serveur de développement et ne modifie pas ses fichiers",
+        "Pour prendre des images, il utilise un navigateur headless, téléchargé une seule fois dans un cache de ton répertoire personnel à la première utilisation, jamais dans le projet"
+      ]
+    },
+    "hi": {
+      "displayName": "Design Critique",
+      "description": "किसी साथी से पूछने से पहले खुद चलाई जा सकने वाली डिज़ाइन समीक्षा। इसे एक स्क्रीनशॉट, पूरा कई-स्क्रीन वाला फ़्लो, कोई Figma फ़ाइल, कोई git रिपो, या पहले से चल रहा URL दो, और यह संभावित स्क्रीन ढूँढ़ता है, तुम्हें चुनने देता है कि क्या देखना है, फिर एक तजुर्बेकार डिज़ाइनर की तरह बताता है: कुल मिलाकर क्या लगा, क्या ठीक काम कर रहा है, और किन चीज़ों को कसने की ज़रूरत है, हर बात किसी नामित ह्यूरिस्टिक से जुड़ी। कई-स्क्रीन वाले फ़्लो को क्रॉस-स्क्रीन नतीजे भी मिलते हैं जो एक स्क्रीन नहीं दिखा सकती — बेमेल कंट्रोल, गायब प्रगति, वापस जाने का रास्ता न होना, बंद गलियाँ। यह कोड और Figma को आँकने से पहले रेंडर करता है, इसलिए बिना देखे विज़ुअल पर कभी टिप्पणी नहीं करता, और अंदाज़ा लगाने की जगह साफ़ कह देता है कि किन स्क्रीन तक नहीं पहुँच पाया।",
+      "pageLabel": "Design Critique",
+      "highlights": [
+        "स्क्रीनशॉट, Figma लिंक, git रिपो, लोकल फ़ोल्डर, या चल रहा URL लेता है — और शुरू करने से पहले बताता है कि उसे क्या मिला",
+        "कंट्रास्ट और हिट-टारगेट के आकार तस्वीर से अंदाज़ा लगाने की जगह रेंडर हुए पेज से नापता है",
+        "कई-स्क्रीन वाले फ़्लो को क्रॉस-स्क्रीन जाँच मिलती है: कंट्रोल की एकरूपता, प्रगति, वापस जाने का रास्ता, बार-बार वही माँग, बंद गलियाँ",
+        "हर नतीजा अपने पीछे की ह्यूरिस्टिक का नाम देता है (Nielsen 1-10, WCAG, Gestalt, Fitts) और NN/g 1-4 पैमाने पर गंभीरता बताता है",
+        "रिपोर्ट की किसी भी लाइन को चुनो और वहीं उसके बारे में आगे सवाल पूछो",
+        "खाली या रुकी हुई स्क्रीन पर टिप्पणी करने की जगह बताता है कि वह क्या नहीं देख पाया",
+        "जिस काम की समीक्षा करता है उसे छूता नहीं: वह उस प्रोजेक्ट की डिपेंडेंसी इंस्टॉल नहीं करता, उसकी स्क्रिप्ट नहीं चलाता, उसका डेव सर्वर शुरू नहीं करता, और उसकी फ़ाइलें नहीं बदलता",
+        "तस्वीरें लेने के लिए यह हेडलेस ब्राउज़र इस्तेमाल करता है, जो पहली बार में तुम्हारी होम डायरेक्टरी के कैश में एक बार डाउनलोड होता है, प्रोजेक्ट में कभी नहीं"
+      ]
+    },
+    "it": {
+      "displayName": "Design Critique",
+      "description": "Una critica di design da fare prima di chiederla a un collega. Dagli uno screenshot, un intero flusso su più schermate, un file Figma, un repo git o un URL già in servizio: individua le schermate candidate, ti lascia scegliere cosa guardare e poi riferisce come farebbe un designer esperto: una lettura d’insieme, ciò che funziona e le cose da stringere, ognuna legata a un’euristica indicata per nome. I flussi su più schermate ricevono anche rilievi trasversali che una singola schermata non può mostrare — comandi incoerenti, avanzamento assente, nessuna via di ritorno, vicoli ciechi. Prima di giudicarli rende il codice e Figma, così non critica mai elementi visivi che non ha davvero visto, e dice chiaramente a quali schermate non è riuscito ad arrivare invece di tirare a indovinare.",
+      "pageLabel": "Design Critique",
+      "highlights": [
+        "Accetta screenshot, un link Figma, un repo git, una cartella locale o un URL attivo — e dice cosa ha trovato prima di iniziare",
+        "Misura contrasto e dimensioni delle aree cliccabili sulla pagina resa, invece di stimarli da un’immagine",
+        "I flussi su più schermate ottengono verifiche trasversali: coerenza dei comandi, avanzamento, via di ritorno, richieste ripetute, vicoli ciechi",
+        "Ogni rilievo indica l’euristica che lo motiva (Nielsen 1-10, WCAG, Gestalt, Fitts) e porta una gravità sulla scala NN/g 1-4",
+        "Seleziona una riga qualsiasi del report e poni una domanda di approfondimento direttamente lì",
+        "Ti dice cosa non è riuscito a vedere invece di criticare una schermata vuota o bloccata",
+        "Non tocca il progetto che esamina: non installa mai le sue dipendenze, non esegue i suoi script, non avvia il suo dev server e non modifica i suoi file",
+        "Per catturare le immagini usa un browser headless, scaricato una sola volta al primo utilizzo in una cache nella tua home e mai dentro il progetto"
+      ]
+    },
+    "ja": {
+      "displayName": "Design Critique",
+      "description": "同僚に相談する前に実行できるデザイン批評です。スクリーンショット、複数画面のフロー、Figma ファイル、Git リポジトリ、または公開中の URL を指定すると、候補画面を検出し、確認対象を選べます。その後、経験豊富なデザイナーのように、全体評価、良い点、改善すべき点を、それぞれ明確なヒューリスティックに結び付けて報告します。複数画面のフローでは、コントロールの不一致、進捗表示の欠如、戻る手段の欠如、行き止まりなど、単一画面では分からない問題も検出します。コードと Figma はレンダリングしてから評価するため、実際に確認していないビジュアルを批評せず、アクセスできなかった画面も推測せず明示します。",
+      "pageLabel": "Design Critique",
+      "highlights": [
+        "スクリーンショット、Figmaリンク、Gitリポジトリ、ローカルフォルダー、または実行中のURL受け取り — 開始前に見つけたものを返す",
+        "画像から推定するのではなく、レンダリングされたページから実際のコントラストおよびヒットターゲットサイズを測定",
+        "複数画面のフローでは、コントロールの一貫性、進捗、戻る手段、繰り返される要求、行き止まりを画面横断で確認",
+        "各検出結果がそれの背後にあるヒューリスティック（Nielsen 1-10、WCAG、Gestalt、Fitts）を指定して、NN/g 1-4スケールの重大度を持つ",
+        "レポートの任意の行を選択して、その場所について追加の質問をする",
+        "見ることができなかったことを示す代わりに空白または遮断されたスクリーンを批評しない",
+        "見直す作業から手を引く。そのプロジェクトの依存関係をインストールしたり、スクリプトを実行したり、dev サーバーを開始したり、ファイルを編集したりすることはありません",
+        "画像を撮るのにはヘッドレスブラウザーを使用。初回利用時にホームディレクトリのキャッシュに一度ダウンロードして、プロジェクトにはダウンロードされません"
+      ]
+    },
+    "ko": {
+      "displayName": "Design Critique",
+      "description": "동료에게 물어보기 전에 먼저 돌려 볼 수 있는 디자인 비평입니다. 스크린샷 하나, 여러 화면으로 이어지는 플로 전체, Figma 파일, git 저장소, 또는 이미 서비스 중인 URL을 주면 후보 화면을 찾아내고 무엇을 볼지 고르게 한 다음, 경험 많은 디자이너처럼 보고합니다. 전체 인상, 잘 되고 있는 점, 그리고 다듬을 만한 지점을 각각 이름이 명시된 휴리스틱과 연결해 제시합니다. 여러 화면으로 된 플로에서는 화면 하나만으로는 드러나지 않는 문제 — 일관성 없는 컨트롤, 진행 표시 누락, 되돌아갈 방법 없음, 막다른 길 — 도 함께 찾아냅니다. 코드와 Figma는 판단하기 전에 렌더링하므로 실제로 보지 않은 화면을 비평하지 않으며, 접근하지 못한 화면은 추측하지 않고 그대로 밝힙니다.",
+      "pageLabel": "Design Critique",
+      "highlights": [
+        "스크린샷, Figma 링크, git 저장소, 로컬 폴더, 실행 중인 URL을 받아 — 시작하기 전에 무엇을 찾았는지 알려 줍니다",
+        "이미지로 추정하지 않고 렌더링된 페이지에서 실제 대비와 터치 영역 크기를 측정합니다",
+        "여러 화면 플로에는 화면 간 점검이 추가됩니다: 컨트롤 일관성, 진행 표시, 되돌아갈 방법, 반복 요청, 막다른 길",
+        "모든 검토 결과가 근거 휴리스틱(Nielsen 1-10, WCAG, Gestalt, Fitts)을 밝히고 NN/g 1-4 척도의 심각도를 함께 표시합니다",
+        "보고서의 어느 줄이든 선택해 그 자리에서 추가 질문을 할 수 있습니다",
+        "비어 있거나 막힌 화면을 비평하는 대신 무엇을 볼 수 없었는지 알려 줍니다",
+        "검토 대상에는 손대지 않습니다: 해당 프로젝트의 의존성을 설치하거나, 스크립트를 실행하거나, 개발 서버를 띄우거나, 파일을 편집하지 않습니다",
+        "화면을 찍을 때 헤드리스 브라우저를 사용하며, 처음 사용할 때 홈 디렉터리의 캐시에 한 번만 내려받고 프로젝트에는 내려받지 않습니다"
+      ]
+    },
+    "pt": {
+      "displayName": "Design Critique",
+      "description": "Uma crítica de design que você pode rodar antes de pedir a um colega. Dê a ele uma captura de tela, um fluxo inteiro de várias telas, um arquivo do Figma, um repositório git ou uma URL que já esteja servindo, e ele encontra as telas candidatas, deixa você escolher o que examinar e responde como faria um designer experiente: uma leitura geral, o que está funcionando e os pontos que valem um ajuste, cada um ligado a uma heurística nomeada. Fluxos de várias telas também recebem descobertas entre telas que uma tela isolada não revela — controles inconsistentes, falta de indicação de progresso, nenhum caminho de volta, becos sem saída. Ele renderiza código e Figma antes de julgá-los, então nunca critica um visual que não viu de fato, e diz claramente a quais telas não conseguiu chegar, em vez de adivinhar.",
+      "pageLabel": "Design Critique",
+      "highlights": [
+        "Aceita capturas de tela, um link do Figma, um repositório git, uma pasta local ou uma URL em execução — e informa o que encontrou antes de começar",
+        "Mede o contraste e o tamanho das áreas de toque na página renderizada, em vez de estimá-los a partir de uma imagem",
+        "Fluxos de várias telas recebem verificações entre telas: consistência dos controles, progresso, caminho de volta, pedidos repetidos, becos sem saída",
+        "Cada descoberta nomeia a heurística por trás dela (Nielsen 1-10, WCAG, Gestalt, Fitts) e traz uma severidade na escala NN/g 1-4",
+        "Selecione qualquer linha do relatório e faça uma pergunta de acompanhamento sobre ela, ali mesmo",
+        "Diz o que não conseguiu ver, em vez de criticar uma tela em branco ou bloqueada",
+        "Não mexe no projeto que revisa: nunca instala as dependências dele, executa os seus scripts, inicia o seu servidor de desenvolvimento nem edita os seus arquivos",
+        "Para capturar imagens, usa um navegador headless, baixado uma única vez para um cache no seu diretório pessoal no primeiro uso e nunca dentro do projeto"
+      ]
+    },
+    "ru": {
+      "displayName": "Design Critique",
+      "description": "Разбор дизайна, который можно провести до того, как спрашивать коллегу. Дай ему один скриншот, целый многоэкранный сценарий, файл Figma, репозиторий git или уже работающий URL — он найдёт подходящие экраны, даст выбрать, что смотреть, а потом ответит так, как ответил бы опытный дизайнер: общее впечатление, что работает хорошо и что стоит подтянуть, причём каждый пункт привязан к названной эвристике. Для многоэкранных сценариев добавляются межэкранные наблюдения, которых не видно на одном экране — несогласованные элементы управления, отсутствие индикации хода работы, невозможность вернуться, тупики. Код и Figma он сначала отрисовывает и только потом судит, поэтому никогда не критикует то, чего на самом деле не видел, и прямо говорит, до каких экранов не смог добраться, вместо того чтобы догадываться.",
+      "pageLabel": "Design Critique",
+      "highlights": [
+        "Принимает скриншоты, ссылку Figma, репозиторий git, локальную папку или работающий URL — и сообщает, что нашёл, прежде чем начать",
+        "Измеряет контраст и размеры областей нажатия по отрисованной странице, а не оценивает их по картинке",
+        "Для многоэкранных сценариев есть межэкранные проверки: согласованность элементов управления, индикация хода работы, путь назад, повторные запросы, тупики",
+        "У каждого замечания названа эвристика, на которой оно основано (Nielsen 1-10, WCAG, Gestalt, Fitts), и указана серьёзность по шкале NN/g 1-4",
+        "Выдели любую строку отчёта и задай по ней уточняющий вопрос, не уходя со страницы",
+        "Говорит, чего не смог увидеть, вместо того чтобы критиковать пустой или недоступный экран",
+        "Не трогает проверяемый проект: не устанавливает его зависимости, не запускает его скрипты, не поднимает его dev-сервер и не правит его файлы",
+        "Для снимков используется headless-браузер: он один раз скачивается в кэш в домашнем каталоге при первом запуске и никогда — в проект"
+      ]
+    },
+    "zh-CN": {
+      "displayName": "Design Critique",
+      "description": "在找同事之前先自己做一轮设计评审。给它一张截图、一整套多屏流程、一个 Figma 文件、一个 git 仓库，或者一个已经在跑的 URL，它会找出候选界面，让你选择要看哪些，然后像资深设计师那样反馈：整体印象、哪些地方做得好、哪些值得收紧，每条都对应一条具名的设计准则。多屏流程还会得到单屏看不出的跨屏发现 — 控件不一致、缺少进度、无法返回、走进死路。它会先把代码和 Figma 渲染出来再判断，绝不评论自己没真正看到的画面；对于到不了的界面，它会直说，而不是猜。",
+      "pageLabel": "Design Critique",
+      "highlights": [
+        "接受截图、Figma 链接、git 仓库、本地文件夹或运行中的 URL — 开始之前先告诉你它找到了什么",
+        "在渲染后的页面上实测对比度和点击目标尺寸，而不是从图片上估算",
+        "多屏流程会做跨屏检查：控件一致性、进度提示、返回路径、重复索取、死路",
+        "每条发现都点明背后的设计准则（Nielsen 1-10、WCAG、Gestalt、Fitts），并按 NN/g 1-4 级标注严重程度",
+        "选中报告里的任意一行，就地追问",
+        "会告诉你哪些没看到，而不是去评论空白或被遮挡的界面",
+        "对评审对象零接触：不安装项目依赖、不运行项目脚本、不启动开发服务器、也不修改任何文件",
+        "截图用无头浏览器完成：首次使用时下载一次，缓存在主目录里，绝不放进项目"
+      ]
+    }
+  }
+}

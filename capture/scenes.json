@@ -1,0 +1,305 @@
+{
+  "app": "design-critique",
+  "fixture": "minimal",
+  "locale": "en-US",
+  "timezone": "UTC",
+  "provenance_note": "The isolated gateway served the design-critique app built into the Kiro Crew checkout (src/kiro_crew/apps/builtins/design_critique, website/src/apps/design-critique): Kiro Crew still ships it built in, and a second install under the same name is refused. This repository is the externally packaged copy of that app, with the same page markup; PORTING.md lists where the two differ.",
+  "data_notes": [
+    "The screens the critic reads are fictional mockups of a made-up library app (Fernleaf Library), written for this README as HTML and rendered to PNG (capture/fixtures/). Every name, card number and the .example email address in them is invented.",
+    "They are handed to the page's own file picker, exactly as choosing them in the browser would; the page uploads them through the dashboard's upload endpoint.",
+    "Every critique and the follow-up answer came from a live model, so the wording, the findings and their count differ from run to run."
+  ],
+  "init_storage": {
+    "mc-nav": "0"
+  },
+  "ready": "text=What should I critique?",
+  "forbid_text": [
+    "That critique didn’t finish.",
+    "Answer failed",
+    "Still working on this one"
+  ],
+  "setup": [
+    {
+      "name": "turn the app on",
+      "method": "POST",
+      "path": "/api/apps/design-critique/enable"
+    },
+    {
+      "name": "retire the host's one-time startup intro",
+      "method": "POST",
+      "path": "/api/feature-videos/feedback",
+      "body": {
+        "id": "crewmates",
+        "status": "dismissed"
+      },
+      "optional": true
+    }
+  ],
+  "setup_when_not_built_in": [
+    {
+      "name": "install this repository",
+      "method": "POST",
+      "path": "/api/apps/install",
+      "body": {
+        "source": "{{app_root}}"
+      }
+    },
+    {
+      "name": "trust it (it runs its own code)",
+      "method": "POST",
+      "path": "/api/security/trusted-apps/design-critique"
+    },
+    {
+      "name": "turn the app on",
+      "method": "POST",
+      "path": "/api/apps/design-critique/enable"
+    }
+  ],
+  "_setup_when_not_built_in_note": "capture.py ignores the key above. Once Kiro Crew no longer ships this app built in, replace the 'turn the app on' step in setup with these three steps.",
+  "screenshots": [
+    {
+      "name": "start",
+      "path": "/design-critique",
+      "themes": [
+        "light"
+      ],
+      "alt": "The Design Critique page before a run: a drop zone for screenshots, a field for a link or a folder, and a list of what the critique will return"
+    },
+    {
+      "name": "hero",
+      "path": "/design-critique",
+      "themes": [
+        "light",
+        "dark"
+      ],
+      "live": true,
+      "fresh_page": true,
+      "steps": [
+        {
+          "upload": "input[type=file]",
+          "files": [
+            "capture/fixtures/1-search.png",
+            "capture/fixtures/2-details.png",
+            "capture/fixtures/3-pickup.png",
+            "capture/fixtures/4-done.png"
+          ]
+        },
+        {
+          "wait_for": "role=button[name=/Critique this flow/]"
+        },
+        {
+          "click": "role=button[name=/Critique this flow/]"
+        },
+        {
+          "wait_for": "text=numbered pins mark issues",
+          "timeout_ms": 300000,
+          "cut": true
+        },
+        {
+          "mouse_park": [
+            1430,
+            890
+          ]
+        }
+      ],
+      "ready_after": "text=numbered pins mark issues",
+      "settle_ms": 1500,
+      "alt": "A finished Design Critique of a four-screen library hold flow: the left panel has the overall read, the counts of major, minor and cosmetic findings, What's working and the first Across the flow finding; the right shows the first screen, Find a book, with numbered pins on the issues"
+    },
+    {
+      "name": "use-case-single",
+      "path": "/design-critique",
+      "themes": [
+        "light"
+      ],
+      "live": true,
+      "fresh_page": true,
+      "steps": [
+        {
+          "upload": "input[type=file]",
+          "files": [
+            "capture/fixtures/3-pickup.png"
+          ]
+        },
+        {
+          "wait_for": "role=button[name='Critique this screen']"
+        },
+        {
+          "click": "role=button[name='Critique this screen']"
+        },
+        {
+          "wait_for": "text=numbered pins mark issues",
+          "timeout_ms": 300000
+        }
+      ],
+      "ready_after": "text=numbered pins mark issues",
+      "settle_ms": 1500,
+      "alt": "A critique of one pick-up form screen: an overall read that calls it calm and tidy, 4 minor and 1 cosmetic findings, What's working, and the first finding, Hold-time note sits under the wrong field, opened beside the screen with five numbered pins"
+    },
+    {
+      "name": "use-case-flow",
+      "path": "/design-critique",
+      "themes": [
+        "light"
+      ],
+      "live": true,
+      "fresh_page": true,
+      "steps": [
+        {
+          "upload": "input[type=file]",
+          "files": [
+            "capture/fixtures/1-search.png",
+            "capture/fixtures/2-details.png",
+            "capture/fixtures/3-pickup.png",
+            "capture/fixtures/4-done.png"
+          ]
+        },
+        {
+          "wait_for": "role=button[name=/Critique this flow/]"
+        },
+        {
+          "click": "role=button[name=/Critique this flow/]"
+        },
+        {
+          "wait_for": "text=numbered pins mark issues",
+          "timeout_ms": 300000,
+          "cut": true
+        },
+        {
+          "click": "text=/^3 · /"
+        },
+        {
+          "wait_ms": 800
+        },
+        {
+          "scroll": "text=/Across the flow/i"
+        }
+      ],
+      "ready_after": "text=numbered pins mark issues",
+      "settle_ms": 1500,
+      "alt": "A four-screen flow critique with step 3, Pick-up, on screen: the Across the flow section's major finding says the 'reserve' link leads to a details page that asks you to 'Place hold', so the same action has a different name on each step"
+    },
+    {
+      "name": "use-case-ask",
+      "path": "/design-critique",
+      "themes": [
+        "light"
+      ],
+      "live": true,
+      "fresh_page": true,
+      "steps": [
+        {
+          "upload": "input[type=file]",
+          "files": [
+            "capture/fixtures/1-search.png"
+          ]
+        },
+        {
+          "wait_for": "role=button[name='Critique this screen']"
+        },
+        {
+          "click": "role=button[name='Critique this screen']"
+        },
+        {
+          "wait_for": "text=numbered pins mark issues",
+          "timeout_ms": 300000
+        },
+        {
+          "select_text": "xpath=(//span[normalize-space()='Where']/..)[1]"
+        },
+        {
+          "click": "role=button[name='Ask about this']"
+        },
+        {
+          "type": "input[placeholder='What don’t you understand about this?']",
+          "value": "Why does this matter for someone reserving a book?",
+          "delay_ms": 5
+        },
+        {
+          "press": "input[placeholder='What don’t you understand about this?']",
+          "key": "Enter"
+        },
+        {
+          "wait_for": "text=Thinking…",
+          "timeout_ms": 15000
+        },
+        {
+          "wait_hidden": "text=Thinking…",
+          "timeout_ms": 300000
+        }
+      ],
+      "settle_ms": 1500,
+      "alt": "A follow-up question about one selected line of a search-page critique: the quoted line about the availability line and the 'reserve' link, the question Why does this matter for someone reserving a book?, and the answer that available and on-loan books look and act the same, with a box to ask another follow-up"
+    }
+  ],
+  "walkthrough": {
+    "name": "walkthrough",
+    "theme": "light",
+    "path": "/design-critique",
+    "live": true,
+    "alt": "A walkthrough of Design Critique: four screens of a library hold flow are added in order, Critique this flow starts the run, the report appears with an overall read, What's working and an Across the flow finding, and choosing step 3 shows the Pick-up screen with its numbered pins",
+    "tail_ms": 3500,
+    "steps": [
+      {
+        "caption": "Drop in the screens of a flow, in order"
+      },
+      {
+        "wait_ms": 1800
+      },
+      {
+        "upload": "input[type=file]",
+        "files": [
+          "capture/fixtures/1-search.png",
+          "capture/fixtures/2-details.png",
+          "capture/fixtures/3-pickup.png",
+          "capture/fixtures/4-done.png"
+        ]
+      },
+      {
+        "wait_ms": 1500
+      },
+      {
+        "caption": "One click starts the critique"
+      },
+      {
+        "click": "role=button[name=/Critique this flow/]"
+      },
+      {
+        "caption": "It reads each screen, then the jumps between them"
+      },
+      {
+        "wait_for": "text=numbered pins mark issues",
+        "timeout_ms": 300000,
+        "cut": true,
+        "cut_keep_ms": 2500
+      },
+      {
+        "caption": "An overall read, what’s working, and what to tighten"
+      },
+      {
+        "wait_ms": 3500
+      },
+      {
+        "caption": "Pins mark where each issue is"
+      },
+      {
+        "click": "text=/^3 · /"
+      },
+      {
+        "wait_ms": 3000
+      },
+      {
+        "caption": ""
+      },
+      {
+        "mouse_park": [
+          1430,
+          890
+        ]
+      },
+      {
+        "wait_ms": 1500
+      }
+    ]
+  }
+}

@@ -1,0 +1,7 @@
+[flake8]
+max-line-length = 100
+# The same as Kiro Crew's own (the code was ported from it, formatted by black):
+# black puts whitespace before ':' in slices and line breaks before binary
+# operators, and what is left over-long after formatting does not matter.
+extend-ignore = E203, W503, E501
+exclude = .git, __pycache__, ui/node_modules

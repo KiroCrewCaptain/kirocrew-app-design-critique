@@ -1,0 +1,8 @@
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { width: 900px; height: 760px; font-family: "Inter", "Segoe UI", Arial, sans-serif; background: #fbfaf7; color: #1d2a22; }
+header { height: 56px; display: flex; align-items: center; justify-content: space-between; padding: 0 28px; background: #fff; border-bottom: 1px solid #e6e2d8; }
+.brand { font-weight: 700; font-size: 18px; color: #2f6b45; }
+nav a { margin-left: 22px; font-size: 14px; color: #55605a; text-decoration: none; }
+main { padding: 34px 120px; }
+h1 { font-size: 26px; margin-bottom: 6px; }
+.sub { color: #9aa39d; font-size: 14px; margin-bottom: 24px; }
