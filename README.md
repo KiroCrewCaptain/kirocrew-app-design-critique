@@ -215,12 +215,14 @@ can start that kind of critique; screenshots still work.
 ## Development
 
 This repository is the externally packaged form of the `design-critique` app that
-ships built into Kiro Crew. The two share a name, a version and the same
-permissions, so the Kiro Crew release that adds built-in adoption can move an
-existing built-in install onto this source in place, at a commit pinned in that
-release. Until a user's Kiro Crew does that, it keeps running its built-in copy,
-and nothing here changes what they run. [PORTING.md](PORTING.md) lists every
-place this copy differs from the built-in, and why.
+ships built into Kiro Crew. The two share a name and the same permissions, and
+this copy's version is never below the built-in's, so the Kiro Crew release that
+adds built-in adoption can move an existing built-in install onto this source in
+place, at a commit pinned in that release. Until a user's Kiro Crew does that, it
+keeps running its built-in copy, and nothing here changes what they run. Fixes
+that land on the built-in are carried here too, with a patch version bump.
+[PORTING.md](PORTING.md) lists every place this copy differs from the built-in,
+the fixes carried since the port, and why.
 
 | Path | What it is |
 |---|---|

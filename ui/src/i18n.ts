@@ -8,6 +8,12 @@
  * than nothing. `{{name}}` placeholders are filled from `vars`; one with no value
  * is left as written.
  *
+ * A numeric `count` picks a plural form the way the dashboard's i18next does:
+ * in each catalog of the chain, `<key>_zero` for 0 when it exists, then
+ * `<key>_<category>` for that catalog's own CLDR category (`one`, `few`,
+ * `many`, `other`; `Intl.PluralRules`), then the bare key. So `ru` reads its
+ * `_few` form for 3 while `ja` reads `_other` for every count.
+ *
  * `t` reads the language at call time. The root component subscribes to the
  * host's language changes (`useLanguageGeneration`), and its re-render reaches
  * every child, so a language switch repaints the page without a reload.
@@ -80,9 +86,32 @@ function currentLocale(): string {
 
 const PLACEHOLDER = /\{\{\s*(\w+)\s*\}\}/g
 
+const pluralRules = new Map<string, Intl.PluralRules>()
+
+function pluralCategory(locale: string, count: number): string {
+  let rules = pluralRules.get(locale)
+  if (!rules) {
+    rules = new Intl.PluralRules(locale)
+    pluralRules.set(locale, rules)
+  }
+  return rules.select(count)
+}
+
+/** The keys to try in `locale`'s catalog, most specific first. */
+function candidates(locale: string, key: string, vars?: Record<string, string | number>): string[] {
+  const count = vars && own(vars, 'count') ? vars.count : undefined
+  if (typeof count !== 'number' || !Number.isFinite(count)) return [key]
+  const forms = [`${key}_${pluralCategory(locale, count)}`, key]
+  return count === 0 ? [`${key}_zero`, ...forms] : forms
+}
+
 export function t(key: string, vars?: Record<string, string | number>): string {
   for (const locale of localeChain(currentLocale())) {
-    const text = lookup(CATALOGS[locale], key)
+    let text: string | undefined
+    for (const candidate of candidates(locale, key, vars)) {
+      text = lookup(CATALOGS[locale], candidate)
+      if (text !== undefined) break
+    }
     if (text !== undefined) {
       return text.replace(PLACEHOLDER, (whole, name: string) =>
         vars && own(vars, name) ? String(vars[name]) : whole,
@@ -90,4 +119,23 @@ export function t(key: string, vars?: Record<string, string | number>): string {
     }
   }
   return key
+}
+
+const numberFormats = new Map<string, Intl.NumberFormat>()
+
+/** A number in the host's active language (`1,234`, `১২৩`), as the dashboard's
+ *  `fmtNumber` spells it; a non-finite value reads `—`. */
+export function fmtNumber(value: number): string {
+  if (!Number.isFinite(value)) return '—'
+  const locale = currentLocale()
+  let format = numberFormats.get(locale)
+  if (!format) {
+    try {
+      format = new Intl.NumberFormat(locale, { localeMatcher: 'lookup' })
+    } catch {
+      format = new Intl.NumberFormat('en')
+    }
+    numberFormats.set(locale, format)
+  }
+  return format.format(value)
 }

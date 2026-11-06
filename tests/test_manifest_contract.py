@@ -4,10 +4,13 @@ Kiro Crew adopts a user's built-in record onto this repository in place, at a
 pinned commit, with no consent dialog, so the tree must be something it can take
 over unchanged:
 
-- the same name, version, permissions, skills and ``defaultEnabled`` as the
-  built-in (and, like it, no agents) (``tests/fixtures/builtin-app.json`` is its manifest at the
-  commit this was ported from). A widened grant would be held back or force the
-  app off, and adoption refuses that;
+- the same name, permissions, skills and ``defaultEnabled`` as the built-in
+  (and, like it, no agents) (``tests/fixtures/builtin-app.json`` is its manifest
+  at the commit this was ported from), and a version never below its. A widened
+  grant would be held back or force the app off, and adoption refuses that.
+  Adoption matches the version against Kiro Crew's pin of one commit here, so a
+  later commit carries a later patch version, which is what shows an adopted
+  user the update;
 - nothing that needs a build at install time, and no symlinks or file names a
   Windows checkout cannot hold;
 - a committed UI bundle that imports only modules the dashboard provides, and
@@ -185,9 +188,16 @@ class TestTheManifest(unittest.TestCase):
 
     def test_what_adoption_compares_is_the_builtins(self) -> None:
         manifest, builtin = _manifest(), _builtin()
-        for key in ("name", "version", "permissions", "skills", "defaultEnabled"):
+        for key in ("name", "permissions", "skills", "defaultEnabled"):
             with self.subTest(field=key):
                 self.assertEqual(manifest[key], builtin[key])
+
+        def parsed(version: str) -> tuple[int, ...]:
+            self.assertRegex(version, r"^\d+\.\d+\.\d+$")
+            return tuple(int(part) for part in version.split("."))
+
+        self.assertGreaterEqual(parsed(manifest["version"]), parsed(builtin["version"]))
+
         # The built-in declares no agent (its critic persona travels in the prompt
         # and runs on the host's default agent); neither does this copy.
         self.assertNotIn("agents", builtin)

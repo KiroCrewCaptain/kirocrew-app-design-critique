@@ -16,10 +16,13 @@ is a Kiro Crew change, not a change here.
 
 ## What carried over unchanged
 
-- `app.json` `name` (`design-critique`) and `version` (`1.0.0`), so adoption can
-  map an existing built-in record onto this one. `permissions`, `skills`,
-  `defaultEnabled`, `platform`, `tags`, `highlights`, `description`, `useCases`
-  and `configuration` are the built-in's; `tests/test_manifest_contract.py`
+- `app.json` `name` (`design-critique`), so adoption can map an existing
+  built-in record onto this one. The `version` started equal to the built-in's
+  (`1.0.0`) and only moves up: adoption matches it against Kiro Crew's pin of one
+  commit here, and a later commit's patch bump is what shows an adopted user the
+  update (see [Fixes since the port](#fixes-since-the-port)). `permissions`,
+  `skills`, `defaultEnabled`, `platform`, `tags`, `highlights`, `description`,
+  `useCases` and `configuration` are the built-in's; `tests/test_manifest_contract.py`
   compares them with the built-in's manifest (`tests/fixtures/builtin-app.json`).
   Like the built-in, the app declares no agent: the critic persona travels in the
   prompt (`ui/src/prompts.ts`) and runs on the host's default agent.
@@ -30,8 +33,8 @@ is a Kiro Crew change, not a change here.
   the clone/probe TTL sweep, and the data location: clones and probe dirs under
   `<data home>/uploads/dc-clones` and `dc-probe-*`, renders under
   `<data home>/uploads/dc-render-*`, so a user's saved critiques keep their images.
-- The page's markup, inline styles and behaviour (`ui/src/`), and its 136
-  strings in all 12 dashboard locales.
+- The page's markup, inline styles and behaviour (`ui/src/`), and its strings
+  in all 12 dashboard locales.
 
 ## What changed, and why
 
@@ -86,11 +89,14 @@ bundle and its sample images loaded from `/apps/<name>/ui/`.
    until the name is back or a seam replaces it.
 2. **Hidden worker slots.** The page opens its critique and follow-up slots with
    `mode: "design-critique"` (`ui/src/api.ts`), which Kiro Crew allows only
-   because it hard-codes that one app mode
-   (`src/kiro_crew/dashboard/chat_handlers.py:672`, `_CREATABLE_MODES`). It keeps
-   them out of the chat sidebar. Core needs a generic app-worker slot mode (keyed
-   on the slot's app, or declared in the manifest), with a migration for slots
-   already persisted with this mode, before it can drop the literal.
+   because its built-in copy registers that one mode at import
+   (`src/kiro_crew/apps/builtins/design_critique/seams.py`, read by
+   `chat_handlers._CREATABLE_MODES` through `apps/seams.worker_slot_modes`). It
+   keeps them out of the chat sidebar. That registration is a built-in's seam
+   module, which an installed app has no way to provide, so core needs a generic
+   app-worker slot mode (keyed on the slot's app, or declared in the manifest),
+   with a migration for slots already persisted with this mode, before it can
+   stop shipping the built-in's `seams.py`.
 3. **Execution trust.** A built-in's in-gateway Python is exempt from the
    third-party execution gate (`src/kiro_crew/apps/execution.py:393`
    `is_builtin_app`, `:719` `app_execution_denied`). This copy's hooks load only
@@ -125,7 +131,8 @@ bundle and its sample images loaded from `/apps/<name>/ui/`.
     attribution goes on the catalog row.
 11. **Core still names the app.** `src/kiro_crew/apps/builtins/__init__.py:9`,
     `src/kiro_crew/dashboard/routes/system.py:235`,
-    `src/kiro_crew/dashboard/chat_handlers.py:672`,
+    `src/kiro_crew/apps/builtins/design_critique/seams.py` (the worker slot
+    mode, gap 2),
     `src/kiro_crew/security/paths.py:225` (comment),
     `website/src/apps/builtinRegistry.ts:64`,
     `website/src/components/appstore/appManifest.ts:178` and the
@@ -149,8 +156,33 @@ committed `ui/dist/index.mjs`; CI rebuilds it and fails on a difference.
 | `hooks/useImeGuard`, `i18n/format.fmtRelative` | the same from `@kirocrew/app-sdk` |
 | `hooks/useReducedMotion` | `useReduceMotion` in `ui/src/hooks.ts`, the same live media-query reader |
 | `hooks/useDialogFocusTrap` | `ui/src/focusTrap.ts` (gap 6) |
+| `hooks/useMenuKeyboard` (the History menu) | `ui/src/menuKeyboard.ts`, restated with the same arrow, Home/End and Tab contract and the same two gaps as the focus trap (gap 6) |
+| `i18n/format.fmtNumber` and i18next's plural pick (`count`) | `fmtNumber` and the plural lookup in `ui/src/i18n.ts`: `<key>_zero` for 0 when present, then `<key>_<CLDR category>` for each catalog's own language, then the bare key |
 | `framer-motion` (`Motion.tsx`) | the same two keyframe loops through `Element.animate`; reduced motion still swaps in the still forms |
 | `i18n/t.i18nT` with `apps.designCritique.*` keys | `t()` in `ui/src/i18n.ts` over `ui/i18n/<locale>.json` (all 12 dashboard locales): the subtree, plus `pages.chatPage.send_failed` and `api.client.unexpected_server_response` as `common.*`. Exact locale, then base language, then English |
+
+## Fixes since the port
+
+Each change that landed on the built-in after the port (Kiro Crew `main` after
+`390c5315be`), carried here so a user on this copy has it too. Version `1.0.1`.
+
+| Kiro Crew commit | What a user sees | Here |
+|---|---|---|
+| `7b6615672f` (#27392) | The rail's `History (n)`, the screen list heading, the preview hint, the step labels, the composer's access, start and remove labels and a finding's fallback title and `Fix` / `Suggestion` read in the user's language. The History button says it opens a menu and whether it is open; the menu is a real `role="menu"` (arrows, Home/End, Tab kept inside), Escape closes it and returns focus to the button, a click outside closes it | `ui/src/DesignCritiquePage.tsx`, `Composer.tsx`, `FindingRow.tsx`, `ui/src/menuKeyboard.ts`, the catalogs |
+| `97a2492dcb` (#29536) | "Critique this flow · 1 screen" in the singular, and every language's own plural forms for it | `_one` / `_other` (and `_few` / `_many`) keys, the plural lookup in `ui/src/i18n.ts` |
+| `bf07772aad` (#29673) | The Ask layer's question field has an accessible name, not only a placeholder | `aria-label` in `ui/src/AskLayer.tsx` |
+| `4e9d75ec16` (#29665) | The composer's title, start button, staged hint, link placeholders and render hint, and the rail's reading lines, are translated; the link field is named; five `utils` hints are translated in the languages that still had English | `ui/src/Composer.tsx`, `DesignCritiquePage.tsx`, the catalogs |
+| `9cb676ad18` (#30155) | The empty history list, the "What you'll get" list, a history entry's screen count, a step's finding count, the flow screen count, the screen fallback name and the ask-error lines are translated, counts in plural form. A critique that fails in the background no longer also raises an English "Critique failed:" toast; the rail's failure notice is what shows it | `ui/src/DesignCritiquePage.tsx`, the catalogs |
+| `259187cd18` (#30519) | A flow finding's step range reads "steps 1–4" in the user's language; a flow finding with no steps shows its translated "flow" badge and no range line; an empty screen label falls back to a translated "Screen" | `ui/src/FindingRow.tsx`, `DesignCritiquePage.tsx`, `utils.ts` |
+| `8a378ff444` (#30299) | The waiting screen's title, placeholder and footer, and the scoping picker's found, picked and flow counts, fallback group and `From links` / `Guess` tags, are translated | `ui/src/WaitingScreen.tsx`, `ScopingPicker.tsx`, the catalogs |
+
+The tests those changes added are in `ui/tests/` (`DesignCritiqueChrome`,
+`ComposerLabels`, `PageText`, `ScopeTags`, `StepRange`, `WaitScope` and the
+updated `StartLabel` i18n tests, `DesignCritiqueInputNames.a11y.test.ts`), with
+the move-only refactor's rows that this copy lacked (`api.typedErrors.test.ts`
+and `uploads.test.ts`, less the dashboard-only HEIC and 429-relabel rows). The
+backend, the skill and the manifest have not changed on the built-in since the
+port.
 
 ## Tests
 

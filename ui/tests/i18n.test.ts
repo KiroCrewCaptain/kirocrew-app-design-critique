@@ -3,12 +3,13 @@
  *
  * The bundle cannot read the dashboard's catalogs, so a missing key here is an
  * untranslated (or raw-key) string on screen in that locale. These pin the
- * fallback order, that every shipped locale covers every English key with the
- * same placeholders, and that every key the source names exists.
+ * fallback order, the plural pick, that every shipped locale covers every
+ * English key with the same placeholders (a counted key in every plural form
+ * its language has), and that every key the source names exists.
  */
 /// <reference types="vite/client" />
 import { describe, it, expect } from 'vitest'
-import { CATALOGS, localeChain, t } from '../src/i18n'
+import { CATALOGS, fmtNumber, localeChain, t } from '../src/i18n'
 import { stubLocale } from './stubs/app-sdk'
 
 type Tree = { [key: string]: string | Tree }
@@ -54,13 +55,55 @@ describe('lookup order', () => {
   })
 
   it('fills placeholders and leaves an unsupplied one as written', () => {
-    expect(t('composer.critique_this_flow_count_screens', { count: 3 })).toBe('Critique this flow · 3 screens')
-    expect(t('composer.critique_this_flow_count_screens')).toBe('Critique this flow · {{count}} screens')
+    expect(t('composer.step_n', { n: 3 })).toBe('Step 3')
+    expect(t('composer.step_n')).toBe('Step {{n}}')
   })
 })
 
+describe('plural pick', () => {
+  it('reads the form for the count in English', () => {
+    expect(t('composer.critique_this_flow_count_screens', { count: 1 })).toBe('Critique this flow · 1 screen')
+    expect(t('composer.critique_this_flow_count_screens', { count: 3 })).toBe('Critique this flow · 3 screens')
+    expect(t('composer.critique_this_flow_count_screens', { count: 0 })).toBe('Critique this flow · 0 screens')
+  })
+
+  it('uses the active language\'s own categories', () => {
+    stubLocale('ru')
+    const ru = flatten(CATALOGS.ru)
+    expect(t('designCritiquePage.findings_count', { count: 1, n: '1' })).toBe(ru['designCritiquePage.findings_count_one'].replace('{{n}}', '1'))
+    expect(t('designCritiquePage.findings_count', { count: 3, n: '3' })).toBe(ru['designCritiquePage.findings_count_few'].replace('{{n}}', '3'))
+    expect(t('designCritiquePage.findings_count', { count: 5, n: '5' })).toBe(ru['designCritiquePage.findings_count_many'].replace('{{n}}', '5'))
+    stubLocale('ja')
+    expect(t('designCritiquePage.findings_count', { count: 1, n: '1' })).toBe(flatten(CATALOGS.ja)['designCritiquePage.findings_count_other'].replace('{{n}}', '1'))
+  })
+
+  it('leaves a key whose name ends in a category alone without a count', () => {
+    expect(t('waitingScreen.title_uploading_one')).toBe('Uploading your screenshot…')
+  })
+
+  it('formats a number in the active language', () => {
+    stubLocale('en')
+    expect(fmtNumber(1234)).toBe('1,234')
+    stubLocale('bn')
+    expect(fmtNumber(3)).toBe(new Intl.NumberFormat('bn').format(3))
+    expect(fmtNumber(Number.NaN)).toBe('—')
+  })
+})
+
+const PLURAL_SUFFIX = /_(zero|one|two|few|many|other)$/
+
+/** A counted key's base name: one whose English catalog has a `_other` form. */
+function baseOf(key: string, english: Record<string, string>): string {
+  const m = PLURAL_SUFFIX.exec(key)
+  if (!m) return key
+  const base = key.slice(0, -m[0].length)
+  return english[base + '_other'] !== undefined ? base : key
+}
+
 describe('catalog coverage', () => {
   const english = flatten(CATALOGS.en)
+  const englishBases = [...new Set(Object.keys(english).map((key) => baseOf(key, english)))].sort()
+  const counted = englishBases.filter((base) => english[base] === undefined && english[base + '_other'] !== undefined)
 
   it('ships every dashboard locale', () => {
     expect(Object.keys(CATALOGS).sort()).toEqual(
@@ -71,10 +114,19 @@ describe('catalog coverage', () => {
   for (const [locale, catalog] of Object.entries(CATALOGS)) {
     it(`${locale} has exactly the English keys, with the same placeholders`, () => {
       const strings = flatten(catalog)
-      expect(Object.keys(strings).sort()).toEqual(Object.keys(english).sort())
+      const bases = [...new Set(Object.keys(strings).map((key) => baseOf(key, english)))].sort()
+      expect(bases).toEqual(englishBases)
+      const categories = new Intl.PluralRules(locale).resolvedOptions().pluralCategories
+      for (const base of counted) {
+        for (const category of categories) {
+          expect(strings[`${base}_${category}`], `${locale} ${base}_${category}`).toBeDefined()
+        }
+      }
       for (const [key, text] of Object.entries(strings)) {
+        const base = baseOf(key, english)
+        const reference = english[key] ?? english[base + '_other']
         expect(text.trim(), `${locale} ${key}`).not.toBe('')
-        expect(placeholders(text), `${locale} ${key}`).toEqual(placeholders(english[key]))
+        expect(placeholders(text), `${locale} ${key}`).toEqual(placeholders(reference))
       }
     })
   }
@@ -86,7 +138,7 @@ describe('catalog coverage', () => {
       for (const m of text.matchAll(/i18nT\(\s*'([A-Za-z][\w.]*)'/g)) used.add(m[1])
     }
     expect(used.size).toBeGreaterThan(50)
-    const missing = [...used].filter((key) => english[key] === undefined)
+    const missing = [...used].filter((key) => english[key] === undefined && english[key + '_other'] === undefined)
     expect(missing).toEqual([])
   })
 })

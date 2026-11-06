@@ -56,6 +56,12 @@ function toApiError(e) {
 * than nothing. `{{name}}` placeholders are filled from `vars`; one with no value
 * is left as written.
 *
+* A numeric `count` picks a plural form the way the dashboard's i18next does:
+* in each catalog of the chain, `<key>_zero` for 0 when it exists, then
+* `<key>_<category>` for that catalog's own CLDR category (`one`, `few`,
+* `many`, `other`; `Intl.PluralRules`), then the bare key. So `ru` reads its
+* `_few` form for 3 while `ja` reads `_other` for every count.
+*
 * `t` reads the language at call time. The root component subscribes to the
 * host's language changes (`useLanguageGeneration`), and its re-render reaches
 * every child, so a language switch repaints the page without a reload.
@@ -71,23 +77,46 @@ var CATALOGS = {
 			"ask_about_this": "এটি সম্পর্কে জিজ্ঞাসা করুন",
 			"close": "বন্ধ করুন",
 			"remove_this_annotation": "এই অ্যানোটেশন সরান",
-			"thinking": "ভাবছে…"
+			"thinking": "ভাবছে…",
+			"question_label": "এই সমালোচনা নিয়ে তোমার প্রশ্ন"
 		},
 		composer: {
 			"add_screens": "স্ক্রিন যোগ করুন",
+			"add_screenshots_or_paste_a_link_first": "আগে স্ক্রিনশট যোগ করো বা একটি লিংক পেস্ট করো",
 			"clear_all": "সব মুছুন",
-			"critique_this_flow_count_screens": "Critique this flow · {{count}} screens",
+			"critique_this_flow_count_screens_one": "এই ফ্লোর ক্রিটিক করো · {{count}}টি স্ক্রিন",
+			"critique_this_flow_count_screens_other": "এই ফ্লোর ক্রিটিক করো · {{count}}টি স্ক্রিন",
 			"critique_this_screen": "Critique this screen",
 			"drop_screenshots_or_click_to_browse": "স্ক্রিনশট ড্রপ করুন — বা ব্রাউজ করতে ক্লিক করুন",
+			"fix_my_access": "আমার অ্যাক্সেস ঠিক করো",
 			"fix_the_link": "লিঙ্কটি ঠিক করুন",
+			"hide_access_steps": "অ্যাক্সেসের ধাপ লুকাও",
 			"move_earlier": "আগে সরান",
 			"move_later": "পরে সরান",
 			"one_screen_or_several_in_order_for_a_flow_png_jp": "একটি স্ক্রিন, বা ফ্লোর জন্য ক্রমানুসারে কয়েকটি · PNG, JPG, WebP",
 			"remove": "সরান",
+			"remove_name": "{{name}} সরাও",
 			"send_screenshots": "স্ক্রিনশট পাঠান",
+			"start_the_critique": "ক্রিটিক শুরু করো",
+			"step_n": "ধাপ {{n}}",
 			"try_again": "আবার চেষ্টা করুন",
 			"unrecognised": "Unrecognised",
-			"use_a_local_folder_instead": "পরিবর্তে একটি লোকাল ফোল্ডার ব্যবহার করুন"
+			"use_a_local_folder_instead": "পরিবর্তে একটি লোকাল ফোল্ডার ব্যবহার করুন",
+			"start_kind_figma": "Figma ফাইলের সমালোচনা করো",
+			"start_kind_repo": "রিপোজিটরির সমালোচনা করো",
+			"start_kind_local": "লোকাল কোডের সমালোচনা করো",
+			"start_kind_url": "চলমান অ্যাপের সমালোচনা করো",
+			"start_this": "এটির সমালোচনা করো",
+			"start_plain": "সমালোচনা করো",
+			"staged_one_hint": "1টি স্ক্রিন · ফ্লো হিসেবে সমালোচনা করতে আরেকটি যোগ করো।",
+			"staged_flow_hint_one": "{{n}}টি স্ক্রিন · এই ক্রমই ফ্লোর ক্রম — শুরু করার আগে ক্রম বদলাও বা সরাও।",
+			"staged_flow_hint_other": "{{n}}টি স্ক্রিন · এই ক্রমই ফ্লোর ক্রম — শুরু করার আগে ক্রম বদলাও বা সরাও।",
+			"title_blocked": "আমি ঢুকতে পারিনি",
+			"title_ask": "আমি কীসের সমালোচনা করব?",
+			"link_placeholder_staged": "তোমার স্ক্রিনশট ব্যবহার হচ্ছে — লিংকের সমালোচনা করতে সেগুলো সরাও",
+			"link_placeholder": "Figma লিংক · git রিপোজিটরি · এই মেশিনের একটি ফোল্ডার · একটি চলমান URL (localhost বা ডিপ্লয় করা প্রিভিউ)",
+			"link_label": "সমালোচনার লিংক",
+			"render_before_judging": "বিচার করার আগে আমি সবকিছু রেন্ডার করি — শুধু কোড দেখে কখনো নয়। তোমার অ্যাপ যদি আগে থেকেই চলে, তাহলে তার URL পেস্ট করো, আমি অনুমানের বদলে আসল রং আর মাপ মাপতে পারব।"
 		},
 		constants: {
 			"blocked_figma_app_missing_hint": "Figma ডেস্কটপে ফাইলটা খোলো আর আবার চেষ্টা করো, বা ফ্রেমগুলো PNG হিসেবে এক্সপোর্ট করে এখানে ফেলে দাও।",
@@ -134,28 +163,36 @@ var CATALOGS = {
 		designCritiquePage: {
 			"a_critique_is_still_running_click_to_watch_it": "একটি ক্রিটিক এখনও চলছে — দেখতে ক্লিক করুন",
 			"across_the_flow": "ফ্লো জুড়ে",
+			"click_to_enlarge": "বড় করতে ক্লিক করো",
 			"close_esc": "বন্ধ করুন (Esc)",
 			"couldn_t_see": "দেখা যায়নি",
 			"couldn_t_tell_what_that_is_give_me_a_figma_link": "এটা কী বুঝতে পারিনি। একটি Figma লিংক, GitHub/GitLab/Bitbucket রেপো, একটি absolute লোকাল পাথ, বা ইতিমধ্যে চালু থাকা একটি URL দিন।",
 			"critique_ready": "ক্রিটিক প্রস্তুত",
+			"critique_untitled": "ক্রিটিক",
 			"design_critique": "Design Critique",
 			"enlarge": "বড় করুন",
 			"full_size": "পূর্ণ আকার",
 			"full_size_view": "পূর্ণ আকারে দেখুন",
+			"history_count": "ইতিহাস ({{n}})",
 			"i_got_in_but_there_s_nothing_in_there_i_can": "আমি ঢুকতে পেরেছি, কিন্তু ভেতরে রেন্ডার করার মতো কিছু নেই। বরং স্ক্রিনশট ছেড়ে দাও।",
 			"new": "নতুন",
 			"no_screens_to_show_the_critic_couldn_t_get_pixel": "দেখানোর মতো কোনো স্ক্রিন নেই — এটির জন্য ক্রিটিক পিক্সেল পায়নি। প্যানেলে \"দেখা যায়নি\" দেখুন।",
 			"nothing_major": "বড় কিছু নেই",
+			"numbered_pins_mark_issues_on_this_screen": "নম্বর দেওয়া পিন এই স্ক্রিনের সমস্যা চিহ্নিত করে",
 			"on_screen": "● স্ক্রিনে",
 			"only_added_the_first_room_the_limit_is_max_screens": "শুধু প্রথম {{room}}টি যোগ করা হয়েছে — সীমা {{max}} স্ক্রিন।",
+			"pick_a_step_above": "ওপরে একটি ধাপ বেছে নাও",
 			"point_me_at_a_running_url": "একটি চলমান URL আমাকে দেখান",
 			"point_me_at_a_screen_or_a_whole_flow_and_i_ll_re": "একটি স্ক্রিন — বা একটি পূর্ণ ফ্লো — আমাকে দেখান, আর আমি একজন ডিজাইনার বন্ধুর মতো করে সেটি পড়ব: কী কাজ করছে, কী আরও নিখুঁত করা যায়, এবং কেন।",
 			"running": "চলছে",
+			"screen_heading": "স্ক্রিন",
+			"screens_in_order": "ক্রমানুসারে স্ক্রিন",
 			"see_an_example": "একটি উদাহরণ দেখুন",
 			"send_screenshots": "স্ক্রিনশট পাঠান",
 			"show_this_screen": "এই স্ক্রিনটি দেখান",
 			"something_went_wrong": "something went wrong",
 			"start_a_new_critique_anything_already_running_ke": "নতুন একটি ক্রিটিক শুরু করুন — চলমান যেকোনো কিছু চলতে থাকবে",
+			"step_n": "ধাপ {{n}}",
 			"still_working_on_this_one_it_s_kept_running_come": "Still working on this one. It’s kept running — come back in a minute.",
 			"still_working_on_this_one_it_s_kept_running_come_2": "Still working on this one. It’s kept running — come back to this page in a minute and it’ll pick up where it left off.",
 			"switch_critique": "ক্রিটিক পাল্টান",
@@ -168,12 +205,46 @@ var CATALOGS = {
 			"what_s_working": "যা কাজ করছে",
 			"what_you_ll_get": "আপনি যা পাবেন",
 			"your_critiques": "আপনার ক্রিটিকগুলো",
-			"your_question_click_to_see_the_answer": "আপনার প্রশ্ন — উত্তর দেখতে ক্লিক করুন"
+			"your_question_click_to_see_the_answer": "আপনার প্রশ্ন — উত্তর দেখতে ক্লিক করুন",
+			"rail_uploading": "আপলোড হচ্ছে…",
+			"rail_reading": "তোমার ডিজাইন পড়া হচ্ছে…",
+			"rail_flow_one": "{{n}}টি স্ক্রিনের একটি ফ্লো — এদের মাঝের রূপান্তরও দেখব।",
+			"rail_flow_other": "{{n}}টি স্ক্রিনের একটি ফ্লো — এদের মাঝের রূপান্তরও দেখব।",
+			"rail_one_screen": "একটি স্ক্রিন।",
+			"rail_pending_figma": "একটি Figma ফাইল — বিচারের আগে রেন্ডার হচ্ছে।",
+			"rail_pending_repo": "একটি রিপোজিটরি — বিচারের আগে রেন্ডার হচ্ছে।",
+			"rail_pending_local": "লোকাল কোড — বিচারের আগে রেন্ডার হচ্ছে।",
+			"rail_pending_url": "একটি চলমান অ্যাপ — বিচারের আগে রেন্ডার হচ্ছে।",
+			"rail_pending_design": "একটি ডিজাইন — বিচারের আগে রেন্ডার হচ্ছে।",
+			"rail_getting_ready": "স্ক্রিন প্রস্তুত করা হচ্ছে।",
+			"critique_ready_fallback": "সমালোচনা তৈরি",
+			"ask_too_long": "অনেক সময় লেগেছে — আবার জিজ্ঞেস করো।",
+			"ask_went_wrong": "কিছু একটা ভুল হয়েছে।",
+			"entry_meta_screens_one": "{{n}}টি স্ক্রিন · {{when}}",
+			"entry_meta_screens_other": "{{n}}টি স্ক্রিন · {{when}}",
+			"findings_count_one": "{{n}}টি মন্তব্য",
+			"findings_count_other": "{{n}}টি মন্তব্য",
+			"nothing_flagged": "কিছু চিহ্নিত হয়নি",
+			"design_critique_fallback": "ডিজাইন সমালোচনা",
+			"flow_screens_count_one": "{{n}}টি স্ক্রিন",
+			"flow_screens_count_other": "{{n}}টি স্ক্রিন",
+			"screen_n": "স্ক্রিন {{n}}",
+			"get_overall_read": "এটি কেমন চলছে তার সামগ্রিক মূল্যায়ন",
+			"get_whats_working": "যা কাজ করছে, যাতে পরের সংশোধনেও টিকে থাকে",
+			"get_top_things": "শক্ত করার প্রধান বিষয়গুলো, স্ক্রিনে চিহ্নসহ",
+			"no_critiques_narrow": "এখনও কোনো সমালোচনা নেই। নিচে একটি স্ক্রিনশট দাও।",
+			"no_critiques_wide": "এখনও কোনো সমালোচনা নেই। প্যানেলে একটি স্ক্রিনশট দাও →",
+			"the_design_alt": "ডিজাইন"
 		},
 		findingRow: {
 			"based_on": "যার ভিত্তিতে",
+			"finding": "পর্যবেক্ষণ",
+			"fix": "সমাধান",
+			"suggestion": "পরামর্শ",
 			"what_i_saw": "আমি যা দেখেছি",
-			"where": "কোথায়"
+			"where": "কোথায়",
+			"steps_range": "ধাপ {{range}}",
+			"flow_badge": "ফ্লো"
 		},
 		manifest: {
 			"description": "সহকর্মীকে জিজ্ঞেস করার আগেই চালিয়ে নেওয়ার মতো একটি ডিজাইন পর্যালোচনা। একটি স্ক্রিনশট, পুরো একটি বহু-স্ক্রিনের ফ্লো, একটি Figma ফাইল, একটি git রিপো, বা চালু আছে এমন একটি URL দাও — এটি সম্ভাব্য স্ক্রিনগুলো খুঁজে বের করে, কোনটা দেখা হবে তা তোমাকে বেছে নিতে দেয়, তারপর অভিজ্ঞ ডিজাইনারের মতোই জানায়: সামগ্রিক একটি পাঠ, কী কাজ করছে, আর কী কী আঁটসাঁট করা দরকার — প্রতিটির সঙ্গে একটি নামধারী হিউরিস্টিক জোড়া থাকে। বহু-স্ক্রিনের ফ্লোতে এমন আন্তঃ-স্ক্রিন ফলাফলও আসে যা একটি স্ক্রিন দেখে বোঝা যায় না — অসংগত কন্ট্রোল, অগ্রগতির খবর না থাকা, ফিরে যাওয়ার পথ না থাকা, মুখবন্ধ গলি। কোড আর Figma বিচার করার আগে সেগুলো রেন্ডার করে নেয়, তাই যা সত্যিই দেখেনি তার সমালোচনা কখনও করে না; আর কোন স্ক্রিনে পৌঁছাতে পারেনি তা অনুমান না করে স্পষ্ট করেই বলে দেয়।",
@@ -191,7 +262,8 @@ var CATALOGS = {
 			"page_label": "Design Critique"
 		},
 		scopingPicker: {
-			"critique_this_flow_count_screens": "Critique this flow · {{count}} screens",
+			"critique_this_flow_count_screens_one": "এই ফ্লোর ক্রিটিক করো · {{count}}টি স্ক্রিন",
+			"critique_this_flow_count_screens_other": "এই ফ্লোর ক্রিটিক করো · {{count}}টি স্ক্রিন",
 			"critique_this_screen": "Critique this screen",
 			"drag_to_reorder": "ক্রম পাল্টাতে টেনে আনুন",
 			"move_earlier": "আগে সরান",
@@ -202,19 +274,43 @@ var CATALOGS = {
 			"screens": "স্ক্রিন",
 			"start_over": "আবার শুরু করুন",
 			"suggested_flows": "প্রস্তাবিত ফ্লো",
-			"what_should_i_audit": "আমি কী অডিট করব?"
+			"what_should_i_audit": "আমি কী অডিট করব?",
+			"screens_found_count_one": "{{n}}টি স্ক্রিন পাওয়া গেছে · {{m}}টি রেন্ডার করতে পারি",
+			"screens_found_count_other": "{{n}}টি স্ক্রিন পাওয়া গেছে · {{m}}টি রেন্ডার করতে পারি",
+			"flow_n": "ফ্লো {{n}}",
+			"picked_count_one": "{{n}}টি বাছাই",
+			"picked_count_other": "{{n}}টি বাছাই",
+			"hint_order": "নম্বরগুলো আমি যে ক্রমে দেখব — ক্রম বদলাতে একটি সারি টেনে নাও, বা কিবোর্ডে ‹ › ব্যবহার করো।",
+			"hint_pick": "বাছাই করতে একটি স্ক্রিনে ক্লিক করো। ফ্লো হিসেবে সমালোচনার জন্য কয়েকটি বাছাই করো।",
+			"cant_render_title": "এটি আমি রেন্ডার করতে পারি না",
+			"cant_render_short": "রেন্ডার হবে না",
+			"group_fallback": "স্ক্রিন",
+			"tag_from_links": "লিংক থেকে",
+			"tag_guess": "অনুমান"
 		},
 		utils: {
-			"i_ll_capture_it_and_measure_real_contrast_and_si": "I’ll capture it and measure real contrast and sizes.",
-			"i_ll_clone_it_and_list_the_screens_only_pages_th": "I’ll clone it and list the screens. Only pages that render without a server can be seen.",
-			"i_ll_list_the_screens_only_pages_that_render_wit": "I’ll list the screens. Only pages that render without a server can be seen.",
+			"i_ll_capture_it_and_measure_real_contrast_and_si": "আমি এটি ক্যাপচার করে আসল কনট্রাস্ট আর মাপ মাপব।",
+			"i_ll_clone_it_and_list_the_screens_only_pages_th": "আমি এটি ক্লোন করে স্ক্রিনগুলোর তালিকা করব। সার্ভার ছাড়া রেন্ডার হয় এমন পেজই শুধু দেখা যায়।",
+			"i_ll_list_the_screens_only_pages_that_render_wit": "আমি স্ক্রিনগুলোর তালিকা করব। সার্ভার ছাড়া রেন্ডার হয় এমন পেজই শুধু দেখা যায়।",
 			"i_ll_pull_the_frames": "I’ll pull the frames.",
-			"it_must_be_running_right_now_i_ll_capture_it_liv": "it must be running right now. I’ll capture it live and measure real contrast and sizes.",
-			"not_something_i_recognise_give_me_a_figma_link_a": "Not something I recognise. Give me a Figma link, a GitHub repo, an absolute local path, or a URL that’s already serving."
+			"it_must_be_running_right_now_i_ll_capture_it_liv": "এটি এখনই চালু থাকতে হবে। আমি লাইভ ক্যাপচার করে আসল কনট্রাস্ট আর মাপ মাপব।",
+			"not_something_i_recognise_give_me_a_figma_link_a": "আমি এটি চিনতে পারছি না। আমাকে একটি Figma লিংক, GitHub রিপোজিটরি, পূর্ণ লোকাল পাথ বা ইতিমধ্যে চালু একটি URL দাও।",
+			"screen_fallback": "স্ক্রিন"
 		},
 		waitingScreen: {
 			"cancel_this_run": "এই রানটি বাতিল করুন",
-			"stop_this_run_and_discard_it": "এই রান থামিয়ে বাতিল করুন"
+			"stop_this_run_and_discard_it": "এই রান থামিয়ে বাতিল করুন",
+			"getting_screens_ready": "স্ক্রিন প্রস্তুত করা হচ্ছে…",
+			"title_scanning": "অডিটের জন্য স্ক্রিন খুঁজছি",
+			"title_uploading_screens_one": "{{n}}টি স্ক্রিন আপলোড হচ্ছে…",
+			"title_uploading_screens_other": "{{n}}টি স্ক্রিন আপলোড হচ্ছে…",
+			"title_uploading_one": "তোমার স্ক্রিনশট আপলোড হচ্ছে…",
+			"title_reading_flow_one": "তোমার ফ্লো পড়ছি · {{n}}টি স্ক্রিন",
+			"title_reading_flow_other": "তোমার ফ্লো পড়ছি · {{n}}টি স্ক্রিন",
+			"title_reading_screen": "তোমার স্ক্রিন পড়ছি",
+			"title_getting_pixels": "আগে আসল পিক্সেল নিচ্ছি",
+			"foot_still_going": "এখনও চলছে — ঘন ফ্লোতে কয়েক মিনিট লাগতে পারে। তুমি এই পেজ ছেড়ে যেতে পারো; সমালোচনা চলতে থাকবে আর ফিরে এলে এখানেই পাবে।",
+			"foot_navigate_away": "তুমি এই পেজ ছেড়ে যেতে পারো — সমালোচনা চলতে থাকবে।"
 		},
 		common: {
 			"send_failed": "পাঠানো যায়নি",
@@ -231,23 +327,46 @@ var CATALOGS = {
 			"ask_about_this": "Dazu fragen",
 			"close": "Schließen",
 			"remove_this_annotation": "Diese Anmerkung entfernen",
-			"thinking": "Denkt nach…"
+			"thinking": "Denkt nach…",
+			"question_label": "Deine Frage zu dieser Kritik"
 		},
 		composer: {
 			"add_screens": "Screens hinzufügen",
+			"add_screenshots_or_paste_a_link_first": "Füge zuerst Screenshots hinzu oder füge einen Link ein",
 			"clear_all": "Alle entfernen",
-			"critique_this_flow_count_screens": "Critique this flow · {{count}} screens",
+			"critique_this_flow_count_screens_one": "Diesen Flow kritisieren · {{count}} Screen",
+			"critique_this_flow_count_screens_other": "Diesen Flow kritisieren · {{count}} Screens",
 			"critique_this_screen": "Critique this screen",
 			"drop_screenshots_or_click_to_browse": "Screenshots ablegen — oder zum Durchsuchen klicken",
+			"fix_my_access": "Meinen Zugriff reparieren",
 			"fix_the_link": "Link korrigieren",
+			"hide_access_steps": "Zugriffsschritte ausblenden",
 			"move_earlier": "Nach vorne",
 			"move_later": "Nach hinten",
 			"one_screen_or_several_in_order_for_a_flow_png_jp": "ein Screen oder mehrere in Reihenfolge für einen Flow · PNG, JPG, WebP",
 			"remove": "Entfernen",
+			"remove_name": "{{name}} entfernen",
 			"send_screenshots": "Screenshots senden",
+			"start_the_critique": "Kritik starten",
+			"step_n": "Schritt {{n}}",
 			"try_again": "Erneut versuchen",
 			"unrecognised": "Unrecognised",
-			"use_a_local_folder_instead": "Stattdessen einen lokalen Ordner verwenden"
+			"use_a_local_folder_instead": "Stattdessen einen lokalen Ordner verwenden",
+			"start_kind_figma": "Figma-Datei kritisieren",
+			"start_kind_repo": "Repo kritisieren",
+			"start_kind_local": "Lokalen Code kritisieren",
+			"start_kind_url": "Laufende App kritisieren",
+			"start_this": "Das hier kritisieren",
+			"start_plain": "Kritisieren",
+			"staged_one_hint": "1 Bildschirm · füge einen weiteren hinzu, um sie als Ablauf zu kritisieren.",
+			"staged_flow_hint_one": "{{n}} Bildschirm · diese Reihenfolge ist die Ablaufreihenfolge — sortiere um oder entferne vor dem Start.",
+			"staged_flow_hint_other": "{{n}} Bildschirme · diese Reihenfolge ist die Ablaufreihenfolge — sortiere um oder entferne vor dem Start.",
+			"title_blocked": "Ich bin nicht hineingekommen",
+			"title_ask": "Was soll ich kritisieren?",
+			"link_placeholder_staged": "Deine Screenshots werden verwendet — entferne sie, um stattdessen einen Link zu kritisieren",
+			"link_placeholder": "Figma-Link · Git-Repo · ein Ordner auf diesem Rechner · eine laufende URL (localhost oder eine bereitgestellte Vorschau)",
+			"link_label": "Link zum Kritisieren",
+			"render_before_judging": "Ich rendere alles, bevor ich es beurteile — nie nur anhand des Codes. Wenn deine App schon läuft, füge ihre URL ein, dann kann ich echte Farben und Größen messen, statt sie zu schätzen."
 		},
 		constants: {
 			"blocked_figma_app_missing_hint": "Öffne die Datei in Figma Desktop und versuche es erneut, oder exportiere die Frames als PNGs und lege sie hier ab.",
@@ -294,28 +413,36 @@ var CATALOGS = {
 		designCritiquePage: {
 			"a_critique_is_still_running_click_to_watch_it": "Eine Kritik läuft noch — zum Ansehen klicken",
 			"across_the_flow": "Über den gesamten Flow",
+			"click_to_enlarge": "Zum Vergrößern klicken",
 			"close_esc": "Schließen (Esc)",
 			"couldn_t_see": "Nicht sichtbar",
 			"couldn_t_tell_what_that_is_give_me_a_figma_link": "Ich konnte nicht erkennen, was das ist. Gib mir einen Figma-Link, ein GitHub/GitLab/Bitbucket-Repo, einen absoluten lokalen Pfad oder eine URL, die bereits läuft.",
 			"critique_ready": "Kritik fertig",
+			"critique_untitled": "Kritik",
 			"design_critique": "Design Critique",
 			"enlarge": "Vergrößern",
 			"full_size": "volle Größe",
 			"full_size_view": "Ansicht in voller Größe",
+			"history_count": "Verlauf ({{n}})",
 			"i_got_in_but_there_s_nothing_in_there_i_can": "Ich bin reingekommen, aber da ist nichts, was ich rendern kann. Wirf stattdessen Screenshots rein.",
 			"new": "Neu",
 			"no_screens_to_show_the_critic_couldn_t_get_pixel": "Keine Screens zum Anzeigen — für diesen konnten keine Pixel erfasst werden. Siehe „Nicht sichtbar“ im Panel.",
 			"nothing_major": "nichts Gravierendes",
+			"numbered_pins_mark_issues_on_this_screen": "nummerierte Pins markieren Probleme auf diesem Screen",
 			"on_screen": "● auf dem Screen",
 			"only_added_the_first_room_the_limit_is_max_screens": "Nur die ersten {{room}} hinzugefügt — das Limit liegt bei {{max}} Screens.",
+			"pick_a_step_above": "wähle oben einen Schritt",
 			"point_me_at_a_running_url": "Zeigen Sie mir eine laufende URL",
 			"point_me_at_a_screen_or_a_whole_flow_and_i_ll_re": "Zeigen Sie mir einen Screen — oder einen ganzen Flow — und ich lese ihn so, wie es ein befreundeter Designer tun würde: was funktioniert, was sich verfeinern lässt und warum.",
 			"running": "läuft",
+			"screen_heading": "Screen",
+			"screens_in_order": "Screens in Reihenfolge",
 			"see_an_example": "Beispiel ansehen",
 			"send_screenshots": "Screenshots senden",
 			"show_this_screen": "Diesen Screen anzeigen",
 			"something_went_wrong": "something went wrong",
 			"start_a_new_critique_anything_already_running_ke": "Neue Kritik starten — bereits laufende Kritiken laufen weiter",
+			"step_n": "Schritt {{n}}",
 			"still_working_on_this_one_it_s_kept_running_come": "Still working on this one. It’s kept running — come back in a minute.",
 			"still_working_on_this_one_it_s_kept_running_come_2": "Still working on this one. It’s kept running — come back to this page in a minute and it’ll pick up where it left off.",
 			"switch_critique": "Kritik wechseln",
@@ -328,12 +455,46 @@ var CATALOGS = {
 			"what_s_working": "Was funktioniert",
 			"what_you_ll_get": "Was Sie erhalten",
 			"your_critiques": "Ihre Kritiken",
-			"your_question_click_to_see_the_answer": "Ihre Frage — zum Anzeigen der Antwort klicken"
+			"your_question_click_to_see_the_answer": "Ihre Frage — zum Anzeigen der Antwort klicken",
+			"rail_uploading": "Wird hochgeladen…",
+			"rail_reading": "Dein Design wird gelesen…",
+			"rail_flow_one": "Ein Ablauf aus {{n}} Bildschirm — ich prüfe auch die Übergänge dazwischen.",
+			"rail_flow_other": "Ein Ablauf aus {{n}} Bildschirmen — ich prüfe auch die Übergänge dazwischen.",
+			"rail_one_screen": "Ein Bildschirm.",
+			"rail_pending_figma": "Eine Figma-Datei — wird gerendert, bevor ich sie beurteile.",
+			"rail_pending_repo": "Ein Repo — wird gerendert, bevor ich es beurteile.",
+			"rail_pending_local": "Lokaler Code — wird gerendert, bevor ich ihn beurteile.",
+			"rail_pending_url": "Eine laufende App — wird gerendert, bevor ich sie beurteile.",
+			"rail_pending_design": "Ein Design — wird gerendert, bevor ich es beurteile.",
+			"rail_getting_ready": "Die Bildschirme werden vorbereitet.",
+			"critique_ready_fallback": "Kritik fertig",
+			"ask_too_long": "Das hat zu lange gedauert — frag noch einmal.",
+			"ask_went_wrong": "Etwas ist schiefgelaufen.",
+			"entry_meta_screens_one": "{{n}} Bildschirm · {{when}}",
+			"entry_meta_screens_other": "{{n}} Bildschirme · {{when}}",
+			"findings_count_one": "{{n}} Befund",
+			"findings_count_other": "{{n}} Befunde",
+			"nothing_flagged": "nichts markiert",
+			"design_critique_fallback": "Designkritik",
+			"flow_screens_count_one": "{{n}} Bildschirm",
+			"flow_screens_count_other": "{{n}} Bildschirme",
+			"screen_n": "Bildschirm {{n}}",
+			"get_overall_read": "Eine Gesamteinschätzung, wie es steht",
+			"get_whats_working": "Was funktioniert, damit es die nächste Runde übersteht",
+			"get_top_things": "Die wichtigsten Punkte zum Nachschärfen, mit Markierungen auf dem Bildschirm",
+			"no_critiques_narrow": "Noch keine Kritiken. Lege unten einen Screenshot ab.",
+			"no_critiques_wide": "Noch keine Kritiken. Lege einen Screenshot im Bereich ab →",
+			"the_design_alt": "Das Design"
 		},
 		findingRow: {
 			"based_on": "Basierend auf",
+			"finding": "Befund",
+			"fix": "Korrektur",
+			"suggestion": "Vorschlag",
 			"what_i_saw": "Was ich gesehen habe",
-			"where": "Wo"
+			"where": "Wo",
+			"steps_range": "Schritte {{range}}",
+			"flow_badge": "Ablauf"
 		},
 		manifest: {
 			"description": "Eine Design-Kritik, die du einholen kannst, bevor du jemanden im Team fragst. Gib ihr einen einzelnen Screenshot, einen ganzen Ablauf über mehrere Screens, eine Figma-Datei, ein Git-Repository oder eine URL, die schon ausgeliefert wird, und sie findet die möglichen Screens, lässt dich auswählen, was angesehen wird, und meldet dann so zurück, wie es erfahrene Designer tun: ein Gesamteindruck, was funktioniert, und die Punkte, die zu schärfen sind, jeder an eine benannte Heuristik gebunden. Abläufe über mehrere Screens erhalten zusätzlich Ergebnisse über Screens hinweg, die ein einzelner Screen nicht zeigen kann — inkonsistente Bedienelemente, fehlender Fortschritt, kein Weg zurück, Sackgassen. Code und Figma werden gerendert, bevor sie beurteilt werden, damit nie Visuelles kritisiert wird, das nicht wirklich gesehen wurde, und sie sagt klar, welche Screens sie nicht erreicht hat, statt zu raten.",
@@ -351,7 +512,8 @@ var CATALOGS = {
 			"configuration_1": "Lege Screenshots für eine Prüfung ohne Einrichtung ab oder gib eine Figma-Datei, ein Repository, einen lokalen Ordner oder eine bereits laufende URL an; private GitHub-Quellen können gh auth login erfordern."
 		},
 		scopingPicker: {
-			"critique_this_flow_count_screens": "Critique this flow · {{count}} screens",
+			"critique_this_flow_count_screens_one": "Diesen Flow kritisieren · {{count}} Screen",
+			"critique_this_flow_count_screens_other": "Diesen Flow kritisieren · {{count}} Screens",
 			"critique_this_screen": "Critique this screen",
 			"drag_to_reorder": "Zum Umsortieren ziehen",
 			"move_earlier": "Nach vorne",
@@ -362,19 +524,43 @@ var CATALOGS = {
 			"screens": "Screens",
 			"start_over": "Neu beginnen",
 			"suggested_flows": "Vorgeschlagene Flows",
-			"what_should_i_audit": "Was soll ich prüfen?"
+			"what_should_i_audit": "Was soll ich prüfen?",
+			"screens_found_count_one": "{{n}} Bildschirm gefunden · {{m}} kann ich rendern",
+			"screens_found_count_other": "{{n}} Bildschirme gefunden · {{m}} kann ich rendern",
+			"flow_n": "Ablauf {{n}}",
+			"picked_count_one": "{{n}} ausgewählt",
+			"picked_count_other": "{{n}} ausgewählt",
+			"hint_order": "Die Zahlen sind die Reihenfolge, in der ich sie durchgehe — zieh eine Zeile zum Umsortieren oder nutze ‹ › auf der Tastatur.",
+			"hint_pick": "Klick auf einen Bildschirm, um ihn auszuwählen. Wähle mehrere, um sie als Ablauf zu kritisieren.",
+			"cant_render_title": "Den kann ich nicht rendern",
+			"cant_render_short": "nicht renderbar",
+			"group_fallback": "Bildschirme",
+			"tag_from_links": "Aus Links",
+			"tag_guess": "Vermutung"
 		},
 		utils: {
-			"i_ll_capture_it_and_measure_real_contrast_and_si": "I’ll capture it and measure real contrast and sizes.",
-			"i_ll_clone_it_and_list_the_screens_only_pages_th": "I’ll clone it and list the screens. Only pages that render without a server can be seen.",
-			"i_ll_list_the_screens_only_pages_that_render_wit": "I’ll list the screens. Only pages that render without a server can be seen.",
+			"i_ll_capture_it_and_measure_real_contrast_and_si": "Ich erfasse sie und messe echten Kontrast und echte Größen.",
+			"i_ll_clone_it_and_list_the_screens_only_pages_th": "Ich klone es und liste die Bildschirme auf. Nur Seiten, die ohne Server rendern, sind sichtbar.",
+			"i_ll_list_the_screens_only_pages_that_render_wit": "Ich liste die Bildschirme auf. Nur Seiten, die ohne Server rendern, sind sichtbar.",
 			"i_ll_pull_the_frames": "I’ll pull the frames.",
-			"it_must_be_running_right_now_i_ll_capture_it_liv": "it must be running right now. I’ll capture it live and measure real contrast and sizes.",
-			"not_something_i_recognise_give_me_a_figma_link_a": "Not something I recognise. Give me a Figma link, a GitHub repo, an absolute local path, or a URL that’s already serving."
+			"it_must_be_running_right_now_i_ll_capture_it_liv": "sie muss gerade laufen. Ich erfasse sie live und messe echten Kontrast und echte Größen.",
+			"not_something_i_recognise_give_me_a_figma_link_a": "Das erkenne ich nicht. Gib mir einen Figma-Link, ein GitHub-Repo, einen absoluten lokalen Pfad oder eine URL, die bereits ausgeliefert wird.",
+			"screen_fallback": "Bildschirm"
 		},
 		waitingScreen: {
 			"cancel_this_run": "Diesen Lauf abbrechen",
-			"stop_this_run_and_discard_it": "Diesen Lauf stoppen und verwerfen"
+			"stop_this_run_and_discard_it": "Diesen Lauf stoppen und verwerfen",
+			"getting_screens_ready": "Die Bildschirme werden vorbereitet…",
+			"title_scanning": "Suche nach Bildschirmen zum Prüfen",
+			"title_uploading_screens_one": "{{n}} Bildschirm wird hochgeladen…",
+			"title_uploading_screens_other": "{{n}} Bildschirme werden hochgeladen…",
+			"title_uploading_one": "Dein Screenshot wird hochgeladen…",
+			"title_reading_flow_one": "Ich lese deinen Ablauf · {{n}} Bildschirm",
+			"title_reading_flow_other": "Ich lese deinen Ablauf · {{n}} Bildschirme",
+			"title_reading_screen": "Ich lese deinen Bildschirm",
+			"title_getting_pixels": "Zuerst echte Pixel holen",
+			"foot_still_going": "Läuft noch — ein dichter Ablauf kann ein paar Minuten dauern. Du kannst die Seite verlassen; die Kritik läuft weiter und ist da, wenn du zurückkommst.",
+			"foot_navigate_away": "Du kannst die Seite verlassen — die Kritik läuft weiter."
 		},
 		common: {
 			"send_failed": "Senden fehlgeschlagen",
@@ -388,6 +574,7 @@ var CATALOGS = {
 			"close": "Close",
 			"remove_this_annotation": "Remove this annotation",
 			"thinking": "Thinking…",
+			"question_label": "Your question about this critique",
 			"answer_failed_ask_again_below": "Answer failed — ask again below",
 			"ask_a_follow_up": "Ask a follow-up…",
 			"ask_again": "Ask again…",
@@ -395,45 +582,75 @@ var CATALOGS = {
 		},
 		composer: {
 			"add_screens": "Add screens",
+			"add_screenshots_or_paste_a_link_first": "Add screenshots or paste a link first",
 			"clear_all": "Clear all",
-			"critique_this_flow_count_screens": "Critique this flow · {{count}} screens",
+			"critique_this_flow_count_screens_one": "Critique this flow · {{count}} screen",
+			"critique_this_flow_count_screens_other": "Critique this flow · {{count}} screens",
 			"critique_this_screen": "Critique this screen",
 			"drop_screenshots_or_click_to_browse": "Drop screenshots — or click to browse",
+			"fix_my_access": "Fix my access",
 			"fix_the_link": "Fix the link",
+			"hide_access_steps": "Hide access steps",
 			"move_earlier": "Move earlier",
 			"move_later": "Move later",
 			"one_screen_or_several_in_order_for_a_flow_png_jp": "one screen, or several in order for a flow · PNG, JPG, WebP",
 			"remove": "Remove",
+			"remove_name": "Remove {{name}}",
 			"send_screenshots": "Send screenshots",
+			"start_the_critique": "Start the critique",
+			"step_n": "Step {{n}}",
 			"try_again": "Try again",
 			"unrecognised": "Unrecognised",
-			"use_a_local_folder_instead": "Use a local folder instead"
+			"use_a_local_folder_instead": "Use a local folder instead",
+			"start_kind_figma": "Critique Figma file",
+			"start_kind_repo": "Critique repo",
+			"start_kind_local": "Critique local code",
+			"start_kind_url": "Critique running app",
+			"start_this": "Critique this",
+			"start_plain": "Critique",
+			"staged_one_hint": "1 screen · add another to critique it as a flow.",
+			"staged_flow_hint_one": "{{n}} screen · this order is the flow order — reorder or remove before you start.",
+			"staged_flow_hint_other": "{{n}} screens · this order is the flow order — reorder or remove before you start.",
+			"title_blocked": "I couldn’t get in",
+			"title_ask": "What should I critique?",
+			"link_placeholder_staged": "Using your screenshots — clear them to critique a link instead",
+			"link_placeholder": "Figma link · git repo · a folder on this machine · a running URL (localhost or a deployed preview)",
+			"link_label": "Link to critique",
+			"render_before_judging": "I render everything before judging it — never from code alone. If your app is already running, paste its URL and I can measure real colours and sizes instead of estimating them."
 		},
 		designCritiquePage: {
 			"a_critique_is_still_running_click_to_watch_it": "A critique is still running — click to watch it",
 			"across_the_flow": "Across the flow",
+			"click_to_enlarge": "Click to enlarge",
 			"close_esc": "Close (Esc)",
 			"couldn_t_see": "Couldn’t see",
 			"couldn_t_tell_what_that_is_give_me_a_figma_link": "I couldn’t tell what that is. Give me a Figma link, a GitHub/GitLab/Bitbucket repo, an absolute local path, or a URL that’s already serving.",
 			"critique_ready": "critique ready",
+			"critique_untitled": "Critique",
 			"design_critique": "Design Critique",
 			"enlarge": "Enlarge",
 			"full_size": "full size",
 			"full_size_view": "Full size view",
+			"history_count": "History ({{n}})",
 			"i_got_in_but_there_s_nothing_in_there_i_can": "I got in, but there’s nothing in there I can render. Drop screenshots instead.",
 			"new": "New",
 			"no_screens_to_show_the_critic_couldn_t_get_pixel": "No screens to show — the critic couldn’t get pixels for this one. See \"Couldn’t see\" in the panel.",
 			"nothing_major": "nothing major",
+			"numbered_pins_mark_issues_on_this_screen": "numbered pins mark issues on this screen",
 			"on_screen": "● on screen",
 			"only_added_the_first_room_the_limit_is_max_screens": "Only added the first {{room}} — the limit is {{max}} screens.",
+			"pick_a_step_above": "pick a step above",
 			"point_me_at_a_running_url": "Point me at a running URL",
 			"point_me_at_a_screen_or_a_whole_flow_and_i_ll_re": "Point me at a screen — or a whole flow — and I’ll read it the way a designer friend would: what’s working, what to tighten, and why.",
 			"running": "running",
+			"screen_heading": "Screen",
+			"screens_in_order": "Screens in order",
 			"see_an_example": "See an example",
 			"send_screenshots": "Send screenshots",
 			"show_this_screen": "Show this screen",
 			"something_went_wrong": "something went wrong",
 			"start_a_new_critique_anything_already_running_ke": "Start a new critique — anything already running keeps going",
+			"step_n": "Step {{n}}",
 			"still_working_on_this_one_it_s_kept_running_come": "Still working on this one. It’s kept running — come back in a minute.",
 			"still_working_on_this_one_it_s_kept_running_come_2": "Still working on this one. It’s kept running — come back to this page in a minute and it’ll pick up where it left off.",
 			"switch_critique": "Switch critique",
@@ -446,12 +663,46 @@ var CATALOGS = {
 			"what_s_working": "What’s working",
 			"what_you_ll_get": "What you’ll get",
 			"your_critiques": "Your critiques",
-			"your_question_click_to_see_the_answer": "Your question — click to see the answer"
+			"your_question_click_to_see_the_answer": "Your question — click to see the answer",
+			"rail_uploading": "Uploading…",
+			"rail_reading": "Reading your design…",
+			"rail_flow_one": "A flow of {{n}} screen — I’ll also check the jumps between them.",
+			"rail_flow_other": "A flow of {{n}} screens — I’ll also check the jumps between them.",
+			"rail_one_screen": "One screen.",
+			"rail_pending_figma": "A Figma file — rendering it before judging it.",
+			"rail_pending_repo": "A repo — rendering it before judging it.",
+			"rail_pending_local": "Local code — rendering it before judging it.",
+			"rail_pending_url": "A running app — rendering it before judging it.",
+			"rail_pending_design": "A design — rendering it before judging it.",
+			"rail_getting_ready": "Getting the screens ready.",
+			"critique_ready_fallback": "Critique ready",
+			"ask_too_long": "That took too long — ask again.",
+			"ask_went_wrong": "Something went wrong.",
+			"entry_meta_screens_one": "{{n}} screen · {{when}}",
+			"entry_meta_screens_other": "{{n}} screens · {{when}}",
+			"findings_count_one": "{{n}} finding",
+			"findings_count_other": "{{n}} findings",
+			"nothing_flagged": "nothing flagged",
+			"design_critique_fallback": "Design critique",
+			"flow_screens_count_one": "{{n}} screen",
+			"flow_screens_count_other": "{{n}} screens",
+			"screen_n": "Screen {{n}}",
+			"get_overall_read": "An overall read of how it’s doing",
+			"get_whats_working": "What’s working, so it survives the next pass",
+			"get_top_things": "The top things to tighten, with pins on the screen",
+			"no_critiques_narrow": "No critiques yet. Drop a screenshot below.",
+			"no_critiques_wide": "No critiques yet. Drop a screenshot in the panel →",
+			"the_design_alt": "The design"
 		},
 		findingRow: {
 			"based_on": "Based on",
+			"finding": "Finding",
+			"fix": "Fix",
+			"suggestion": "Suggestion",
 			"what_i_saw": "What I saw",
-			"where": "Where"
+			"where": "Where",
+			"steps_range": "steps {{range}}",
+			"flow_badge": "flow"
 		},
 		manifest: {
 			"description": "A design critique you can run before you ask a colleague. Give it one screenshot, a whole multi-screen flow, a Figma file, a git repo, or a URL that is already serving, and it finds the candidate screens, lets you choose what to look at, then reports back the way an experienced designer would: an overall read, what is working, and the things worth tightening, each tied to a named heuristic. Multi-screen flows also get cross-screen findings that a single screen cannot show — inconsistent controls, missing progress, no way back, dead ends. It renders code and Figma before judging them, so it never critiques visuals it has not actually seen, and it says plainly which screens it could not get to instead of guessing.",
@@ -469,7 +720,8 @@ var CATALOGS = {
 			"configuration_1": "Drop in screenshots for zero-setup review, or provide a Figma file, repository, local folder, or already-running URL; private GitHub sources may require gh auth login."
 		},
 		scopingPicker: {
-			"critique_this_flow_count_screens": "Critique this flow · {{count}} screens",
+			"critique_this_flow_count_screens_one": "Critique this flow · {{count}} screen",
+			"critique_this_flow_count_screens_other": "Critique this flow · {{count}} screens",
 			"critique_this_screen": "Critique this screen",
 			"drag_to_reorder": "Drag to reorder",
 			"move_earlier": "Move earlier",
@@ -480,7 +732,19 @@ var CATALOGS = {
 			"screens": "Screens",
 			"start_over": "Start over",
 			"suggested_flows": "Suggested flows",
-			"what_should_i_audit": "What should I audit?"
+			"what_should_i_audit": "What should I audit?",
+			"screens_found_count_one": "{{n}} screen found · {{m}} I can render",
+			"screens_found_count_other": "{{n}} screens found · {{m}} I can render",
+			"flow_n": "Flow {{n}}",
+			"picked_count_one": "{{n}} picked",
+			"picked_count_other": "{{n}} picked",
+			"hint_order": "Numbers are the order I’ll walk them — drag a row to reorder, or use ‹ › from the keyboard.",
+			"hint_pick": "Click a screen to pick it. Pick several to critique them as a flow.",
+			"cant_render_title": "I can’t render this one",
+			"cant_render_short": "can’t render",
+			"group_fallback": "Screens",
+			"tag_from_links": "From links",
+			"tag_guess": "Guess"
 		},
 		utils: {
 			"i_ll_capture_it_and_measure_real_contrast_and_si": "I’ll capture it and measure real contrast and sizes.",
@@ -488,11 +752,23 @@ var CATALOGS = {
 			"i_ll_list_the_screens_only_pages_that_render_wit": "I’ll list the screens. Only pages that render without a server can be seen.",
 			"i_ll_pull_the_frames": "export the frames as PNGs and drop them in — I critique the exported images.",
 			"it_must_be_running_right_now_i_ll_capture_it_liv": "it must be running right now. I’ll capture it live and measure real contrast and sizes.",
-			"not_something_i_recognise_give_me_a_figma_link_a": "Not something I recognise. Give me a Figma link, a GitHub repo, an absolute local path, or a URL that’s already serving."
+			"not_something_i_recognise_give_me_a_figma_link_a": "Not something I recognise. Give me a Figma link, a GitHub repo, an absolute local path, or a URL that’s already serving.",
+			"screen_fallback": "Screen"
 		},
 		waitingScreen: {
 			"cancel_this_run": "Cancel this run",
-			"stop_this_run_and_discard_it": "Stop this run and discard it"
+			"stop_this_run_and_discard_it": "Stop this run and discard it",
+			"getting_screens_ready": "Getting the screens ready…",
+			"title_scanning": "Looking for screens to audit",
+			"title_uploading_screens_one": "Uploading {{n}} screen…",
+			"title_uploading_screens_other": "Uploading {{n}} screens…",
+			"title_uploading_one": "Uploading your screenshot…",
+			"title_reading_flow_one": "Reading your flow · {{n}} screen",
+			"title_reading_flow_other": "Reading your flow · {{n}} screens",
+			"title_reading_screen": "Reading your screen",
+			"title_getting_pixels": "Getting real pixels first",
+			"foot_still_going": "Still going — a dense flow can take a couple of minutes. You can navigate away; the critique keeps running and will be here when you come back.",
+			"foot_navigate_away": "You can navigate away — the critique keeps running."
 		},
 		constants: {
 			"blocked_figma_app_missing_hint": "Open the file in Figma desktop and try again, or export the frames as PNGs and drop them here.",
@@ -551,23 +827,48 @@ var CATALOGS = {
 			"ask_about_this": "Preguntar sobre esto",
 			"close": "Cerrar",
 			"remove_this_annotation": "Eliminar esta anotación",
-			"thinking": "Pensando…"
+			"thinking": "Pensando…",
+			"question_label": "Tu pregunta sobre esta crítica"
 		},
 		composer: {
 			"add_screens": "Añadir pantallas",
+			"add_screenshots_or_paste_a_link_first": "Primero añade capturas o pega un enlace",
 			"clear_all": "Borrar todo",
-			"critique_this_flow_count_screens": "Critique this flow · {{count}} screens",
+			"critique_this_flow_count_screens_one": "Criticar este flujo · {{count}} pantalla",
+			"critique_this_flow_count_screens_many": "Criticar este flujo · {{count}} pantallas",
+			"critique_this_flow_count_screens_other": "Criticar este flujo · {{count}} pantallas",
 			"critique_this_screen": "Critique this screen",
 			"drop_screenshots_or_click_to_browse": "Suelta capturas — o haz clic para explorar",
+			"fix_my_access": "Arreglar mi acceso",
 			"fix_the_link": "Corregir el enlace",
+			"hide_access_steps": "Ocultar los pasos de acceso",
 			"move_earlier": "Mover antes",
 			"move_later": "Mover después",
 			"one_screen_or_several_in_order_for_a_flow_png_jp": "una pantalla, o varias en orden para un flujo · PNG, JPG, WebP",
 			"remove": "Eliminar",
+			"remove_name": "Eliminar {{name}}",
 			"send_screenshots": "Enviar capturas",
+			"start_the_critique": "Empezar la crítica",
+			"step_n": "Paso {{n}}",
 			"try_again": "Reintentar",
 			"unrecognised": "Unrecognised",
-			"use_a_local_folder_instead": "Usar una carpeta local en su lugar"
+			"use_a_local_folder_instead": "Usar una carpeta local en su lugar",
+			"start_kind_figma": "Criticar el archivo de Figma",
+			"start_kind_repo": "Criticar el repositorio",
+			"start_kind_local": "Criticar el código local",
+			"start_kind_url": "Criticar la app en ejecución",
+			"start_this": "Criticar esto",
+			"start_plain": "Criticar",
+			"staged_one_hint": "1 pantalla · añade otra para criticarlas como un flujo.",
+			"staged_flow_hint_one": "{{n}} pantalla · este orden es el orden del flujo: reordena o quita antes de empezar.",
+			"staged_flow_hint_many": "{{n}} pantallas · este orden es el orden del flujo: reordena o quita antes de empezar.",
+			"staged_flow_hint_other": "{{n}} pantallas · este orden es el orden del flujo: reordena o quita antes de empezar.",
+			"title_blocked": "No pude entrar",
+			"title_ask": "¿Qué debo criticar?",
+			"link_placeholder_staged": "Usando tus capturas: quítalas para criticar un enlace en su lugar",
+			"link_placeholder": "Enlace de Figma · repositorio git · una carpeta de este equipo · una URL en ejecución (localhost o una vista previa desplegada)",
+			"link_label": "Enlace para criticar",
+			"render_before_judging": "Renderizo todo antes de juzgarlo, nunca solo a partir del código. Si tu app ya se está ejecutando, pega su URL y podré medir colores y tamaños reales en lugar de estimarlos."
 		},
 		constants: {
 			"blocked_figma_app_missing_hint": "Abre el archivo en Figma para escritorio y vuelve a intentarlo, o exporta los marcos como PNG y suéltalos aquí.",
@@ -614,28 +915,36 @@ var CATALOGS = {
 		designCritiquePage: {
 			"a_critique_is_still_running_click_to_watch_it": "Una crítica sigue en marcha — haz clic para verla",
 			"across_the_flow": "En todo el flujo",
+			"click_to_enlarge": "Haz clic para ampliar",
 			"close_esc": "Cerrar (Esc)",
 			"couldn_t_see": "No se pudo ver",
 			"couldn_t_tell_what_that_is_give_me_a_figma_link": "No pude reconocer qué es eso. Dame un enlace de Figma, un repositorio de GitHub/GitLab/Bitbucket, una ruta local absoluta o una URL que ya esté sirviendo.",
 			"critique_ready": "crítica lista",
+			"critique_untitled": "Crítica",
 			"design_critique": "Design Critique",
 			"enlarge": "Ampliar",
 			"full_size": "tamaño completo",
 			"full_size_view": "Vista a tamaño completo",
+			"history_count": "Historial ({{n}})",
 			"i_got_in_but_there_s_nothing_in_there_i_can": "Entré, pero ahí dentro no hay nada que pueda renderizar. Mejor suéltame capturas de pantalla.",
 			"new": "Nueva",
 			"no_screens_to_show_the_critic_couldn_t_get_pixel": "No hay pantallas que mostrar — el crítico no pudo obtener los píxeles de esta. Consulta \"No se pudo ver\" en el panel.",
 			"nothing_major": "nada grave",
+			"numbered_pins_mark_issues_on_this_screen": "los pines numerados marcan problemas en esta pantalla",
 			"on_screen": "● en pantalla",
 			"only_added_the_first_room_the_limit_is_max_screens": "Solo se añadieron las primeras {{room}} — el límite es de {{max}} pantallas.",
+			"pick_a_step_above": "elige un paso arriba",
 			"point_me_at_a_running_url": "Indícame una URL en ejecución",
 			"point_me_at_a_screen_or_a_whole_flow_and_i_ll_re": "Muéstrame una pantalla — o un flujo completo — y lo leeré como lo haría un colega diseñador: qué funciona, qué conviene ajustar y por qué.",
 			"running": "en ejecución",
+			"screen_heading": "Pantalla",
+			"screens_in_order": "Pantallas en orden",
 			"see_an_example": "Ver un ejemplo",
 			"send_screenshots": "Enviar capturas",
 			"show_this_screen": "Mostrar esta pantalla",
 			"something_went_wrong": "something went wrong",
 			"start_a_new_critique_anything_already_running_ke": "Inicia una nueva crítica — lo que ya esté en marcha continúa",
+			"step_n": "Paso {{n}}",
 			"still_working_on_this_one_it_s_kept_running_come": "Sigo trabajando en esto. Continúa en ejecución — vuelve en un minuto.",
 			"still_working_on_this_one_it_s_kept_running_come_2": "Sigo trabajando en esto. Continúa en ejecución — vuelve a esta página en un minuto y retomará donde lo dejó.",
 			"switch_critique": "Cambiar de crítica",
@@ -648,12 +957,50 @@ var CATALOGS = {
 			"what_s_working": "Qué funciona",
 			"what_you_ll_get": "Qué obtendrás",
 			"your_critiques": "Tus críticas",
-			"your_question_click_to_see_the_answer": "Tu pregunta — haz clic para ver la respuesta"
+			"your_question_click_to_see_the_answer": "Tu pregunta — haz clic para ver la respuesta",
+			"rail_uploading": "Subiendo…",
+			"rail_reading": "Leyendo tu diseño…",
+			"rail_flow_one": "Un flujo de {{n}} pantalla: también revisaré los saltos entre ellas.",
+			"rail_flow_many": "Un flujo de {{n}} pantallas: también revisaré los saltos entre ellas.",
+			"rail_flow_other": "Un flujo de {{n}} pantallas: también revisaré los saltos entre ellas.",
+			"rail_one_screen": "Una pantalla.",
+			"rail_pending_figma": "Un archivo de Figma: lo renderizo antes de juzgarlo.",
+			"rail_pending_repo": "Un repositorio: lo renderizo antes de juzgarlo.",
+			"rail_pending_local": "Código local: lo renderizo antes de juzgarlo.",
+			"rail_pending_url": "Una app en ejecución: la renderizo antes de juzgarla.",
+			"rail_pending_design": "Un diseño: lo renderizo antes de juzgarlo.",
+			"rail_getting_ready": "Preparando las pantallas.",
+			"critique_ready_fallback": "Crítica lista",
+			"ask_too_long": "Tardó demasiado: vuelve a preguntar.",
+			"ask_went_wrong": "Algo salió mal.",
+			"entry_meta_screens_one": "{{n}} pantalla · {{when}}",
+			"entry_meta_screens_many": "{{n}} pantallas · {{when}}",
+			"entry_meta_screens_other": "{{n}} pantallas · {{when}}",
+			"findings_count_one": "{{n}} hallazgo",
+			"findings_count_many": "{{n}} hallazgos",
+			"findings_count_other": "{{n}} hallazgos",
+			"nothing_flagged": "nada señalado",
+			"design_critique_fallback": "Crítica de diseño",
+			"flow_screens_count_one": "{{n}} pantalla",
+			"flow_screens_count_many": "{{n}} pantallas",
+			"flow_screens_count_other": "{{n}} pantallas",
+			"screen_n": "Pantalla {{n}}",
+			"get_overall_read": "Una valoración general de cómo va",
+			"get_whats_working": "Lo que funciona, para que sobreviva a la siguiente pasada",
+			"get_top_things": "Lo más importante que ajustar, con marcas en la pantalla",
+			"no_critiques_narrow": "Aún no hay críticas. Suelta una captura abajo.",
+			"no_critiques_wide": "Aún no hay críticas. Suelta una captura en el panel →",
+			"the_design_alt": "El diseño"
 		},
 		findingRow: {
 			"based_on": "Basado en",
+			"finding": "Hallazgo",
+			"fix": "Corrección",
+			"suggestion": "Sugerencia",
 			"what_i_saw": "Qué vi",
-			"where": "Dónde"
+			"where": "Dónde",
+			"steps_range": "pasos {{range}}",
+			"flow_badge": "flujo"
 		},
 		manifest: {
 			"description": "Una crítica de diseño que puedes ejecutar antes de pedírsela a un colega. Le das una captura, un flujo completo de varias pantallas, un archivo de Figma, un repositorio git o una URL que ya esté sirviendo, y encuentra las pantallas candidatas, te deja elegir qué revisar y luego responde como lo haría un diseñador con experiencia: una lectura general, lo que funciona y lo que vale la pena ajustar, cada punto ligado a una heurística con nombre. Los flujos de varias pantallas también reciben hallazgos entre pantallas que una sola no puede mostrar — controles inconsistentes, falta de indicación de avance, ninguna forma de volver, callejones sin salida. Renderiza el código y Figma antes de juzgarlos, así que nunca critica elementos visuales que no vio de verdad, y dice con claridad a qué pantallas no pudo llegar en lugar de adivinar.",
@@ -671,7 +1018,9 @@ var CATALOGS = {
 			"configuration_1": "Añade capturas para una revisión sin configuración o proporciona un archivo de Figma, un repositorio, una carpeta local o una URL ya activa; las fuentes privadas de GitHub pueden requerir gh auth login."
 		},
 		scopingPicker: {
-			"critique_this_flow_count_screens": "Critique this flow · {{count}} screens",
+			"critique_this_flow_count_screens_one": "Criticar este flujo · {{count}} pantalla",
+			"critique_this_flow_count_screens_many": "Criticar este flujo · {{count}} pantallas",
+			"critique_this_flow_count_screens_other": "Criticar este flujo · {{count}} pantallas",
 			"critique_this_screen": "Critique this screen",
 			"drag_to_reorder": "Arrastra para reordenar",
 			"move_earlier": "Mover antes",
@@ -682,7 +1031,21 @@ var CATALOGS = {
 			"screens": "Pantallas",
 			"start_over": "Empezar de nuevo",
 			"suggested_flows": "Flujos sugeridos",
-			"what_should_i_audit": "¿Qué debo revisar?"
+			"what_should_i_audit": "¿Qué debo revisar?",
+			"screens_found_count_one": "{{n}} pantalla encontrada · {{m}} que puedo renderizar",
+			"screens_found_count_many": "{{n}} pantallas encontradas · {{m}} que puedo renderizar",
+			"screens_found_count_other": "{{n}} pantallas encontradas · {{m}} que puedo renderizar",
+			"flow_n": "Flujo {{n}}",
+			"picked_count_one": "{{n}} elegida",
+			"picked_count_many": "{{n}} elegidas",
+			"picked_count_other": "{{n}} elegidas",
+			"hint_order": "Los números son el orden en que las recorreré: arrastra una fila para reordenar o usa ‹ › con el teclado.",
+			"hint_pick": "Haz clic en una pantalla para elegirla. Elige varias para criticarlas como un flujo.",
+			"cant_render_title": "No puedo renderizar esta",
+			"cant_render_short": "no se puede renderizar",
+			"group_fallback": "Pantallas",
+			"tag_from_links": "Según enlaces",
+			"tag_guess": "Suposición"
 		},
 		utils: {
 			"i_ll_capture_it_and_measure_real_contrast_and_si": "Lo capturaré y mediré el contraste y los tamaños reales.",
@@ -690,11 +1053,25 @@ var CATALOGS = {
 			"i_ll_list_the_screens_only_pages_that_render_wit": "Listaré las pantallas. Solo se pueden ver las páginas que se renderizan sin un servidor.",
 			"i_ll_pull_the_frames": "Traeré los frames.",
 			"it_must_be_running_right_now_i_ll_capture_it_liv": "debe estar en ejecución ahora mismo. Lo capturaré en vivo y mediré el contraste y los tamaños reales.",
-			"not_something_i_recognise_give_me_a_figma_link_a": "No lo reconozco. Envíame un enlace de Figma, un repositorio de GitHub, una ruta local absoluta o una URL que ya esté en servicio."
+			"not_something_i_recognise_give_me_a_figma_link_a": "No lo reconozco. Envíame un enlace de Figma, un repositorio de GitHub, una ruta local absoluta o una URL que ya esté en servicio.",
+			"screen_fallback": "Pantalla"
 		},
 		waitingScreen: {
 			"cancel_this_run": "Cancelar esta ejecución",
-			"stop_this_run_and_discard_it": "Detener esta ejecución y descartarla"
+			"stop_this_run_and_discard_it": "Detener esta ejecución y descartarla",
+			"getting_screens_ready": "Preparando las pantallas…",
+			"title_scanning": "Buscando pantallas para revisar",
+			"title_uploading_screens_one": "Subiendo {{n}} pantalla…",
+			"title_uploading_screens_many": "Subiendo {{n}} pantallas…",
+			"title_uploading_screens_other": "Subiendo {{n}} pantallas…",
+			"title_uploading_one": "Subiendo tu captura…",
+			"title_reading_flow_one": "Leyendo tu flujo · {{n}} pantalla",
+			"title_reading_flow_many": "Leyendo tu flujo · {{n}} pantallas",
+			"title_reading_flow_other": "Leyendo tu flujo · {{n}} pantallas",
+			"title_reading_screen": "Leyendo tu pantalla",
+			"title_getting_pixels": "Primero obtengo píxeles reales",
+			"foot_still_going": "Sigue en marcha: un flujo denso puede tardar un par de minutos. Puedes salir de aquí; la crítica sigue y estará lista cuando vuelvas.",
+			"foot_navigate_away": "Puedes salir de aquí: la crítica sigue en marcha."
 		},
 		common: {
 			"send_failed": "Error al enviar",
@@ -711,23 +1088,48 @@ var CATALOGS = {
 			"ask_about_this": "Poser une question",
 			"close": "Fermer",
 			"remove_this_annotation": "Supprimer cette annotation",
-			"thinking": "Réflexion…"
+			"thinking": "Réflexion…",
+			"question_label": "Ta question sur cette critique"
 		},
 		composer: {
 			"add_screens": "Ajouter des écrans",
+			"add_screenshots_or_paste_a_link_first": "Ajoute d’abord des captures ou colle un lien",
 			"clear_all": "Tout effacer",
-			"critique_this_flow_count_screens": "Critique this flow · {{count}} screens",
+			"critique_this_flow_count_screens_one": "Critiquer ce parcours · {{count}} écran",
+			"critique_this_flow_count_screens_many": "Critiquer ce parcours · {{count}} écrans",
+			"critique_this_flow_count_screens_other": "Critiquer ce parcours · {{count}} écrans",
 			"critique_this_screen": "Critique this screen",
 			"drop_screenshots_or_click_to_browse": "Déposez des captures — ou cliquez pour parcourir",
+			"fix_my_access": "Réparer mon accès",
 			"fix_the_link": "Corriger le lien",
+			"hide_access_steps": "Masquer les étapes d’accès",
 			"move_earlier": "Déplacer avant",
 			"move_later": "Déplacer après",
 			"one_screen_or_several_in_order_for_a_flow_png_jp": "un écran, ou plusieurs dans l'ordre pour un parcours · PNG, JPG, WebP",
 			"remove": "Supprimer",
+			"remove_name": "Supprimer {{name}}",
 			"send_screenshots": "Envoyer les captures",
+			"start_the_critique": "Lancer la critique",
+			"step_n": "Étape {{n}}",
 			"try_again": "Réessayer",
 			"unrecognised": "Unrecognised",
-			"use_a_local_folder_instead": "Utiliser plutôt un dossier local"
+			"use_a_local_folder_instead": "Utiliser plutôt un dossier local",
+			"start_kind_figma": "Critiquer le fichier Figma",
+			"start_kind_repo": "Critiquer le dépôt",
+			"start_kind_local": "Critiquer le code local",
+			"start_kind_url": "Critiquer l’app en cours d’exécution",
+			"start_this": "Critiquer ceci",
+			"start_plain": "Critiquer",
+			"staged_one_hint": "1 écran · ajoute-en un autre pour les critiquer comme un parcours.",
+			"staged_flow_hint_one": "{{n}} écran · cet ordre est celui du parcours — réordonne ou retire avant de commencer.",
+			"staged_flow_hint_many": "{{n}} écrans · cet ordre est celui du parcours — réordonne ou retire avant de commencer.",
+			"staged_flow_hint_other": "{{n}} écrans · cet ordre est celui du parcours — réordonne ou retire avant de commencer.",
+			"title_blocked": "Je n’ai pas pu entrer",
+			"title_ask": "Que dois-je critiquer ?",
+			"link_placeholder_staged": "Tes captures sont utilisées — retire-les pour critiquer un lien à la place",
+			"link_placeholder": "Lien Figma · dépôt git · un dossier sur cette machine · une URL en cours d’exécution (localhost ou un aperçu déployé)",
+			"link_label": "Lien à critiquer",
+			"render_before_judging": "J’affiche tout avant de juger — jamais à partir du code seul. Si ton app tourne déjà, colle son URL et je pourrai mesurer les vraies couleurs et tailles au lieu de les estimer."
 		},
 		constants: {
 			"blocked_figma_app_missing_hint": "Ouvre le fichier dans l’application de bureau Figma et réessaie, ou exporte les cadres en PNG et dépose-les ici.",
@@ -774,28 +1176,36 @@ var CATALOGS = {
 		designCritiquePage: {
 			"a_critique_is_still_running_click_to_watch_it": "Une critique est encore en cours — cliquez pour la suivre",
 			"across_the_flow": "Sur l'ensemble du parcours",
+			"click_to_enlarge": "Clique pour agrandir",
 			"close_esc": "Fermer (Échap)",
 			"couldn_t_see": "Non visible",
 			"couldn_t_tell_what_that_is_give_me_a_figma_link": "Je n’ai pas reconnu ce que c’est. Donnez-moi un lien Figma, un dépôt GitHub/GitLab/Bitbucket, un chemin local absolu ou une URL déjà en service.",
 			"critique_ready": "critique prête",
+			"critique_untitled": "Critique",
 			"design_critique": "Design Critique",
 			"enlarge": "Agrandir",
 			"full_size": "taille réelle",
 			"full_size_view": "Affichage taille réelle",
+			"history_count": "Historique ({{n}})",
 			"i_got_in_but_there_s_nothing_in_there_i_can": "Je suis entré, mais il n’y a rien là-dedans que je puisse afficher. Envoie-moi plutôt des captures d’écran.",
 			"new": "Nouvelle",
 			"no_screens_to_show_the_critic_couldn_t_get_pixel": "Aucun écran à afficher — le critique n'a pas pu récupérer les pixels de celui-ci. Voir « Non visible » dans le panneau.",
 			"nothing_major": "rien de majeur",
+			"numbered_pins_mark_issues_on_this_screen": "les repères numérotés signalent les problèmes de cet écran",
 			"on_screen": "● à l'écran",
 			"only_added_the_first_room_the_limit_is_max_screens": "Seuls les {{room}} premiers ont été ajoutés — la limite est de {{max}} écrans.",
+			"pick_a_step_above": "choisis une étape ci-dessus",
 			"point_me_at_a_running_url": "Indiquez-moi une URL active",
 			"point_me_at_a_screen_or_a_whole_flow_and_i_ll_re": "Montrez-moi un écran — ou tout un parcours — et je le lirai comme le ferait un ami designer : ce qui fonctionne, ce qu'il faut resserrer, et pourquoi.",
 			"running": "en cours",
+			"screen_heading": "Écran",
+			"screens_in_order": "Écrans dans l’ordre",
 			"see_an_example": "Voir un exemple",
 			"send_screenshots": "Envoyer les captures",
 			"show_this_screen": "Afficher cet écran",
 			"something_went_wrong": "something went wrong",
 			"start_a_new_critique_anything_already_running_ke": "Lancer une nouvelle critique — celles déjà en cours se poursuivent",
+			"step_n": "Étape {{n}}",
 			"still_working_on_this_one_it_s_kept_running_come": "Still working on this one. It’s kept running — come back in a minute.",
 			"still_working_on_this_one_it_s_kept_running_come_2": "Still working on this one. It’s kept running — come back to this page in a minute and it’ll pick up where it left off.",
 			"switch_critique": "Changer de critique",
@@ -808,12 +1218,50 @@ var CATALOGS = {
 			"what_s_working": "Ce qui fonctionne",
 			"what_you_ll_get": "Ce que vous obtiendrez",
 			"your_critiques": "Vos critiques",
-			"your_question_click_to_see_the_answer": "Votre question — cliquez pour voir la réponse"
+			"your_question_click_to_see_the_answer": "Votre question — cliquez pour voir la réponse",
+			"rail_uploading": "Envoi…",
+			"rail_reading": "Lecture de ton design…",
+			"rail_flow_one": "Un parcours de {{n}} écran — je vérifierai aussi les transitions entre eux.",
+			"rail_flow_many": "Un parcours de {{n}} écrans — je vérifierai aussi les transitions entre eux.",
+			"rail_flow_other": "Un parcours de {{n}} écrans — je vérifierai aussi les transitions entre eux.",
+			"rail_one_screen": "Un écran.",
+			"rail_pending_figma": "Un fichier Figma — je l’affiche avant de le juger.",
+			"rail_pending_repo": "Un dépôt — je l’affiche avant de le juger.",
+			"rail_pending_local": "Du code local — je l’affiche avant de le juger.",
+			"rail_pending_url": "Une app en cours d’exécution — je l’affiche avant de la juger.",
+			"rail_pending_design": "Un design — je l’affiche avant de le juger.",
+			"rail_getting_ready": "Préparation des écrans.",
+			"critique_ready_fallback": "Critique prête",
+			"ask_too_long": "C’était trop long — redemande.",
+			"ask_went_wrong": "Une erreur s’est produite.",
+			"entry_meta_screens_one": "{{n}} écran · {{when}}",
+			"entry_meta_screens_many": "{{n}} écrans · {{when}}",
+			"entry_meta_screens_other": "{{n}} écrans · {{when}}",
+			"findings_count_one": "{{n}} remarque",
+			"findings_count_many": "{{n}} remarques",
+			"findings_count_other": "{{n}} remarques",
+			"nothing_flagged": "rien de signalé",
+			"design_critique_fallback": "Critique de design",
+			"flow_screens_count_one": "{{n}} écran",
+			"flow_screens_count_many": "{{n}} écrans",
+			"flow_screens_count_other": "{{n}} écrans",
+			"screen_n": "Écran {{n}}",
+			"get_overall_read": "Un avis d’ensemble sur où il en est",
+			"get_whats_working": "Ce qui fonctionne, pour que ça survive à la prochaine passe",
+			"get_top_things": "Les points principaux à resserrer, avec des repères sur l’écran",
+			"no_critiques_narrow": "Aucune critique pour l’instant. Dépose une capture ci-dessous.",
+			"no_critiques_wide": "Aucune critique pour l’instant. Dépose une capture dans le panneau →",
+			"the_design_alt": "Le design"
 		},
 		findingRow: {
 			"based_on": "D'après",
+			"finding": "Constat",
+			"fix": "Correctif",
+			"suggestion": "Suggestion",
 			"what_i_saw": "Ce que j'ai vu",
-			"where": "Où"
+			"where": "Où",
+			"steps_range": "étapes {{range}}",
+			"flow_badge": "parcours"
 		},
 		manifest: {
 			"description": "Une critique de design que tu peux lancer avant de solliciter un collègue. Donne-lui une capture d’écran, tout un parcours multi-écrans, un fichier Figma, un dépôt git ou une URL déjà servie, et il repère les écrans candidats, te laisse choisir ce qu’il doit examiner, puis rend son compte rendu comme le ferait un designer expérimenté : une lecture d’ensemble, ce qui fonctionne et ce qui mérite d’être resserré, chaque point rattaché à une heuristique nommée. Les parcours multi-écrans reçoivent en plus des conclusions transversales qu’un écran seul ne peut pas révéler — contrôles incohérents, progression absente, aucun retour possible, impasses. Il rend le code et Figma avant de les juger, donc il ne critique jamais un visuel qu’il n’a pas réellement vu, et il dit clairement quels écrans il n’a pas pu atteindre plutôt que de deviner.",
@@ -831,7 +1279,9 @@ var CATALOGS = {
 			"configuration_1": "Dépose des captures d'écran pour une analyse sans configuration, ou fournis un fichier Figma, un dépôt, un dossier local ou une URL déjà en ligne ; les sources GitHub privées peuvent nécessiter gh auth login."
 		},
 		scopingPicker: {
-			"critique_this_flow_count_screens": "Critique this flow · {{count}} screens",
+			"critique_this_flow_count_screens_one": "Critiquer ce parcours · {{count}} écran",
+			"critique_this_flow_count_screens_many": "Critiquer ce parcours · {{count}} écrans",
+			"critique_this_flow_count_screens_other": "Critiquer ce parcours · {{count}} écrans",
 			"critique_this_screen": "Critique this screen",
 			"drag_to_reorder": "Glisser pour réorganiser",
 			"move_earlier": "Déplacer avant",
@@ -842,19 +1292,47 @@ var CATALOGS = {
 			"screens": "Écrans",
 			"start_over": "Recommencer",
 			"suggested_flows": "Parcours suggérés",
-			"what_should_i_audit": "Que dois-je auditer ?"
+			"what_should_i_audit": "Que dois-je auditer ?",
+			"screens_found_count_one": "{{n}} écran trouvé · {{m}} que je peux rendre",
+			"screens_found_count_many": "{{n}} écrans trouvés · {{m}} que je peux rendre",
+			"screens_found_count_other": "{{n}} écrans trouvés · {{m}} que je peux rendre",
+			"flow_n": "Parcours {{n}}",
+			"picked_count_one": "{{n}} choisi",
+			"picked_count_many": "{{n}} choisis",
+			"picked_count_other": "{{n}} choisis",
+			"hint_order": "Les numéros sont l’ordre dans lequel je les parcourrai — fais glisser une ligne pour réordonner, ou utilise ‹ › au clavier.",
+			"hint_pick": "Clique sur un écran pour le choisir. Choisis-en plusieurs pour les critiquer comme un parcours.",
+			"cant_render_title": "Je ne peux pas rendre celui-ci",
+			"cant_render_short": "rendu impossible",
+			"group_fallback": "Écrans",
+			"tag_from_links": "D’après les liens",
+			"tag_guess": "Supposition"
 		},
 		utils: {
-			"i_ll_capture_it_and_measure_real_contrast_and_si": "I’ll capture it and measure real contrast and sizes.",
-			"i_ll_clone_it_and_list_the_screens_only_pages_th": "I’ll clone it and list the screens. Only pages that render without a server can be seen.",
-			"i_ll_list_the_screens_only_pages_that_render_wit": "I’ll list the screens. Only pages that render without a server can be seen.",
+			"i_ll_capture_it_and_measure_real_contrast_and_si": "Je vais la capturer et mesurer le contraste et les tailles réels.",
+			"i_ll_clone_it_and_list_the_screens_only_pages_th": "Je vais le cloner et lister les écrans. Seules les pages qui s’affichent sans serveur sont visibles.",
+			"i_ll_list_the_screens_only_pages_that_render_wit": "Je vais lister les écrans. Seules les pages qui s’affichent sans serveur sont visibles.",
 			"i_ll_pull_the_frames": "I’ll pull the frames.",
-			"it_must_be_running_right_now_i_ll_capture_it_liv": "it must be running right now. I’ll capture it live and measure real contrast and sizes.",
-			"not_something_i_recognise_give_me_a_figma_link_a": "Not something I recognise. Give me a Figma link, a GitHub repo, an absolute local path, or a URL that’s already serving."
+			"it_must_be_running_right_now_i_ll_capture_it_liv": "elle doit tourner en ce moment. Je vais la capturer en direct et mesurer le contraste et les tailles réels.",
+			"not_something_i_recognise_give_me_a_figma_link_a": "Je ne reconnais pas ça. Donne-moi un lien Figma, un dépôt GitHub, un chemin local absolu ou une URL déjà servie.",
+			"screen_fallback": "Écran"
 		},
 		waitingScreen: {
 			"cancel_this_run": "Annuler cette exécution",
-			"stop_this_run_and_discard_it": "Arrêter cette exécution et l'abandonner"
+			"stop_this_run_and_discard_it": "Arrêter cette exécution et l'abandonner",
+			"getting_screens_ready": "Préparation des écrans…",
+			"title_scanning": "Recherche d’écrans à auditer",
+			"title_uploading_screens_one": "Envoi de {{n}} écran…",
+			"title_uploading_screens_many": "Envoi de {{n}} écrans…",
+			"title_uploading_screens_other": "Envoi de {{n}} écrans…",
+			"title_uploading_one": "Envoi de ta capture…",
+			"title_reading_flow_one": "Lecture de ton parcours · {{n}} écran",
+			"title_reading_flow_many": "Lecture de ton parcours · {{n}} écrans",
+			"title_reading_flow_other": "Lecture de ton parcours · {{n}} écrans",
+			"title_reading_screen": "Lecture de ton écran",
+			"title_getting_pixels": "D’abord, de vrais pixels",
+			"foot_still_going": "Toujours en cours — un parcours dense peut prendre quelques minutes. Tu peux quitter la page ; la critique continue et sera là à ton retour.",
+			"foot_navigate_away": "Tu peux quitter la page — la critique continue."
 		},
 		common: {
 			"send_failed": "Échec de l’envoi",
@@ -871,23 +1349,46 @@ var CATALOGS = {
 			"ask_about_this": "इस बारे में पूछें",
 			"close": "बंद करें",
 			"remove_this_annotation": "यह एनोटेशन हटाएँ",
-			"thinking": "सोच रहे हैं…"
+			"thinking": "सोच रहे हैं…",
+			"question_label": "इस समीक्षा के बारे में तुम्हारा सवाल"
 		},
 		composer: {
 			"add_screens": "स्क्रीन जोड़ें",
+			"add_screenshots_or_paste_a_link_first": "पहले स्क्रीनशॉट जोड़ो या लिंक चिपकाओ",
 			"clear_all": "सभी हटाएँ",
-			"critique_this_flow_count_screens": "Critique this flow · {{count}} screens",
+			"critique_this_flow_count_screens_one": "इस फ़्लो की समीक्षा करो · {{count}} स्क्रीन",
+			"critique_this_flow_count_screens_other": "इस फ़्लो की समीक्षा करो · {{count}} स्क्रीन",
 			"critique_this_screen": "Critique this screen",
 			"drop_screenshots_or_click_to_browse": "स्क्रीनशॉट यहाँ छोड़ें — या ब्राउज़ करने के लिए क्लिक करें",
+			"fix_my_access": "मेरी पहुँच ठीक करो",
 			"fix_the_link": "लिंक ठीक करें",
+			"hide_access_steps": "पहुँच के चरण छिपाओ",
 			"move_earlier": "पहले ले जाएँ",
 			"move_later": "बाद में ले जाएँ",
 			"one_screen_or_several_in_order_for_a_flow_png_jp": "एक स्क्रीन, या फ़्लो के लिए क्रम में कई · PNG, JPG, WebP",
 			"remove": "हटाएँ",
+			"remove_name": "{{name}} हटाओ",
 			"send_screenshots": "स्क्रीनशॉट भेजें",
+			"start_the_critique": "समीक्षा शुरू करो",
+			"step_n": "चरण {{n}}",
 			"try_again": "फिर से कोशिश करें",
 			"unrecognised": "Unrecognised",
-			"use_a_local_folder_instead": "इसके बजाय लोकल फ़ोल्डर इस्तेमाल करें"
+			"use_a_local_folder_instead": "इसके बजाय लोकल फ़ोल्डर इस्तेमाल करें",
+			"start_kind_figma": "Figma फ़ाइल की समीक्षा करो",
+			"start_kind_repo": "रिपॉज़िटरी की समीक्षा करो",
+			"start_kind_local": "स्थानीय कोड की समीक्षा करो",
+			"start_kind_url": "चल रहे ऐप की समीक्षा करो",
+			"start_this": "इसकी समीक्षा करो",
+			"start_plain": "समीक्षा करो",
+			"staged_one_hint": "1 स्क्रीन · इसे फ़्लो के रूप में समीक्षा करने के लिए एक और जोड़ो।",
+			"staged_flow_hint_one": "{{n}} स्क्रीन · यही क्रम फ़्लो का क्रम है — शुरू करने से पहले क्रम बदलो या हटाओ।",
+			"staged_flow_hint_other": "{{n}} स्क्रीन · यही क्रम फ़्लो का क्रम है — शुरू करने से पहले क्रम बदलो या हटाओ।",
+			"title_blocked": "मैं अंदर नहीं जा सका",
+			"title_ask": "मैं किसकी समीक्षा करूँ?",
+			"link_placeholder_staged": "तुम्हारे स्क्रीनशॉट इस्तेमाल हो रहे हैं — लिंक की समीक्षा के लिए उन्हें हटाओ",
+			"link_placeholder": "Figma लिंक · git रिपॉज़िटरी · इस मशीन का कोई फ़ोल्डर · कोई चल रहा URL (localhost या तैनात प्रीव्यू)",
+			"link_label": "समीक्षा के लिए लिंक",
+			"render_before_judging": "मैं आँकने से पहले सब कुछ रेंडर करता हूँ — सिर्फ़ कोड देखकर कभी नहीं। अगर तुम्हारा ऐप पहले से चल रहा है, तो उसका URL चिपकाओ, ताकि मैं अनुमान लगाने के बजाय असली रंग और आकार माप सकूँ।"
 		},
 		constants: {
 			"blocked_figma_app_missing_hint": "फ़ाइल को Figma डेस्कटॉप में खोलें और फिर कोशिश करें, या फ़्रेम को PNG के रूप में एक्सपोर्ट करके यहाँ छोड़ें।",
@@ -934,28 +1435,36 @@ var CATALOGS = {
 		designCritiquePage: {
 			"a_critique_is_still_running_click_to_watch_it": "एक समीक्षा अभी चल रही है — देखने के लिए क्लिक करें",
 			"across_the_flow": "पूरे फ़्लो में",
+			"click_to_enlarge": "बड़ा करने के लिए क्लिक करो",
 			"close_esc": "बंद करें (Esc)",
 			"couldn_t_see": "देख नहीं सके",
 			"couldn_t_tell_what_that_is_give_me_a_figma_link": "समझ नहीं आया कि यह क्या है। मुझे Figma लिंक, GitHub/GitLab/Bitbucket रेपो, कोई absolute लोकल पाथ, या पहले से चल रहा URL दो।",
 			"critique_ready": "समीक्षा तैयार",
+			"critique_untitled": "समीक्षा",
 			"design_critique": "Design Critique",
 			"enlarge": "बड़ा करें",
 			"full_size": "पूरा आकार",
 			"full_size_view": "पूरे आकार में देखें",
+			"history_count": "इतिहास ({{n}})",
 			"i_got_in_but_there_s_nothing_in_there_i_can": "मैं अंदर पहुँच गया, पर वहाँ रेंडर करने लायक कुछ नहीं है। बेहतर होगा स्क्रीनशॉट भेज दें।",
 			"new": "नया",
 			"no_screens_to_show_the_critic_couldn_t_get_pixel": "दिखाने के लिए कोई स्क्रीन नहीं — समीक्षक इसके पिक्सेल नहीं ले सका। पैनल में \"देख नहीं सके\" देखें।",
 			"nothing_major": "कुछ बड़ा नहीं",
+			"numbered_pins_mark_issues_on_this_screen": "नंबर वाले पिन इस स्क्रीन की समस्याएँ दिखाते हैं",
 			"on_screen": "● स्क्रीन पर",
 			"only_added_the_first_room_the_limit_is_max_screens": "सिर्फ़ पहली {{room}} जोड़ी गईं — सीमा {{max}} स्क्रीन है।",
+			"pick_a_step_above": "ऊपर कोई चरण चुनो",
 			"point_me_at_a_running_url": "मुझे कोई चालू URL बताएँ",
 			"point_me_at_a_screen_or_a_whole_flow_and_i_ll_re": "मुझे कोई स्क्रीन — या पूरा फ़्लो — दिखाएँ, और मैं उसे एक डिज़ाइनर दोस्त की तरह पढ़ूँगा: क्या अच्छा चल रहा है, क्या कसना है, और क्यों।",
 			"running": "चल रही है",
+			"screen_heading": "स्क्रीन",
+			"screens_in_order": "क्रम से स्क्रीन",
 			"see_an_example": "एक उदाहरण देखें",
 			"send_screenshots": "स्क्रीनशॉट भेजें",
 			"show_this_screen": "यह स्क्रीन दिखाएँ",
 			"something_went_wrong": "something went wrong",
 			"start_a_new_critique_anything_already_running_ke": "नई समीक्षा शुरू करें — जो पहले से चल रहा है वह चलता रहेगा",
+			"step_n": "चरण {{n}}",
 			"still_working_on_this_one_it_s_kept_running_come": "Still working on this one. It’s kept running — come back in a minute.",
 			"still_working_on_this_one_it_s_kept_running_come_2": "Still working on this one. It’s kept running — come back to this page in a minute and it’ll pick up where it left off.",
 			"switch_critique": "समीक्षा बदलें",
@@ -968,12 +1477,46 @@ var CATALOGS = {
 			"what_s_working": "क्या अच्छा चल रहा है",
 			"what_you_ll_get": "तुम्हें क्या मिलेगा",
 			"your_critiques": "तुम्हारी समीक्षाएँ",
-			"your_question_click_to_see_the_answer": "तुम्हारा सवाल — उत्तर देखने के लिए क्लिक करो"
+			"your_question_click_to_see_the_answer": "तुम्हारा सवाल — उत्तर देखने के लिए क्लिक करो",
+			"rail_uploading": "अपलोड हो रहा है…",
+			"rail_reading": "तुम्हारा डिज़ाइन पढ़ा जा रहा है…",
+			"rail_flow_one": "{{n}} स्क्रीन का फ़्लो — मैं उनके बीच के बदलाव भी जाँचूँगा।",
+			"rail_flow_other": "{{n}} स्क्रीन का फ़्लो — मैं उनके बीच के बदलाव भी जाँचूँगा।",
+			"rail_one_screen": "एक स्क्रीन।",
+			"rail_pending_figma": "एक Figma फ़ाइल — आँकने से पहले रेंडर हो रही है।",
+			"rail_pending_repo": "एक रिपॉज़िटरी — आँकने से पहले रेंडर हो रही है।",
+			"rail_pending_local": "स्थानीय कोड — आँकने से पहले रेंडर हो रहा है।",
+			"rail_pending_url": "एक चल रहा ऐप — आँकने से पहले रेंडर हो रहा है।",
+			"rail_pending_design": "एक डिज़ाइन — आँकने से पहले रेंडर हो रहा है।",
+			"rail_getting_ready": "स्क्रीन तैयार की जा रही हैं।",
+			"critique_ready_fallback": "समीक्षा तैयार",
+			"ask_too_long": "बहुत देर लगी — फिर से पूछें।",
+			"ask_went_wrong": "कुछ गड़बड़ हो गई।",
+			"entry_meta_screens_one": "{{n}} स्क्रीन · {{when}}",
+			"entry_meta_screens_other": "{{n}} स्क्रीन · {{when}}",
+			"findings_count_one": "{{n}} टिप्पणी",
+			"findings_count_other": "{{n}} टिप्पणियाँ",
+			"nothing_flagged": "कुछ चिह्नित नहीं",
+			"design_critique_fallback": "डिज़ाइन समीक्षा",
+			"flow_screens_count_one": "{{n}} स्क्रीन",
+			"flow_screens_count_other": "{{n}} स्क्रीन",
+			"screen_n": "स्क्रीन {{n}}",
+			"get_overall_read": "यह कैसा चल रहा है, इसकी कुल राय",
+			"get_whats_working": "क्या ठीक काम कर रहा है, ताकि वह अगले बदलाव में बचा रहे",
+			"get_top_things": "कसने लायक मुख्य बातें, स्क्रीन पर निशानों के साथ",
+			"no_critiques_narrow": "अभी कोई समीक्षा नहीं। नीचे एक स्क्रीनशॉट डालें।",
+			"no_critiques_wide": "अभी कोई समीक्षा नहीं। पैनल में एक स्क्रीनशॉट डालें →",
+			"the_design_alt": "डिज़ाइन"
 		},
 		findingRow: {
 			"based_on": "किस आधार पर",
+			"finding": "निष्कर्ष",
+			"fix": "सुधार",
+			"suggestion": "सुझाव",
 			"what_i_saw": "मैंने क्या देखा",
-			"where": "कहाँ"
+			"where": "कहाँ",
+			"steps_range": "चरण {{range}}",
+			"flow_badge": "फ़्लो"
 		},
 		manifest: {
 			"description": "किसी साथी से पूछने से पहले खुद चलाई जा सकने वाली डिज़ाइन समीक्षा। इसे एक स्क्रीनशॉट, पूरा कई-स्क्रीन वाला फ़्लो, कोई Figma फ़ाइल, कोई git रिपो, या पहले से चल रहा URL दो, और यह संभावित स्क्रीन ढूँढ़ता है, तुम्हें चुनने देता है कि क्या देखना है, फिर एक तजुर्बेकार डिज़ाइनर की तरह बताता है: कुल मिलाकर क्या लगा, क्या ठीक काम कर रहा है, और किन चीज़ों को कसने की ज़रूरत है, हर बात किसी नामित ह्यूरिस्टिक से जुड़ी। कई-स्क्रीन वाले फ़्लो को क्रॉस-स्क्रीन नतीजे भी मिलते हैं जो एक स्क्रीन नहीं दिखा सकती — बेमेल कंट्रोल, गायब प्रगति, वापस जाने का रास्ता न होना, बंद गलियाँ। यह कोड और Figma को आँकने से पहले रेंडर करता है, इसलिए बिना देखे विज़ुअल पर कभी टिप्पणी नहीं करता, और अंदाज़ा लगाने की जगह साफ़ कह देता है कि किन स्क्रीन तक नहीं पहुँच पाया।",
@@ -991,7 +1534,8 @@ var CATALOGS = {
 			"page_label": "Design Critique"
 		},
 		scopingPicker: {
-			"critique_this_flow_count_screens": "Critique this flow · {{count}} screens",
+			"critique_this_flow_count_screens_one": "इस फ़्लो की समीक्षा करो · {{count}} स्क्रीन",
+			"critique_this_flow_count_screens_other": "इस फ़्लो की समीक्षा करो · {{count}} स्क्रीन",
 			"critique_this_screen": "Critique this screen",
 			"drag_to_reorder": "क्रम बदलने के लिए खींचें",
 			"move_earlier": "पहले ले जाएँ",
@@ -1002,19 +1546,43 @@ var CATALOGS = {
 			"screens": "स्क्रीन",
 			"start_over": "फिर से शुरू करें",
 			"suggested_flows": "सुझाए गए फ़्लो",
-			"what_should_i_audit": "मैं किसका ऑडिट करूँ?"
+			"what_should_i_audit": "मैं किसका ऑडिट करूँ?",
+			"screens_found_count_one": "{{n}} स्क्रीन मिली · {{m}} रेंडर कर सकता हूँ",
+			"screens_found_count_other": "{{n}} स्क्रीन मिलीं · {{m}} रेंडर कर सकता हूँ",
+			"flow_n": "फ़्लो {{n}}",
+			"picked_count_one": "{{n}} चुनी",
+			"picked_count_other": "{{n}} चुनीं",
+			"hint_order": "नंबर वह क्रम हैं जिसमें मैं इन्हें देखूँगा — क्रम बदलने के लिए पंक्ति खींचो, या कीबोर्ड से ‹ › दबाओ।",
+			"hint_pick": "चुनने के लिए किसी स्क्रीन पर क्लिक करो। फ़्लो के रूप में समीक्षा के लिए कई चुनो।",
+			"cant_render_title": "इसे मैं रेंडर नहीं कर सकता",
+			"cant_render_short": "रेंडर नहीं होगी",
+			"group_fallback": "स्क्रीन",
+			"tag_from_links": "लिंक से",
+			"tag_guess": "अनुमान"
 		},
 		utils: {
-			"i_ll_capture_it_and_measure_real_contrast_and_si": "I’ll capture it and measure real contrast and sizes.",
-			"i_ll_clone_it_and_list_the_screens_only_pages_th": "I’ll clone it and list the screens. Only pages that render without a server can be seen.",
-			"i_ll_list_the_screens_only_pages_that_render_wit": "I’ll list the screens. Only pages that render without a server can be seen.",
+			"i_ll_capture_it_and_measure_real_contrast_and_si": "मैं इसे कैप्चर करके असली कंट्रास्ट और आकार मापूँगा।",
+			"i_ll_clone_it_and_list_the_screens_only_pages_th": "मैं इसे क्लोन करके स्क्रीन की सूची बनाऊँगा। सिर्फ़ वही पेज दिखते हैं जो बिना सर्वर के रेंडर होते हैं।",
+			"i_ll_list_the_screens_only_pages_that_render_wit": "मैं स्क्रीन की सूची बनाऊँगा। सिर्फ़ वही पेज दिखते हैं जो बिना सर्वर के रेंडर होते हैं।",
 			"i_ll_pull_the_frames": "I’ll pull the frames.",
-			"it_must_be_running_right_now_i_ll_capture_it_liv": "it must be running right now. I’ll capture it live and measure real contrast and sizes.",
-			"not_something_i_recognise_give_me_a_figma_link_a": "Not something I recognise. Give me a Figma link, a GitHub repo, an absolute local path, or a URL that’s already serving."
+			"it_must_be_running_right_now_i_ll_capture_it_liv": "इसे अभी चलना चाहिए। मैं इसे लाइव कैप्चर करके असली कंट्रास्ट और आकार मापूँगा।",
+			"not_something_i_recognise_give_me_a_figma_link_a": "मैं इसे नहीं पहचानता। मुझे Figma लिंक, GitHub रिपॉज़िटरी, पूरा स्थानीय पाथ या पहले से चल रहा URL दो।",
+			"screen_fallback": "स्क्रीन"
 		},
 		waitingScreen: {
 			"cancel_this_run": "यह रन रद्द करें",
-			"stop_this_run_and_discard_it": "यह रन रोकें और हटा दें"
+			"stop_this_run_and_discard_it": "यह रन रोकें और हटा दें",
+			"getting_screens_ready": "स्क्रीन तैयार की जा रही हैं…",
+			"title_scanning": "ऑडिट के लिए स्क्रीन ढूँढ रहा हूँ",
+			"title_uploading_screens_one": "{{n}} स्क्रीन अपलोड हो रही है…",
+			"title_uploading_screens_other": "{{n}} स्क्रीन अपलोड हो रही हैं…",
+			"title_uploading_one": "तुम्हारा स्क्रीनशॉट अपलोड हो रहा है…",
+			"title_reading_flow_one": "तुम्हारा फ़्लो पढ़ रहा हूँ · {{n}} स्क्रीन",
+			"title_reading_flow_other": "तुम्हारा फ़्लो पढ़ रहा हूँ · {{n}} स्क्रीन",
+			"title_reading_screen": "तुम्हारी स्क्रीन पढ़ रहा हूँ",
+			"title_getting_pixels": "पहले असली पिक्सेल ले रहा हूँ",
+			"foot_still_going": "अभी चल रहा है — घना फ़्लो कुछ मिनट ले सकता है। तुम यह पेज छोड़ सकते हो; समीक्षा चलती रहेगी और लौटने पर यहीं मिलेगी।",
+			"foot_navigate_away": "तुम यह पेज छोड़ सकते हो — समीक्षा चलती रहेगी।"
 		},
 		common: {
 			"send_failed": "भेजना विफल",
@@ -1031,23 +1599,48 @@ var CATALOGS = {
 			"ask_about_this": "Fai una domanda",
 			"close": "Chiudi",
 			"remove_this_annotation": "Rimuovi questa annotazione",
-			"thinking": "Sto pensando…"
+			"thinking": "Sto pensando…",
+			"question_label": "La tua domanda su questa critica"
 		},
 		composer: {
 			"add_screens": "Aggiungi schermate",
+			"add_screenshots_or_paste_a_link_first": "Prima aggiungi degli screenshot o incolla un link",
 			"clear_all": "Cancella tutto",
-			"critique_this_flow_count_screens": "Critique this flow · {{count}} screens",
+			"critique_this_flow_count_screens_one": "Critica questo flusso · {{count}} schermata",
+			"critique_this_flow_count_screens_many": "Critica questo flusso · {{count}} schermate",
+			"critique_this_flow_count_screens_other": "Critica questo flusso · {{count}} schermate",
 			"critique_this_screen": "Critique this screen",
 			"drop_screenshots_or_click_to_browse": "Trascina gli screenshot — o clicca per sfogliare",
+			"fix_my_access": "Sistema il mio accesso",
 			"fix_the_link": "Correggi il link",
+			"hide_access_steps": "Nascondi i passaggi di accesso",
 			"move_earlier": "Sposta prima",
 			"move_later": "Sposta dopo",
 			"one_screen_or_several_in_order_for_a_flow_png_jp": "una schermata, o più in sequenza per un flusso · PNG, JPG, WebP",
 			"remove": "Rimuovi",
+			"remove_name": "Rimuovi {{name}}",
 			"send_screenshots": "Invia gli screenshot",
+			"start_the_critique": "Avvia la critica",
+			"step_n": "Passo {{n}}",
 			"try_again": "Riprova",
 			"unrecognised": "Unrecognised",
-			"use_a_local_folder_instead": "Usa invece una cartella locale"
+			"use_a_local_folder_instead": "Usa invece una cartella locale",
+			"start_kind_figma": "Critica il file Figma",
+			"start_kind_repo": "Critica il repository",
+			"start_kind_local": "Critica il codice locale",
+			"start_kind_url": "Critica l’app in esecuzione",
+			"start_this": "Critica questo",
+			"start_plain": "Critica",
+			"staged_one_hint": "1 schermata · aggiungine un’altra per criticarle come un flusso.",
+			"staged_flow_hint_one": "{{n}} schermata · questo è l’ordine del flusso — riordina o rimuovi prima di iniziare.",
+			"staged_flow_hint_many": "{{n}} schermate · questo è l’ordine del flusso — riordina o rimuovi prima di iniziare.",
+			"staged_flow_hint_other": "{{n}} schermate · questo è l’ordine del flusso — riordina o rimuovi prima di iniziare.",
+			"title_blocked": "Non sono riuscito a entrare",
+			"title_ask": "Cosa devo criticare?",
+			"link_placeholder_staged": "Sto usando i tuoi screenshot — rimuovili per criticare un link",
+			"link_placeholder": "Link Figma · repository git · una cartella su questo computer · un URL in esecuzione (localhost o un’anteprima distribuita)",
+			"link_label": "Link da criticare",
+			"render_before_judging": "Eseguo il rendering di tutto prima di giudicarlo, mai solo dal codice. Se la tua app è già in esecuzione, incolla il suo URL e potrò misurare colori e dimensioni reali invece di stimarli."
 		},
 		constants: {
 			"blocked_figma_app_missing_hint": "Apri il file in Figma desktop e riprova, oppure esporta i frame come PNG e trascinali qui.",
@@ -1094,28 +1687,36 @@ var CATALOGS = {
 		designCritiquePage: {
 			"a_critique_is_still_running_click_to_watch_it": "Una critica è ancora in corso — clicca per seguirla",
 			"across_the_flow": "In tutto il flusso",
+			"click_to_enlarge": "Fai clic per ingrandire",
 			"close_esc": "Chiudi (Esc)",
 			"couldn_t_see": "Non ho potuto vedere",
 			"couldn_t_tell_what_that_is_give_me_a_figma_link": "Non sono riuscito a capire cosa sia. Dammi un link Figma, un repository GitHub/GitLab/Bitbucket, un percorso locale assoluto o un URL già in esecuzione.",
 			"critique_ready": "critica pronta",
+			"critique_untitled": "Critica",
 			"design_critique": "Design Critique",
 			"enlarge": "Ingrandisci",
 			"full_size": "dimensione reale",
 			"full_size_view": "Vista a dimensione reale",
+			"history_count": "Cronologia ({{n}})",
 			"i_got_in_but_there_s_nothing_in_there_i_can": "Sono entrato, ma lì dentro non c’è niente che io possa renderizzare. Mandami piuttosto degli screenshot.",
 			"new": "Nuova",
 			"no_screens_to_show_the_critic_couldn_t_get_pixel": "Nessuna schermata da mostrare — il critico non è riuscito a ottenere i pixel per questa. Vedi “Non ho potuto vedere” nel pannello.",
 			"nothing_major": "niente di grave",
+			"numbered_pins_mark_issues_on_this_screen": "i segnaposto numerati indicano i problemi di questa schermata",
 			"on_screen": "● sulla schermata",
 			"only_added_the_first_room_the_limit_is_max_screens": "Aggiunte solo le prime {{room}} — il limite è di {{max}} schermate.",
+			"pick_a_step_above": "scegli un passo qui sopra",
 			"point_me_at_a_running_url": "Indicami un URL attivo",
 			"point_me_at_a_screen_or_a_whole_flow_and_i_ll_re": "Indicami una schermata — o un intero flusso — e la leggerò come farebbe un amico designer: cosa funziona, cosa rifinire e perché.",
 			"running": "in esecuzione",
+			"screen_heading": "Schermata",
+			"screens_in_order": "Schermate in ordine",
 			"see_an_example": "Guarda un esempio",
 			"send_screenshots": "Invia gli screenshot",
 			"show_this_screen": "Mostra questa schermata",
 			"something_went_wrong": "something went wrong",
 			"start_a_new_critique_anything_already_running_ke": "Avvia una nuova critica — quelle già in corso proseguono",
+			"step_n": "Passo {{n}}",
 			"still_working_on_this_one_it_s_kept_running_come": "Still working on this one. It’s kept running — come back in a minute.",
 			"still_working_on_this_one_it_s_kept_running_come_2": "Still working on this one. It’s kept running — come back to this page in a minute and it’ll pick up where it left off.",
 			"switch_critique": "Cambia critica",
@@ -1128,12 +1729,50 @@ var CATALOGS = {
 			"what_s_working": "Cosa funziona",
 			"what_you_ll_get": "Cosa otterrai",
 			"your_critiques": "Le tue critiche",
-			"your_question_click_to_see_the_answer": "La tua domanda — clicca per vedere la risposta"
+			"your_question_click_to_see_the_answer": "La tua domanda — clicca per vedere la risposta",
+			"rail_uploading": "Caricamento…",
+			"rail_reading": "Lettura del tuo design…",
+			"rail_flow_one": "Un flusso di {{n}} schermata — controllerò anche i passaggi tra loro.",
+			"rail_flow_many": "Un flusso di {{n}} schermate — controllerò anche i passaggi tra loro.",
+			"rail_flow_other": "Un flusso di {{n}} schermate — controllerò anche i passaggi tra loro.",
+			"rail_one_screen": "Una schermata.",
+			"rail_pending_figma": "Un file Figma — lo renderizzo prima di giudicarlo.",
+			"rail_pending_repo": "Un repository — lo renderizzo prima di giudicarlo.",
+			"rail_pending_local": "Codice locale — lo renderizzo prima di giudicarlo.",
+			"rail_pending_url": "Un’app in esecuzione — la renderizzo prima di giudicarla.",
+			"rail_pending_design": "Un design — lo renderizzo prima di giudicarlo.",
+			"rail_getting_ready": "Preparo le schermate.",
+			"critique_ready_fallback": "Critica pronta",
+			"ask_too_long": "Ci è voluto troppo — chiedi di nuovo.",
+			"ask_went_wrong": "Qualcosa è andato storto.",
+			"entry_meta_screens_one": "{{n}} schermata · {{when}}",
+			"entry_meta_screens_many": "{{n}} schermate · {{when}}",
+			"entry_meta_screens_other": "{{n}} schermate · {{when}}",
+			"findings_count_one": "{{n}} osservazione",
+			"findings_count_many": "{{n}} osservazioni",
+			"findings_count_other": "{{n}} osservazioni",
+			"nothing_flagged": "niente da segnalare",
+			"design_critique_fallback": "Critica del design",
+			"flow_screens_count_one": "{{n}} schermata",
+			"flow_screens_count_many": "{{n}} schermate",
+			"flow_screens_count_other": "{{n}} schermate",
+			"screen_n": "Schermata {{n}}",
+			"get_overall_read": "Una valutazione complessiva di come va",
+			"get_whats_working": "Cosa funziona, così resiste al prossimo giro",
+			"get_top_things": "Le cose principali da sistemare, con segnaposti sulla schermata",
+			"no_critiques_narrow": "Ancora nessuna critica. Trascina uno screenshot qui sotto.",
+			"no_critiques_wide": "Ancora nessuna critica. Trascina uno screenshot nel pannello →",
+			"the_design_alt": "Il design"
 		},
 		findingRow: {
 			"based_on": "Basato su",
+			"finding": "Rilievo",
+			"fix": "Correzione",
+			"suggestion": "Suggerimento",
 			"what_i_saw": "Cosa ho visto",
-			"where": "Dove"
+			"where": "Dove",
+			"steps_range": "passi {{range}}",
+			"flow_badge": "flusso"
 		},
 		manifest: {
 			"description": "Una critica di design da fare prima di chiederla a un collega. Dagli uno screenshot, un intero flusso su più schermate, un file Figma, un repo git o un URL già in servizio: individua le schermate candidate, ti lascia scegliere cosa guardare e poi riferisce come farebbe un designer esperto: una lettura d’insieme, ciò che funziona e le cose da stringere, ognuna legata a un’euristica indicata per nome. I flussi su più schermate ricevono anche rilievi trasversali che una singola schermata non può mostrare — comandi incoerenti, avanzamento assente, nessuna via di ritorno, vicoli ciechi. Prima di giudicarli rende il codice e Figma, così non critica mai elementi visivi che non ha davvero visto, e dice chiaramente a quali schermate non è riuscito ad arrivare invece di tirare a indovinare.",
@@ -1151,7 +1790,9 @@ var CATALOGS = {
 			"configuration_1": "Trascina screenshot per una revisione senza configurazione oppure fornisci un file Figma, un repository, una cartella locale o un URL già attivo; le fonti GitHub private possono richiedere gh auth login."
 		},
 		scopingPicker: {
-			"critique_this_flow_count_screens": "Critique this flow · {{count}} screens",
+			"critique_this_flow_count_screens_one": "Critica questo flusso · {{count}} schermata",
+			"critique_this_flow_count_screens_many": "Critica questo flusso · {{count}} schermate",
+			"critique_this_flow_count_screens_other": "Critica questo flusso · {{count}} schermate",
 			"critique_this_screen": "Critique this screen",
 			"drag_to_reorder": "Trascina per riordinare",
 			"move_earlier": "Sposta prima",
@@ -1162,19 +1803,47 @@ var CATALOGS = {
 			"screens": "Schermate",
 			"start_over": "Ricomincia",
 			"suggested_flows": "Flussi suggeriti",
-			"what_should_i_audit": "Cosa devo esaminare?"
+			"what_should_i_audit": "Cosa devo esaminare?",
+			"screens_found_count_one": "{{n}} schermata trovata · {{m}} che posso renderizzare",
+			"screens_found_count_many": "{{n}} schermate trovate · {{m}} che posso renderizzare",
+			"screens_found_count_other": "{{n}} schermate trovate · {{m}} che posso renderizzare",
+			"flow_n": "Flusso {{n}}",
+			"picked_count_one": "{{n}} scelta",
+			"picked_count_many": "{{n}} scelte",
+			"picked_count_other": "{{n}} scelte",
+			"hint_order": "I numeri sono l’ordine in cui le percorro — trascina una riga per riordinare, o usa ‹ › dalla tastiera.",
+			"hint_pick": "Fai clic su una schermata per sceglierla. Scegline più di una per criticarle come un flusso.",
+			"cant_render_title": "Questa non riesco a renderizzarla",
+			"cant_render_short": "non renderizzabile",
+			"group_fallback": "Schermate",
+			"tag_from_links": "Dai link",
+			"tag_guess": "Ipotesi"
 		},
 		utils: {
-			"i_ll_capture_it_and_measure_real_contrast_and_si": "I’ll capture it and measure real contrast and sizes.",
-			"i_ll_clone_it_and_list_the_screens_only_pages_th": "I’ll clone it and list the screens. Only pages that render without a server can be seen.",
-			"i_ll_list_the_screens_only_pages_that_render_wit": "I’ll list the screens. Only pages that render without a server can be seen.",
+			"i_ll_capture_it_and_measure_real_contrast_and_si": "La catturerò e misurerò contrasto e dimensioni reali.",
+			"i_ll_clone_it_and_list_the_screens_only_pages_th": "Lo clonerò ed elencherò le schermate. Sono visibili solo le pagine che si renderizzano senza server.",
+			"i_ll_list_the_screens_only_pages_that_render_wit": "Elencherò le schermate. Sono visibili solo le pagine che si renderizzano senza server.",
 			"i_ll_pull_the_frames": "I’ll pull the frames.",
-			"it_must_be_running_right_now_i_ll_capture_it_liv": "it must be running right now. I’ll capture it live and measure real contrast and sizes.",
-			"not_something_i_recognise_give_me_a_figma_link_a": "Not something I recognise. Give me a Figma link, a GitHub repo, an absolute local path, or a URL that’s already serving."
+			"it_must_be_running_right_now_i_ll_capture_it_liv": "deve essere in esecuzione adesso. La catturerò dal vivo e misurerò contrasto e dimensioni reali.",
+			"not_something_i_recognise_give_me_a_figma_link_a": "Non lo riconosco. Dammi un link Figma, un repository GitHub, un percorso locale assoluto o un URL già servito.",
+			"screen_fallback": "Schermata"
 		},
 		waitingScreen: {
 			"cancel_this_run": "Annulla questa esecuzione",
-			"stop_this_run_and_discard_it": "Arresta questa esecuzione e scartala"
+			"stop_this_run_and_discard_it": "Arresta questa esecuzione e scartala",
+			"getting_screens_ready": "Preparo le schermate…",
+			"title_scanning": "Cerco schermate da esaminare",
+			"title_uploading_screens_one": "Caricamento di {{n}} schermata…",
+			"title_uploading_screens_many": "Caricamento di {{n}} schermate…",
+			"title_uploading_screens_other": "Caricamento di {{n}} schermate…",
+			"title_uploading_one": "Caricamento del tuo screenshot…",
+			"title_reading_flow_one": "Leggo il tuo flusso · {{n}} schermata",
+			"title_reading_flow_many": "Leggo il tuo flusso · {{n}} schermate",
+			"title_reading_flow_other": "Leggo il tuo flusso · {{n}} schermate",
+			"title_reading_screen": "Leggo la tua schermata",
+			"title_getting_pixels": "Prima ottengo pixel reali",
+			"foot_still_going": "Ancora in corso — un flusso denso può richiedere un paio di minuti. Puoi uscire dalla pagina; la critica continua e sarà qui quando torni.",
+			"foot_navigate_away": "Puoi uscire dalla pagina — la critica continua."
 		},
 		common: {
 			"send_failed": "Invio non riuscito",
@@ -1191,23 +1860,44 @@ var CATALOGS = {
 			"ask_about_this": "この件について質問する",
 			"close": "閉じる",
 			"remove_this_annotation": "このアノテーションを削除",
-			"thinking": "考え中…"
+			"thinking": "考え中…",
+			"question_label": "この批評についての質問"
 		},
 		composer: {
 			"add_screens": "スクリーンを追加",
+			"add_screenshots_or_paste_a_link_first": "先にスクリーンショットを追加するか、リンクを貼り付けてください",
 			"clear_all": "すべてクリア",
-			"critique_this_flow_count_screens": "Critique this flow · {{count}} screens",
+			"critique_this_flow_count_screens_other": "このフローを批評 · スクリーン {{count}} 件",
 			"critique_this_screen": "Critique this screen",
 			"drop_screenshots_or_click_to_browse": "スクリーンショットをドラッグするか、クリックして参照",
+			"fix_my_access": "アクセスを修正",
 			"fix_the_link": "リンクを修正",
+			"hide_access_steps": "アクセス手順を隠す",
 			"move_earlier": "前に移動",
 			"move_later": "後に移動",
 			"one_screen_or_several_in_order_for_a_flow_png_jp": "1つのスクリーン、またはフローの順序で複数 · PNG、JPG、WebP",
 			"remove": "削除",
+			"remove_name": "{{name}} を削除",
 			"send_screenshots": "スクリーンショットを送信",
+			"start_the_critique": "批評を開始",
+			"step_n": "ステップ {{n}}",
 			"try_again": "もう一度試す",
 			"unrecognised": "Unrecognised",
-			"use_a_local_folder_instead": "代わりにローカルフォルダーを使用"
+			"use_a_local_folder_instead": "代わりにローカルフォルダーを使用",
+			"start_kind_figma": "Figma ファイルを批評",
+			"start_kind_repo": "リポジトリを批評",
+			"start_kind_local": "ローカルのコードを批評",
+			"start_kind_url": "実行中のアプリを批評",
+			"start_this": "これを批評",
+			"start_plain": "批評",
+			"staged_one_hint": "1 画面 · もう 1 つ追加するとフローとして批評できます。",
+			"staged_flow_hint_other": "{{n}} 画面 · この順番がフローの順番です。開始前に並べ替えるか削除してください。",
+			"title_blocked": "中に入れませんでした",
+			"title_ask": "何を批評しますか？",
+			"link_placeholder_staged": "スクリーンショットを使用中です。リンクを批評するにはスクリーンショットを削除してください",
+			"link_placeholder": "Figma リンク · git リポジトリ · このマシン上のフォルダー · 実行中の URL（localhost またはデプロイ済みのプレビュー）",
+			"link_label": "批評するリンク",
+			"render_before_judging": "判断する前にすべてをレンダリングします。コードだけで判断することはありません。アプリがすでに動いている場合は URL を貼り付けてください。色やサイズを推測せず実測できます。"
 		},
 		constants: {
 			"blocked_figma_app_missing_hint": "Figmaデスクトップでファイルを開いてもう一度試すか、フレームをPNGとしてエクスポートしてここにドラッグしてください。",
@@ -1254,28 +1944,36 @@ var CATALOGS = {
 		designCritiquePage: {
 			"a_critique_is_still_running_click_to_watch_it": "批評実行中 — クリックして監視",
 			"across_the_flow": "フロー全体",
+			"click_to_enlarge": "クリックして拡大",
 			"close_esc": "閉じる (Esc)",
 			"couldn_t_see": "表示できませんでした",
 			"couldn_t_tell_what_that_is_give_me_a_figma_link": "これが何か判別できませんでした。Figma のリンク、GitHub/GitLab/Bitbucket のリポジトリ、ローカルの絶対パス、または配信中の URL を指定してください。",
 			"critique_ready": "批評完了",
+			"critique_untitled": "批評",
 			"design_critique": "Design Critique",
 			"enlarge": "拡大",
 			"full_size": "実際のサイズ",
 			"full_size_view": "実際のサイズで表示",
+			"history_count": "履歴（{{n}}）",
 			"i_got_in_but_there_s_nothing_in_there_i_can": "入れましたが、そこにはレンダリングできるものが何もありません。代わりにスクリーンショットをドロップしてください。",
 			"new": "新規",
 			"no_screens_to_show_the_critic_couldn_t_get_pixel": "表示するスクリーンなし — 批評家はこれのピクセルを取得できませんでした。パネルの「表示できませんでした」を参照してください。",
 			"nothing_major": "特に問題なし",
+			"numbered_pins_mark_issues_on_this_screen": "番号付きのピンはこのスクリーンの問題を示します",
 			"on_screen": "● 画面上",
 			"only_added_the_first_room_the_limit_is_max_screens": "最初の {{room}} 枚のみ追加しました — 上限は {{max}} 枚です。",
+			"pick_a_step_above": "上でステップを選んでください",
 			"point_me_at_a_running_url": "実行中のURLを指定",
 			"point_me_at_a_screen_or_a_whole_flow_and_i_ll_re": "スクリーン、またはフロー全体を指定してください — デザイナーの友人として読みます。動作している内容、改善点、理由を示します。",
 			"running": "実行中",
+			"screen_heading": "スクリーン",
+			"screens_in_order": "順番どおりのスクリーン",
 			"see_an_example": "例を見る",
 			"send_screenshots": "スクリーンショットを送信",
 			"show_this_screen": "このスクリーンを表示",
 			"something_went_wrong": "something went wrong",
 			"start_a_new_critique_anything_already_running_ke": "新しい批評を開始 — 既に実行されているものは継続",
+			"step_n": "ステップ {{n}}",
 			"still_working_on_this_one_it_s_kept_running_come": "Still working on this one. It’s kept running — come back in a minute.",
 			"still_working_on_this_one_it_s_kept_running_come_2": "Still working on this one. It’s kept running — come back to this page in a minute and it’ll pick up where it left off.",
 			"switch_critique": "批評を切り替え",
@@ -1288,12 +1986,42 @@ var CATALOGS = {
 			"what_s_working": "動作している点",
 			"what_you_ll_get": "得られるもの",
 			"your_critiques": "あなたの批評",
-			"your_question_click_to_see_the_answer": "あなたの質問 — クリックして答えを表示"
+			"your_question_click_to_see_the_answer": "あなたの質問 — クリックして答えを表示",
+			"rail_uploading": "アップロード中…",
+			"rail_reading": "デザインを読み込み中…",
+			"rail_flow_other": "{{n}} 画面のフロー — 画面間の移り変わりも確認します。",
+			"rail_one_screen": "1 画面。",
+			"rail_pending_figma": "Figma ファイル — 判断する前にレンダリングしています。",
+			"rail_pending_repo": "リポジトリ — 判断する前にレンダリングしています。",
+			"rail_pending_local": "ローカルのコード — 判断する前にレンダリングしています。",
+			"rail_pending_url": "実行中のアプリ — 判断する前にレンダリングしています。",
+			"rail_pending_design": "デザイン — 判断する前にレンダリングしています。",
+			"rail_getting_ready": "画面を準備しています。",
+			"critique_ready_fallback": "講評の準備ができました",
+			"ask_too_long": "時間がかかりすぎました — もう一度質問してください。",
+			"ask_went_wrong": "問題が発生しました。",
+			"entry_meta_screens_other": "{{n}} 画面 · {{when}}",
+			"findings_count_other": "指摘 {{n}} 件",
+			"nothing_flagged": "指摘なし",
+			"design_critique_fallback": "デザイン講評",
+			"flow_screens_count_other": "{{n}} 画面",
+			"screen_n": "画面 {{n}}",
+			"get_overall_read": "全体としての出来ばえの評価",
+			"get_whats_working": "うまくいっている点 (次の修正でも残すために)",
+			"get_top_things": "直すべき主な点 (画面上のピン付き)",
+			"no_critiques_narrow": "まだ講評はありません。下にスクリーンショットをドロップしてください。",
+			"no_critiques_wide": "まだ講評はありません。パネルにスクリーンショットをドロップしてください →",
+			"the_design_alt": "デザイン"
 		},
 		findingRow: {
 			"based_on": "基づく",
+			"finding": "指摘",
+			"fix": "修正",
+			"suggestion": "提案",
 			"what_i_saw": "見たこと",
-			"where": "場所"
+			"where": "場所",
+			"steps_range": "ステップ {{range}}",
+			"flow_badge": "フロー"
 		},
 		manifest: {
 			"use_case_1": "1 画面または製品フロー全体を、表示領域に紐づく重要度順のヒューリスティックベースの指摘で評価します。",
@@ -1311,7 +2039,7 @@ var CATALOGS = {
 			"page_label": "Design Critique"
 		},
 		scopingPicker: {
-			"critique_this_flow_count_screens": "Critique this flow · {{count}} screens",
+			"critique_this_flow_count_screens_other": "このフローを批評 · スクリーン {{count}} 件",
 			"critique_this_screen": "Critique this screen",
 			"drag_to_reorder": "ドラッグして並び替え",
 			"move_earlier": "前に移動",
@@ -1322,19 +2050,39 @@ var CATALOGS = {
 			"screens": "スクリーン",
 			"start_over": "始め直す",
 			"suggested_flows": "提案されたフロー",
-			"what_should_i_audit": "何を監査すべきですか？"
+			"what_should_i_audit": "何を監査すべきですか？",
+			"screens_found_count_other": "{{n}} 画面を検出 · 描画できるのは {{m}} 画面",
+			"flow_n": "フロー {{n}}",
+			"picked_count_other": "{{n}} 件選択",
+			"hint_order": "番号は確認する順番です — 行をドラッグして並べ替えるか、キーボードの ‹ › を使ってください。",
+			"hint_pick": "画面をクリックして選択します。複数選ぶとフローとして講評します。",
+			"cant_render_title": "この画面は描画できません",
+			"cant_render_short": "描画不可",
+			"group_fallback": "画面",
+			"tag_from_links": "リンクから",
+			"tag_guess": "推測"
 		},
 		utils: {
-			"i_ll_capture_it_and_measure_real_contrast_and_si": "I’ll capture it and measure real contrast and sizes.",
-			"i_ll_clone_it_and_list_the_screens_only_pages_th": "I’ll clone it and list the screens. Only pages that render without a server can be seen.",
-			"i_ll_list_the_screens_only_pages_that_render_wit": "I’ll list the screens. Only pages that render without a server can be seen.",
+			"i_ll_capture_it_and_measure_real_contrast_and_si": "キャプチャして実際のコントラストとサイズを測定します。",
+			"i_ll_clone_it_and_list_the_screens_only_pages_th": "クローンして画面を一覧にします。サーバーなしで表示できるページだけが見えます。",
+			"i_ll_list_the_screens_only_pages_that_render_wit": "画面を一覧にします。サーバーなしで表示できるページだけが見えます。",
 			"i_ll_pull_the_frames": "I’ll pull the frames.",
-			"it_must_be_running_right_now_i_ll_capture_it_liv": "it must be running right now. I’ll capture it live and measure real contrast and sizes.",
-			"not_something_i_recognise_give_me_a_figma_link_a": "Not something I recognise. Give me a Figma link, a GitHub repo, an absolute local path, or a URL that’s already serving."
+			"it_must_be_running_right_now_i_ll_capture_it_liv": "今まさに動いている必要があります。ライブでキャプチャして、実際のコントラストとサイズを測定します。",
+			"not_something_i_recognise_give_me_a_figma_link_a": "認識できません。Figma リンク、GitHub リポジトリ、ローカルの絶対パス、または配信中の URL を指定してください。",
+			"screen_fallback": "画面"
 		},
 		waitingScreen: {
 			"cancel_this_run": "このランをキャンセル",
-			"stop_this_run_and_discard_it": "このランを停止して破棄"
+			"stop_this_run_and_discard_it": "このランを停止して破棄",
+			"getting_screens_ready": "画面を準備しています…",
+			"title_scanning": "監査する画面を探しています",
+			"title_uploading_screens_other": "{{n}} 画面をアップロード中…",
+			"title_uploading_one": "スクリーンショットをアップロード中…",
+			"title_reading_flow_other": "フローを読み込み中 · {{n}} 画面",
+			"title_reading_screen": "画面を読み込み中",
+			"title_getting_pixels": "まず実際のピクセルを取得しています",
+			"foot_still_going": "まだ処理中です — 画面の多いフローは数分かかることがあります。このページを離れても講評は続き、戻ったときに表示されます。",
+			"foot_navigate_away": "このページを離れても講評は続きます。"
 		},
 		common: {
 			"send_failed": "送信に失敗しました",
@@ -1351,23 +2099,44 @@ var CATALOGS = {
 			"ask_about_this": "이 부분에 대해 질문하기",
 			"close": "닫기",
 			"remove_this_annotation": "이 주석 삭제",
-			"thinking": "생각하는 중…"
+			"thinking": "생각하는 중…",
+			"question_label": "이 비평에 대한 질문"
 		},
 		composer: {
 			"add_screens": "화면 추가",
+			"add_screenshots_or_paste_a_link_first": "먼저 스크린샷을 추가하거나 링크를 붙여넣으세요",
 			"clear_all": "모두 지우기",
-			"critique_this_flow_count_screens": "Critique this flow · {{count}} screens",
+			"critique_this_flow_count_screens_other": "이 플로 비평 · 화면 {{count}}개",
 			"critique_this_screen": "Critique this screen",
 			"drop_screenshots_or_click_to_browse": "스크린샷을 끌어다 놓거나 클릭해서 찾아보세요",
+			"fix_my_access": "내 액세스 수정",
 			"fix_the_link": "링크 수정",
+			"hide_access_steps": "액세스 단계 숨기기",
 			"move_earlier": "앞으로 이동",
 			"move_later": "뒤로 이동",
 			"one_screen_or_several_in_order_for_a_flow_png_jp": "화면 하나, 또는 플로 순서대로 여러 개 · PNG, JPG, WebP",
 			"remove": "삭제",
+			"remove_name": "{{name}} 삭제",
 			"send_screenshots": "스크린샷 보내기",
+			"start_the_critique": "비평 시작",
+			"step_n": "{{n}}단계",
 			"try_again": "다시 시도",
 			"unrecognised": "Unrecognised",
-			"use_a_local_folder_instead": "대신 로컬 폴더 사용"
+			"use_a_local_folder_instead": "대신 로컬 폴더 사용",
+			"start_kind_figma": "Figma 파일 비평",
+			"start_kind_repo": "저장소 비평",
+			"start_kind_local": "로컬 코드 비평",
+			"start_kind_url": "실행 중인 앱 비평",
+			"start_this": "이것 비평",
+			"start_plain": "비평",
+			"staged_one_hint": "화면 1개 · 하나를 더 추가하면 흐름으로 비평할 수 있습니다.",
+			"staged_flow_hint_other": "화면 {{n}}개 · 이 순서가 흐름 순서입니다. 시작하기 전에 순서를 바꾸거나 제거하세요.",
+			"title_blocked": "들어갈 수 없었습니다",
+			"title_ask": "무엇을 비평할까요?",
+			"link_placeholder_staged": "스크린샷을 사용하는 중입니다. 링크를 비평하려면 스크린샷을 지우세요",
+			"link_placeholder": "Figma 링크 · git 저장소 · 이 컴퓨터의 폴더 · 실행 중인 URL(localhost 또는 배포된 미리 보기)",
+			"link_label": "비평할 링크",
+			"render_before_judging": "판단하기 전에 모든 것을 렌더링합니다. 코드만 보고 판단하지 않습니다. 앱이 이미 실행 중이면 URL을 붙여 넣으세요. 색상과 크기를 추정하지 않고 실제로 측정할 수 있습니다."
 		},
 		constants: {
 			"blocked_figma_app_missing_hint": "Figma 데스크톱에서 파일을 열고 다시 시도하거나, 프레임을 PNG로 내보내 여기에 끌어다 놓으세요.",
@@ -1414,28 +2183,36 @@ var CATALOGS = {
 		designCritiquePage: {
 			"a_critique_is_still_running_click_to_watch_it": "비평이 아직 실행 중입니다 — 클릭해서 지켜보세요",
 			"across_the_flow": "플로 전반",
+			"click_to_enlarge": "클릭하여 확대",
 			"close_esc": "닫기 (Esc)",
 			"couldn_t_see": "볼 수 없었던 것",
 			"couldn_t_tell_what_that_is_give_me_a_figma_link": "이것이 무엇인지 알 수 없습니다. Figma 링크, GitHub/GitLab/Bitbucket 저장소, 절대 로컬 경로 또는 이미 서비스 중인 URL을 알려주세요.",
 			"critique_ready": "비평 완료",
+			"critique_untitled": "비평",
 			"design_critique": "Design Critique",
 			"enlarge": "확대",
 			"full_size": "실제 크기",
 			"full_size_view": "실제 크기로 보기",
+			"history_count": "기록 ({{n}})",
 			"i_got_in_but_there_s_nothing_in_there_i_can": "들어가긴 했는데, 그 안에 제가 렌더링할 수 있는 게 없네요. 대신 스크린샷을 드롭해 주세요.",
 			"new": "새로 만들기",
 			"no_screens_to_show_the_critic_couldn_t_get_pixel": "표시할 화면이 없습니다 — 이 항목의 픽셀을 가져오지 못했습니다. 패널의 ‘볼 수 없었던 것’을 확인하세요.",
 			"nothing_major": "큰 문제 없음",
+			"numbered_pins_mark_issues_on_this_screen": "번호 핀은 이 화면의 문제를 표시합니다",
 			"on_screen": "● 화면 내",
 			"only_added_the_first_room_the_limit_is_max_screens": "처음 {{room}}장만 추가했습니다 — 상한은 {{max}}장입니다.",
+			"pick_a_step_above": "위에서 단계를 선택하세요",
 			"point_me_at_a_running_url": "실행 중인 URL 알려 주기",
 			"point_me_at_a_screen_or_a_whole_flow_and_i_ll_re": "화면 하나, 또는 플로 전체를 알려 주세요 — 디자이너 친구처럼 읽어 드립니다. 잘 되고 있는 점, 다듬을 점, 그리고 그 이유까지.",
 			"running": "실행 중",
+			"screen_heading": "화면",
+			"screens_in_order": "순서대로 본 화면",
 			"see_an_example": "예시 보기",
 			"send_screenshots": "스크린샷 보내기",
 			"show_this_screen": "이 화면 표시",
 			"something_went_wrong": "something went wrong",
 			"start_a_new_critique_anything_already_running_ke": "새 비평 시작 — 이미 실행 중인 작업은 계속됩니다",
+			"step_n": "{{n}}단계",
 			"still_working_on_this_one_it_s_kept_running_come": "Still working on this one. It’s kept running — come back in a minute.",
 			"still_working_on_this_one_it_s_kept_running_come_2": "Still working on this one. It’s kept running — come back to this page in a minute and it’ll pick up where it left off.",
 			"switch_critique": "비평 전환",
@@ -1448,12 +2225,42 @@ var CATALOGS = {
 			"what_s_working": "잘 되고 있는 점",
 			"what_you_ll_get": "받게 될 내용",
 			"your_critiques": "내 비평",
-			"your_question_click_to_see_the_answer": "내 질문 — 클릭하면 답변이 표시됩니다"
+			"your_question_click_to_see_the_answer": "내 질문 — 클릭하면 답변이 표시됩니다",
+			"rail_uploading": "업로드 중…",
+			"rail_reading": "디자인을 읽는 중…",
+			"rail_flow_other": "화면 {{n}}개의 흐름 — 화면 사이의 전환도 확인합니다.",
+			"rail_one_screen": "화면 1개.",
+			"rail_pending_figma": "Figma 파일 — 판단하기 전에 렌더링하는 중입니다.",
+			"rail_pending_repo": "저장소 — 판단하기 전에 렌더링하는 중입니다.",
+			"rail_pending_local": "로컬 코드 — 판단하기 전에 렌더링하는 중입니다.",
+			"rail_pending_url": "실행 중인 앱 — 판단하기 전에 렌더링하는 중입니다.",
+			"rail_pending_design": "디자인 — 판단하기 전에 렌더링하는 중입니다.",
+			"rail_getting_ready": "화면을 준비하는 중입니다.",
+			"critique_ready_fallback": "비평 준비됨",
+			"ask_too_long": "너무 오래 걸렸습니다 — 다시 물어보세요.",
+			"ask_went_wrong": "문제가 발생했습니다.",
+			"entry_meta_screens_other": "화면 {{n}}개 · {{when}}",
+			"findings_count_other": "지적 {{n}}건",
+			"nothing_flagged": "지적 없음",
+			"design_critique_fallback": "디자인 비평",
+			"flow_screens_count_other": "화면 {{n}}개",
+			"screen_n": "화면 {{n}}",
+			"get_overall_read": "전반적인 상태에 대한 평가",
+			"get_whats_working": "잘 되는 점 (다음 수정에서도 살리도록)",
+			"get_top_things": "다듬을 주요 사항 (화면에 핀 표시)",
+			"no_critiques_narrow": "아직 비평이 없습니다. 아래에 스크린샷을 놓으세요.",
+			"no_critiques_wide": "아직 비평이 없습니다. 패널에 스크린샷을 놓으세요 →",
+			"the_design_alt": "디자인"
 		},
 		findingRow: {
 			"based_on": "근거",
+			"finding": "발견 사항",
+			"fix": "수정 방법",
+			"suggestion": "제안",
 			"what_i_saw": "본 내용",
-			"where": "위치"
+			"where": "위치",
+			"steps_range": "{{range}}단계",
+			"flow_badge": "흐름"
 		},
 		manifest: {
 			"use_case_1": "화면 하나 또는 전체 제품 흐름을 보이는 영역과 연결된 심각도순 휴리스틱 기반 결과로 검토합니다.",
@@ -1471,7 +2278,7 @@ var CATALOGS = {
 			"page_label": "Design Critique"
 		},
 		scopingPicker: {
-			"critique_this_flow_count_screens": "Critique this flow · {{count}} screens",
+			"critique_this_flow_count_screens_other": "이 플로 비평 · 화면 {{count}}개",
 			"critique_this_screen": "Critique this screen",
 			"drag_to_reorder": "끌어서 순서 변경",
 			"move_earlier": "앞으로 이동",
@@ -1482,19 +2289,39 @@ var CATALOGS = {
 			"screens": "화면",
 			"start_over": "처음부터 다시",
 			"suggested_flows": "제안된 플로",
-			"what_should_i_audit": "무엇을 점검할까요?"
+			"what_should_i_audit": "무엇을 점검할까요?",
+			"screens_found_count_other": "화면 {{n}}개 발견 · 렌더링 가능 {{m}}개",
+			"flow_n": "흐름 {{n}}",
+			"picked_count_other": "{{n}}개 선택됨",
+			"hint_order": "숫자는 확인할 순서입니다 — 행을 끌어 순서를 바꾸거나 키보드의 ‹ ›를 사용하세요.",
+			"hint_pick": "화면을 클릭해 선택하세요. 여러 개를 고르면 흐름으로 비평합니다.",
+			"cant_render_title": "이 화면은 렌더링할 수 없습니다",
+			"cant_render_short": "렌더링 불가",
+			"group_fallback": "화면",
+			"tag_from_links": "링크 기반",
+			"tag_guess": "추측"
 		},
 		utils: {
-			"i_ll_capture_it_and_measure_real_contrast_and_si": "I’ll capture it and measure real contrast and sizes.",
-			"i_ll_clone_it_and_list_the_screens_only_pages_th": "I’ll clone it and list the screens. Only pages that render without a server can be seen.",
-			"i_ll_list_the_screens_only_pages_that_render_wit": "I’ll list the screens. Only pages that render without a server can be seen.",
+			"i_ll_capture_it_and_measure_real_contrast_and_si": "캡처해서 실제 대비와 크기를 측정합니다.",
+			"i_ll_clone_it_and_list_the_screens_only_pages_th": "복제해서 화면 목록을 만듭니다. 서버 없이 렌더링되는 페이지만 볼 수 있습니다.",
+			"i_ll_list_the_screens_only_pages_that_render_wit": "화면 목록을 만듭니다. 서버 없이 렌더링되는 페이지만 볼 수 있습니다.",
 			"i_ll_pull_the_frames": "I’ll pull the frames.",
-			"it_must_be_running_right_now_i_ll_capture_it_liv": "it must be running right now. I’ll capture it live and measure real contrast and sizes.",
-			"not_something_i_recognise_give_me_a_figma_link_a": "Not something I recognise. Give me a Figma link, a GitHub repo, an absolute local path, or a URL that’s already serving."
+			"it_must_be_running_right_now_i_ll_capture_it_liv": "지금 실행 중이어야 합니다. 실시간으로 캡처해서 실제 대비와 크기를 측정합니다.",
+			"not_something_i_recognise_give_me_a_figma_link_a": "인식할 수 없습니다. Figma 링크, GitHub 저장소, 로컬 절대 경로 또는 이미 서비스 중인 URL을 알려 주세요.",
+			"screen_fallback": "화면"
 		},
 		waitingScreen: {
 			"cancel_this_run": "이 실행 취소",
-			"stop_this_run_and_discard_it": "이 실행을 중지하고 버리기"
+			"stop_this_run_and_discard_it": "이 실행을 중지하고 버리기",
+			"getting_screens_ready": "화면을 준비하는 중…",
+			"title_scanning": "점검할 화면을 찾는 중",
+			"title_uploading_screens_other": "화면 {{n}}개 업로드 중…",
+			"title_uploading_one": "스크린샷 업로드 중…",
+			"title_reading_flow_other": "흐름 읽는 중 · 화면 {{n}}개",
+			"title_reading_screen": "화면 읽는 중",
+			"title_getting_pixels": "먼저 실제 픽셀을 가져오는 중",
+			"foot_still_going": "아직 진행 중입니다 — 화면이 많은 흐름은 몇 분 걸릴 수 있습니다. 이 페이지를 떠나도 비평은 계속되며, 돌아오면 여기에 있습니다.",
+			"foot_navigate_away": "이 페이지를 떠나도 비평은 계속됩니다."
 		},
 		common: {
 			"send_failed": "전송 실패",
@@ -1511,23 +2338,48 @@ var CATALOGS = {
 			"ask_about_this": "Perguntar sobre isto",
 			"close": "Fechar",
 			"remove_this_annotation": "Remover esta anotação",
-			"thinking": "Pensando…"
+			"thinking": "Pensando…",
+			"question_label": "Sua pergunta sobre esta crítica"
 		},
 		composer: {
 			"add_screens": "Adicionar telas",
+			"add_screenshots_or_paste_a_link_first": "Primeiro adicione capturas de tela ou cole um link",
 			"clear_all": "Limpar tudo",
-			"critique_this_flow_count_screens": "Critique this flow · {{count}} screens",
+			"critique_this_flow_count_screens_one": "Criticar este fluxo · {{count}} tela",
+			"critique_this_flow_count_screens_many": "Criticar este fluxo · {{count}} telas",
+			"critique_this_flow_count_screens_other": "Criticar este fluxo · {{count}} telas",
 			"critique_this_screen": "Critique this screen",
 			"drop_screenshots_or_click_to_browse": "Solte as capturas de tela — ou clique para procurar",
+			"fix_my_access": "Corrigir meu acesso",
 			"fix_the_link": "Corrigir o link",
+			"hide_access_steps": "Ocultar as etapas de acesso",
 			"move_earlier": "Mover antes",
 			"move_later": "Mover depois",
 			"one_screen_or_several_in_order_for_a_flow_png_jp": "uma tela, ou várias em ordem para um fluxo · PNG, JPG, WebP",
 			"remove": "Remover",
+			"remove_name": "Remover {{name}}",
 			"send_screenshots": "Enviar capturas de tela",
+			"start_the_critique": "Iniciar a crítica",
+			"step_n": "Etapa {{n}}",
 			"try_again": "Tentar de novo",
 			"unrecognised": "Unrecognised",
-			"use_a_local_folder_instead": "Usar uma pasta local"
+			"use_a_local_folder_instead": "Usar uma pasta local",
+			"start_kind_figma": "Criticar o arquivo do Figma",
+			"start_kind_repo": "Criticar o repositório",
+			"start_kind_local": "Criticar o código local",
+			"start_kind_url": "Criticar o app em execução",
+			"start_this": "Criticar isto",
+			"start_plain": "Criticar",
+			"staged_one_hint": "1 tela · adicione outra para criticá-las como um fluxo.",
+			"staged_flow_hint_one": "{{n}} tela · esta ordem é a ordem do fluxo — reordene ou remova antes de começar.",
+			"staged_flow_hint_many": "{{n}} telas · esta ordem é a ordem do fluxo — reordene ou remova antes de começar.",
+			"staged_flow_hint_other": "{{n}} telas · esta ordem é a ordem do fluxo — reordene ou remova antes de começar.",
+			"title_blocked": "Não consegui entrar",
+			"title_ask": "O que devo criticar?",
+			"link_placeholder_staged": "Usando suas capturas — remova-as para criticar um link",
+			"link_placeholder": "Link do Figma · repositório git · uma pasta nesta máquina · uma URL em execução (localhost ou uma prévia implantada)",
+			"link_label": "Link para criticar",
+			"render_before_judging": "Renderizo tudo antes de julgar — nunca só pelo código. Se o seu app já estiver em execução, cole a URL e poderei medir cores e tamanhos reais em vez de estimá-los."
 		},
 		constants: {
 			"blocked_figma_app_missing_hint": "Abra o arquivo no Figma para desktop e tente novamente, ou exporte os frames como PNGs e solte-os aqui.",
@@ -1574,28 +2426,36 @@ var CATALOGS = {
 		designCritiquePage: {
 			"a_critique_is_still_running_click_to_watch_it": "Uma crítica ainda está em andamento — clique para acompanhar",
 			"across_the_flow": "Ao longo do fluxo",
+			"click_to_enlarge": "Clique para ampliar",
 			"close_esc": "Fechar (Esc)",
 			"couldn_t_see": "Não consegui ver",
 			"couldn_t_tell_what_that_is_give_me_a_figma_link": "Não consegui identificar o que é isso. Envie um link do Figma, um repositório GitHub/GitLab/Bitbucket, um caminho local absoluto ou uma URL que já esteja em execução.",
 			"critique_ready": "crítica pronta",
+			"critique_untitled": "Crítica",
 			"design_critique": "Design Critique",
 			"enlarge": "Ampliar",
 			"full_size": "tamanho real",
 			"full_size_view": "Visualização em tamanho real",
+			"history_count": "Histórico ({{n}})",
 			"i_got_in_but_there_s_nothing_in_there_i_can": "Entrei, mas não há nada lá dentro que eu consiga renderizar. Melhor me mandar capturas de tela.",
 			"new": "Nova",
 			"no_screens_to_show_the_critic_couldn_t_get_pixel": "Nenhuma tela para mostrar — não foi possível capturar os pixels desta. Veja \"Não consegui ver\" no painel.",
 			"nothing_major": "nada grave",
+			"numbered_pins_mark_issues_on_this_screen": "os marcadores numerados indicam problemas nesta tela",
 			"on_screen": "● na tela",
 			"only_added_the_first_room_the_limit_is_max_screens": "Só as primeiras {{room}} foram adicionadas — o limite é de {{max}} telas.",
+			"pick_a_step_above": "escolha uma etapa acima",
 			"point_me_at_a_running_url": "Aponte para uma URL em execução",
 			"point_me_at_a_screen_or_a_whole_flow_and_i_ll_re": "Me mostre uma tela — ou um fluxo inteiro — e eu vou analisá-lo como um amigo designer faria: o que está funcionando, o que ajustar e por quê.",
 			"running": "em andamento",
+			"screen_heading": "Tela",
+			"screens_in_order": "Telas em ordem",
 			"see_an_example": "Ver um exemplo",
 			"send_screenshots": "Enviar capturas de tela",
 			"show_this_screen": "Mostrar esta tela",
 			"something_went_wrong": "something went wrong",
 			"start_a_new_critique_anything_already_running_ke": "Iniciar uma nova crítica — o que já estiver em andamento continua",
+			"step_n": "Etapa {{n}}",
 			"still_working_on_this_one_it_s_kept_running_come": "Ainda estou trabalhando nisso. A análise continua em execução — volte em um minuto.",
 			"still_working_on_this_one_it_s_kept_running_come_2": "Ainda estou trabalhando nisso. A análise continua em execução — volte a esta página em um minuto e ela retomará de onde parou.",
 			"switch_critique": "Trocar de crítica",
@@ -1608,12 +2468,50 @@ var CATALOGS = {
 			"what_s_working": "O que está funcionando",
 			"what_you_ll_get": "O que você vai receber",
 			"your_critiques": "Suas críticas",
-			"your_question_click_to_see_the_answer": "Sua pergunta — clique para ver a resposta"
+			"your_question_click_to_see_the_answer": "Sua pergunta — clique para ver a resposta",
+			"rail_uploading": "Enviando…",
+			"rail_reading": "Lendo o seu design…",
+			"rail_flow_one": "Um fluxo de {{n}} tela — também vou verificar as transições entre elas.",
+			"rail_flow_many": "Um fluxo de {{n}} telas — também vou verificar as transições entre elas.",
+			"rail_flow_other": "Um fluxo de {{n}} telas — também vou verificar as transições entre elas.",
+			"rail_one_screen": "Uma tela.",
+			"rail_pending_figma": "Um arquivo do Figma — renderizando antes de julgar.",
+			"rail_pending_repo": "Um repositório — renderizando antes de julgar.",
+			"rail_pending_local": "Código local — renderizando antes de julgar.",
+			"rail_pending_url": "Um app em execução — renderizando antes de julgar.",
+			"rail_pending_design": "Um design — renderizando antes de julgar.",
+			"rail_getting_ready": "Preparando as telas.",
+			"critique_ready_fallback": "Crítica pronta",
+			"ask_too_long": "Demorou demais — pergunte de novo.",
+			"ask_went_wrong": "Algo deu errado.",
+			"entry_meta_screens_one": "{{n}} tela · {{when}}",
+			"entry_meta_screens_many": "{{n}} telas · {{when}}",
+			"entry_meta_screens_other": "{{n}} telas · {{when}}",
+			"findings_count_one": "{{n}} apontamento",
+			"findings_count_many": "{{n}} apontamentos",
+			"findings_count_other": "{{n}} apontamentos",
+			"nothing_flagged": "nada sinalizado",
+			"design_critique_fallback": "Crítica de design",
+			"flow_screens_count_one": "{{n}} tela",
+			"flow_screens_count_many": "{{n}} telas",
+			"flow_screens_count_other": "{{n}} telas",
+			"screen_n": "Tela {{n}}",
+			"get_overall_read": "Uma leitura geral de como está indo",
+			"get_whats_working": "O que funciona, para sobreviver à próxima rodada",
+			"get_top_things": "Os principais pontos a ajustar, com marcadores na tela",
+			"no_critiques_narrow": "Nenhuma crítica ainda. Solte uma captura abaixo.",
+			"no_critiques_wide": "Nenhuma crítica ainda. Solte uma captura no painel →",
+			"the_design_alt": "O design"
 		},
 		findingRow: {
 			"based_on": "Com base em",
+			"finding": "Achado",
+			"fix": "Correção",
+			"suggestion": "Sugestão",
 			"what_i_saw": "O que eu vi",
-			"where": "Onde"
+			"where": "Onde",
+			"steps_range": "etapas {{range}}",
+			"flow_badge": "fluxo"
 		},
 		manifest: {
 			"description": "Uma crítica de design que você pode rodar antes de pedir a um colega. Dê a ele uma captura de tela, um fluxo inteiro de várias telas, um arquivo do Figma, um repositório git ou uma URL que já esteja servindo, e ele encontra as telas candidatas, deixa você escolher o que examinar e responde como faria um designer experiente: uma leitura geral, o que está funcionando e os pontos que valem um ajuste, cada um ligado a uma heurística nomeada. Fluxos de várias telas também recebem descobertas entre telas que uma tela isolada não revela — controles inconsistentes, falta de indicação de progresso, nenhum caminho de volta, becos sem saída. Ele renderiza código e Figma antes de julgá-los, então nunca critica um visual que não viu de fato, e diz claramente a quais telas não conseguiu chegar, em vez de adivinhar.",
@@ -1631,7 +2529,9 @@ var CATALOGS = {
 			"configuration_1": "Adicione capturas de tela para uma análise sem configuração ou forneça um arquivo do Figma, repositório, pasta local ou URL já em execução; fontes privadas do GitHub podem exigir gh auth login."
 		},
 		scopingPicker: {
-			"critique_this_flow_count_screens": "Critique this flow · {{count}} screens",
+			"critique_this_flow_count_screens_one": "Criticar este fluxo · {{count}} tela",
+			"critique_this_flow_count_screens_many": "Criticar este fluxo · {{count}} telas",
+			"critique_this_flow_count_screens_other": "Criticar este fluxo · {{count}} telas",
 			"critique_this_screen": "Critique this screen",
 			"drag_to_reorder": "Arraste para reordenar",
 			"move_earlier": "Mover antes",
@@ -1642,19 +2542,47 @@ var CATALOGS = {
 			"screens": "Telas",
 			"start_over": "Começar de novo",
 			"suggested_flows": "Fluxos sugeridos",
-			"what_should_i_audit": "O que devo analisar?"
+			"what_should_i_audit": "O que devo analisar?",
+			"screens_found_count_one": "{{n}} tela encontrada · {{m}} que consigo renderizar",
+			"screens_found_count_many": "{{n}} telas encontradas · {{m}} que consigo renderizar",
+			"screens_found_count_other": "{{n}} telas encontradas · {{m}} que consigo renderizar",
+			"flow_n": "Fluxo {{n}}",
+			"picked_count_one": "{{n}} escolhida",
+			"picked_count_many": "{{n}} escolhidas",
+			"picked_count_other": "{{n}} escolhidas",
+			"hint_order": "Os números são a ordem em que vou percorrê-las — arraste uma linha para reordenar ou use ‹ › no teclado.",
+			"hint_pick": "Clique em uma tela para escolhê-la. Escolha várias para criticá-las como um fluxo.",
+			"cant_render_title": "Não consigo renderizar esta",
+			"cant_render_short": "não renderiza",
+			"group_fallback": "Telas",
+			"tag_from_links": "Pelos links",
+			"tag_guess": "Palpite"
 		},
 		utils: {
-			"i_ll_capture_it_and_measure_real_contrast_and_si": "Vou capturá-lo e medir o contraste e os tamanhos reais.",
-			"i_ll_clone_it_and_list_the_screens_only_pages_th": "Vou cloná-lo e listar as telas. Só é possível ver páginas que renderizam sem um servidor.",
-			"i_ll_list_the_screens_only_pages_that_render_wit": "Vou listar as telas. Só é possível ver páginas que renderizam sem um servidor.",
+			"i_ll_capture_it_and_measure_real_contrast_and_si": "Vou capturá-la e medir contraste e tamanhos reais.",
+			"i_ll_clone_it_and_list_the_screens_only_pages_th": "Vou cloná-lo e listar as telas. Só aparecem as páginas que renderizam sem servidor.",
+			"i_ll_list_the_screens_only_pages_that_render_wit": "Vou listar as telas. Só aparecem as páginas que renderizam sem servidor.",
 			"i_ll_pull_the_frames": "Vou buscar os frames.",
-			"it_must_be_running_right_now_i_ll_capture_it_liv": "ele precisa estar em execução agora. Vou capturá-lo ao vivo e medir o contraste e os tamanhos reais.",
-			"not_something_i_recognise_give_me_a_figma_link_a": "Não reconheço isso. Envie um link do Figma, um repositório do GitHub, um caminho local absoluto ou uma URL que já esteja no ar."
+			"it_must_be_running_right_now_i_ll_capture_it_liv": "ela precisa estar em execução agora. Vou capturá-la ao vivo e medir contraste e tamanhos reais.",
+			"not_something_i_recognise_give_me_a_figma_link_a": "Não reconheço isso. Envie um link do Figma, um repositório do GitHub, um caminho local absoluto ou uma URL que já esteja no ar.",
+			"screen_fallback": "Tela"
 		},
 		waitingScreen: {
 			"cancel_this_run": "Cancelar esta execução",
-			"stop_this_run_and_discard_it": "Parar esta execução e descartá-la"
+			"stop_this_run_and_discard_it": "Parar esta execução e descartá-la",
+			"getting_screens_ready": "Preparando as telas…",
+			"title_scanning": "Procurando telas para analisar",
+			"title_uploading_screens_one": "Enviando {{n}} tela…",
+			"title_uploading_screens_many": "Enviando {{n}} telas…",
+			"title_uploading_screens_other": "Enviando {{n}} telas…",
+			"title_uploading_one": "Enviando sua captura…",
+			"title_reading_flow_one": "Lendo seu fluxo · {{n}} tela",
+			"title_reading_flow_many": "Lendo seu fluxo · {{n}} telas",
+			"title_reading_flow_other": "Lendo seu fluxo · {{n}} telas",
+			"title_reading_screen": "Lendo sua tela",
+			"title_getting_pixels": "Primeiro, pixels reais",
+			"foot_still_going": "Ainda em andamento — um fluxo denso pode levar alguns minutos. Você pode sair desta página; a crítica continua e estará aqui quando você voltar.",
+			"foot_navigate_away": "Você pode sair desta página — a crítica continua."
 		},
 		common: {
 			"send_failed": "Falha no envio",
@@ -1671,23 +2599,50 @@ var CATALOGS = {
 			"ask_about_this": "Спросить об этом",
 			"close": "Закрыть",
 			"remove_this_annotation": "Удалить эту пометку",
-			"thinking": "Думаю…"
+			"thinking": "Думаю…",
+			"question_label": "Твой вопрос об этом разборе"
 		},
 		composer: {
 			"add_screens": "Добавить экраны",
+			"add_screenshots_or_paste_a_link_first": "Сначала добавь скриншоты или вставь ссылку",
 			"clear_all": "Очистить всё",
-			"critique_this_flow_count_screens": "Critique this flow · {{count}} screens",
+			"critique_this_flow_count_screens_one": "Разобрать этот сценарий · {{count}} экран",
+			"critique_this_flow_count_screens_few": "Разобрать этот сценарий · {{count}} экрана",
+			"critique_this_flow_count_screens_many": "Разобрать этот сценарий · {{count}} экранов",
+			"critique_this_flow_count_screens_other": "Разобрать этот сценарий · {{count}} экрана",
 			"critique_this_screen": "Critique this screen",
 			"drop_screenshots_or_click_to_browse": "Перетащите скриншоты — или нажмите для выбора",
+			"fix_my_access": "Исправить доступ",
 			"fix_the_link": "Исправить ссылку",
+			"hide_access_steps": "Скрыть шаги доступа",
 			"move_earlier": "Переместить раньше",
 			"move_later": "Переместить позже",
 			"one_screen_or_several_in_order_for_a_flow_png_jp": "один экран или несколько по порядку для сценария · PNG, JPG, WebP",
 			"remove": "Удалить",
+			"remove_name": "Удалить {{name}}",
 			"send_screenshots": "Отправить скриншоты",
+			"start_the_critique": "Начать разбор",
+			"step_n": "Шаг {{n}}",
 			"try_again": "Повторить",
 			"unrecognised": "Unrecognised",
-			"use_a_local_folder_instead": "Использовать локальную папку"
+			"use_a_local_folder_instead": "Использовать локальную папку",
+			"start_kind_figma": "Разобрать файл Figma",
+			"start_kind_repo": "Разобрать репозиторий",
+			"start_kind_local": "Разобрать локальный код",
+			"start_kind_url": "Разобрать запущенное приложение",
+			"start_this": "Разобрать это",
+			"start_plain": "Разобрать",
+			"staged_one_hint": "1 экран · добавь ещё один, чтобы разобрать их как сценарий.",
+			"staged_flow_hint_one": "{{n}} экран · это порядок сценария — переставь или удали перед началом.",
+			"staged_flow_hint_few": "{{n}} экрана · это порядок сценария — переставь или удали перед началом.",
+			"staged_flow_hint_many": "{{n}} экранов · это порядок сценария — переставь или удали перед началом.",
+			"staged_flow_hint_other": "{{n}} экрана · это порядок сценария — переставь или удали перед началом.",
+			"title_blocked": "Мне не удалось войти",
+			"title_ask": "Что разобрать?",
+			"link_placeholder_staged": "Используются твои скриншоты — убери их, чтобы разобрать ссылку",
+			"link_placeholder": "Ссылка Figma · git-репозиторий · папка на этом компьютере · запущенный URL (localhost или развёрнутый предпросмотр)",
+			"link_label": "Ссылка для разбора",
+			"render_before_judging": "Я отрисовываю всё, прежде чем оценивать, — никогда не только по коду. Если твоё приложение уже запущено, вставь его URL, и я смогу измерить настоящие цвета и размеры, а не прикидывать их."
 		},
 		constants: {
 			"blocked_figma_app_missing_hint": "Открой файл в настольном приложении Figma и попробуй снова, или экспортируй фреймы в PNG и перетащи их сюда.",
@@ -1734,28 +2689,36 @@ var CATALOGS = {
 		designCritiquePage: {
 			"a_critique_is_still_running_click_to_watch_it": "Разбор ещё выполняется — нажмите, чтобы посмотреть",
 			"across_the_flow": "По всему сценарию",
+			"click_to_enlarge": "Нажми, чтобы увеличить",
 			"close_esc": "Закрыть (Esc)",
 			"couldn_t_see": "Не удалось увидеть",
 			"couldn_t_tell_what_that_is_give_me_a_figma_link": "Не удалось понять, что это. Дайте ссылку на Figma, репозиторий GitHub/GitLab/Bitbucket, абсолютный локальный путь или уже работающий URL.",
 			"critique_ready": "разбор готов",
+			"critique_untitled": "Разбор",
 			"design_critique": "Design Critique",
 			"enlarge": "Увеличить",
 			"full_size": "полный размер",
 			"full_size_view": "Просмотр в полном размере",
+			"history_count": "История ({{n}})",
 			"i_got_in_but_there_s_nothing_in_there_i_can": "Я зашёл, но там нет ничего, что я мог бы отрисовать. Лучше закинь скриншоты.",
 			"new": "Новый",
 			"no_screens_to_show_the_critic_couldn_t_get_pixel": "Нет экранов для показа — критик не получил пиксели для этого. См. «Не удалось увидеть» на панели.",
 			"nothing_major": "ничего серьёзного",
+			"numbered_pins_mark_issues_on_this_screen": "пронумерованные метки отмечают проблемы на этом экране",
 			"on_screen": "● на экране",
 			"only_added_the_first_room_the_limit_is_max_screens": "Добавлены только первые {{room}} — предел {{max}} экранов.",
+			"pick_a_step_above": "выбери шаг выше",
 			"point_me_at_a_running_url": "Укажите работающий URL",
 			"point_me_at_a_screen_or_a_whole_flow_and_i_ll_re": "Укажите экран — или целый сценарий — и я разберу его как друг-дизайнер: что работает, что стоит доработать и почему.",
 			"running": "выполняется",
+			"screen_heading": "Экран",
+			"screens_in_order": "Экраны по порядку",
 			"see_an_example": "Посмотреть пример",
 			"send_screenshots": "Отправить скриншоты",
 			"show_this_screen": "Показать этот экран",
 			"something_went_wrong": "something went wrong",
 			"start_a_new_critique_anything_already_running_ke": "Начать новый разбор — уже запущенные продолжат работу",
+			"step_n": "Шаг {{n}}",
 			"still_working_on_this_one_it_s_kept_running_come": "Still working on this one. It’s kept running — come back in a minute.",
 			"still_working_on_this_one_it_s_kept_running_come_2": "Still working on this one. It’s kept running — come back to this page in a minute and it’ll pick up where it left off.",
 			"switch_critique": "Переключить разбор",
@@ -1768,12 +2731,54 @@ var CATALOGS = {
 			"what_s_working": "Что работает",
 			"what_you_ll_get": "Что вы получите",
 			"your_critiques": "Ваши разборы",
-			"your_question_click_to_see_the_answer": "Ваш вопрос — нажмите, чтобы увидеть ответ"
+			"your_question_click_to_see_the_answer": "Ваш вопрос — нажмите, чтобы увидеть ответ",
+			"rail_uploading": "Загрузка…",
+			"rail_reading": "Читаю твой дизайн…",
+			"rail_flow_one": "Сценарий из {{n}} экрана — проверю и переходы между ними.",
+			"rail_flow_few": "Сценарий из {{n}} экранов — проверю и переходы между ними.",
+			"rail_flow_many": "Сценарий из {{n}} экранов — проверю и переходы между ними.",
+			"rail_flow_other": "Сценарий из {{n}} экрана — проверю и переходы между ними.",
+			"rail_one_screen": "Один экран.",
+			"rail_pending_figma": "Файл Figma — отрисовываю, прежде чем оценивать.",
+			"rail_pending_repo": "Репозиторий — отрисовываю, прежде чем оценивать.",
+			"rail_pending_local": "Локальный код — отрисовываю, прежде чем оценивать.",
+			"rail_pending_url": "Запущенное приложение — отрисовываю, прежде чем оценивать.",
+			"rail_pending_design": "Дизайн — отрисовываю, прежде чем оценивать.",
+			"rail_getting_ready": "Готовлю экраны.",
+			"critique_ready_fallback": "Разбор готов",
+			"ask_too_long": "Слишком долго — спроси ещё раз.",
+			"ask_went_wrong": "Что-то пошло не так.",
+			"entry_meta_screens_one": "{{n}} экран · {{when}}",
+			"entry_meta_screens_few": "{{n}} экрана · {{when}}",
+			"entry_meta_screens_many": "{{n}} экранов · {{when}}",
+			"entry_meta_screens_other": "{{n}} экрана · {{when}}",
+			"findings_count_one": "{{n}} замечание",
+			"findings_count_few": "{{n}} замечания",
+			"findings_count_many": "{{n}} замечаний",
+			"findings_count_other": "{{n}} замечания",
+			"nothing_flagged": "замечаний нет",
+			"design_critique_fallback": "Разбор дизайна",
+			"flow_screens_count_one": "{{n}} экран",
+			"flow_screens_count_few": "{{n}} экрана",
+			"flow_screens_count_many": "{{n}} экранов",
+			"flow_screens_count_other": "{{n}} экрана",
+			"screen_n": "Экран {{n}}",
+			"get_overall_read": "Общая оценка того, как всё выглядит",
+			"get_whats_working": "Что работает, чтобы это пережило следующую правку",
+			"get_top_things": "Главное, что стоит подтянуть, с метками на экране",
+			"no_critiques_narrow": "Разборов пока нет. Перетащи скриншот ниже.",
+			"no_critiques_wide": "Разборов пока нет. Перетащи скриншот на панель →",
+			"the_design_alt": "дизайн"
 		},
 		findingRow: {
 			"based_on": "На основе",
+			"finding": "Замечание",
+			"fix": "Исправление",
+			"suggestion": "Предложение",
 			"what_i_saw": "Что я увидел",
-			"where": "Где"
+			"where": "Где",
+			"steps_range": "шаги {{range}}",
+			"flow_badge": "сценарий"
 		},
 		manifest: {
 			"description": "Разбор дизайна, который можно провести до того, как спрашивать коллегу. Дай ему один скриншот, целый многоэкранный сценарий, файл Figma, репозиторий git или уже работающий URL — он найдёт подходящие экраны, даст выбрать, что смотреть, а потом ответит так, как ответил бы опытный дизайнер: общее впечатление, что работает хорошо и что стоит подтянуть, причём каждый пункт привязан к названной эвристике. Для многоэкранных сценариев добавляются межэкранные наблюдения, которых не видно на одном экране — несогласованные элементы управления, отсутствие индикации хода работы, невозможность вернуться, тупики. Код и Figma он сначала отрисовывает и только потом судит, поэтому никогда не критикует то, чего на самом деле не видел, и прямо говорит, до каких экранов не смог добраться, вместо того чтобы догадываться.",
@@ -1791,7 +2796,10 @@ var CATALOGS = {
 			"page_label": "Design Critique"
 		},
 		scopingPicker: {
-			"critique_this_flow_count_screens": "Critique this flow · {{count}} screens",
+			"critique_this_flow_count_screens_one": "Разобрать этот сценарий · {{count}} экран",
+			"critique_this_flow_count_screens_few": "Разобрать этот сценарий · {{count}} экрана",
+			"critique_this_flow_count_screens_many": "Разобрать этот сценарий · {{count}} экранов",
+			"critique_this_flow_count_screens_other": "Разобрать этот сценарий · {{count}} экрана",
 			"critique_this_screen": "Critique this screen",
 			"drag_to_reorder": "Перетащите для изменения порядка",
 			"move_earlier": "Переместить раньше",
@@ -1802,19 +2810,51 @@ var CATALOGS = {
 			"screens": "Экраны",
 			"start_over": "Начать заново",
 			"suggested_flows": "Предлагаемые сценарии",
-			"what_should_i_audit": "Что мне проанализировать?"
+			"what_should_i_audit": "Что мне проанализировать?",
+			"screens_found_count_one": "Найден {{n}} экран · отрисовать могу {{m}}",
+			"screens_found_count_few": "Найдено {{n}} экрана · отрисовать могу {{m}}",
+			"screens_found_count_many": "Найдено {{n}} экранов · отрисовать могу {{m}}",
+			"screens_found_count_other": "Найдено {{n}} экрана · отрисовать могу {{m}}",
+			"flow_n": "Сценарий {{n}}",
+			"picked_count_one": "выбран {{n}}",
+			"picked_count_few": "выбрано {{n}}",
+			"picked_count_many": "выбрано {{n}}",
+			"picked_count_other": "выбрано {{n}}",
+			"hint_order": "Номера — порядок, в котором я их пройду. Перетащи строку, чтобы изменить порядок, или используй ‹ › с клавиатуры.",
+			"hint_pick": "Нажми на экран, чтобы выбрать его. Выбери несколько, чтобы разобрать их как сценарий.",
+			"cant_render_title": "Этот я не могу отрисовать",
+			"cant_render_short": "не отрисовывается",
+			"group_fallback": "Экраны",
+			"tag_from_links": "По ссылкам",
+			"tag_guess": "Догадка"
 		},
 		utils: {
-			"i_ll_capture_it_and_measure_real_contrast_and_si": "I’ll capture it and measure real contrast and sizes.",
-			"i_ll_clone_it_and_list_the_screens_only_pages_th": "I’ll clone it and list the screens. Only pages that render without a server can be seen.",
-			"i_ll_list_the_screens_only_pages_that_render_wit": "I’ll list the screens. Only pages that render without a server can be seen.",
+			"i_ll_capture_it_and_measure_real_contrast_and_si": "Я сниму его и измерю настоящий контраст и размеры.",
+			"i_ll_clone_it_and_list_the_screens_only_pages_th": "Я склонирую его и перечислю экраны. Видны только страницы, которые отрисовываются без сервера.",
+			"i_ll_list_the_screens_only_pages_that_render_wit": "Я перечислю экраны. Видны только страницы, которые отрисовываются без сервера.",
 			"i_ll_pull_the_frames": "I’ll pull the frames.",
-			"it_must_be_running_right_now_i_ll_capture_it_liv": "it must be running right now. I’ll capture it live and measure real contrast and sizes.",
-			"not_something_i_recognise_give_me_a_figma_link_a": "Not something I recognise. Give me a Figma link, a GitHub repo, an absolute local path, or a URL that’s already serving."
+			"it_must_be_running_right_now_i_ll_capture_it_liv": "оно должно работать прямо сейчас. Я сниму его вживую и измерю настоящий контраст и размеры.",
+			"not_something_i_recognise_give_me_a_figma_link_a": "Не узнаю это. Дай ссылку Figma, репозиторий GitHub, абсолютный локальный путь или URL, который уже отвечает.",
+			"screen_fallback": "Экран"
 		},
 		waitingScreen: {
 			"cancel_this_run": "Отменить этот запуск",
-			"stop_this_run_and_discard_it": "Остановить запуск и отменить его"
+			"stop_this_run_and_discard_it": "Остановить запуск и отменить его",
+			"getting_screens_ready": "Готовлю экраны…",
+			"title_scanning": "Ищу экраны для разбора",
+			"title_uploading_screens_one": "Загружаю {{n}} экран…",
+			"title_uploading_screens_few": "Загружаю {{n}} экрана…",
+			"title_uploading_screens_many": "Загружаю {{n}} экранов…",
+			"title_uploading_screens_other": "Загружаю {{n}} экрана…",
+			"title_uploading_one": "Загружаю твой скриншот…",
+			"title_reading_flow_one": "Читаю сценарий · {{n}} экран",
+			"title_reading_flow_few": "Читаю сценарий · {{n}} экрана",
+			"title_reading_flow_many": "Читаю сценарий · {{n}} экранов",
+			"title_reading_flow_other": "Читаю сценарий · {{n}} экрана",
+			"title_reading_screen": "Читаю твой экран",
+			"title_getting_pixels": "Сначала получаю настоящие пиксели",
+			"foot_still_going": "Ещё идёт — плотный сценарий может занять пару минут. Можешь уйти со страницы: разбор продолжится и будет ждать, когда ты вернёшься.",
+			"foot_navigate_away": "Можешь уйти со страницы — разбор продолжится."
 		},
 		common: {
 			"send_failed": "Не удалось отправить",
@@ -1831,23 +2871,44 @@ var CATALOGS = {
 			"ask_about_this": "就此提问",
 			"close": "关闭",
 			"remove_this_annotation": "移除此标注",
-			"thinking": "思考中…"
+			"thinking": "思考中…",
+			"question_label": "关于此评审的问题"
 		},
 		composer: {
 			"add_screens": "添加界面",
+			"add_screenshots_or_paste_a_link_first": "先添加截图或粘贴链接",
 			"clear_all": "全部清除",
-			"critique_this_flow_count_screens": "Critique this flow · {{count}} screens",
+			"critique_this_flow_count_screens_other": "评审此流程 · {{count}} 个界面",
 			"critique_this_screen": "Critique this screen",
 			"drop_screenshots_or_click_to_browse": "拖入截图，或点击浏览",
+			"fix_my_access": "修复我的访问权限",
 			"fix_the_link": "修正链接",
+			"hide_access_steps": "隐藏访问步骤",
 			"move_earlier": "前移",
 			"move_later": "后移",
 			"one_screen_or_several_in_order_for_a_flow_png_jp": "单个界面，或按顺序排列多个组成流程 · PNG、JPG、WebP",
 			"remove": "移除",
+			"remove_name": "移除 {{name}}",
 			"send_screenshots": "发送截图",
+			"start_the_critique": "开始评审",
+			"step_n": "第 {{n}} 步",
 			"try_again": "重试",
 			"unrecognised": "Unrecognised",
-			"use_a_local_folder_instead": "改用本地文件夹"
+			"use_a_local_folder_instead": "改用本地文件夹",
+			"start_kind_figma": "评审 Figma 文件",
+			"start_kind_repo": "评审代码仓库",
+			"start_kind_local": "评审本地代码",
+			"start_kind_url": "评审运行中的应用",
+			"start_this": "评审这个",
+			"start_plain": "评审",
+			"staged_one_hint": "1 个界面 · 再添加一个即可作为流程评审。",
+			"staged_flow_hint_other": "{{n}} 个界面 · 此顺序即流程顺序——开始前请调整顺序或移除。",
+			"title_blocked": "我没能进入",
+			"title_ask": "要评审什么？",
+			"link_placeholder_staged": "正在使用你的截图——清除截图即可改为评审链接",
+			"link_placeholder": "Figma 链接 · git 仓库 · 本机文件夹 · 运行中的 URL（localhost 或已部署预览）",
+			"link_label": "要评审的链接",
+			"render_before_judging": "我会先渲染再评判，绝不只看代码。如果应用已在运行，粘贴它的 URL，我就能测量真实颜色和尺寸，而不是估算。"
 		},
 		constants: {
 			"blocked_figma_app_missing_hint": "在 Figma 桌面版中打开该文件后重试，或把画板导出为 PNG 拖到这里。",
@@ -1894,28 +2955,36 @@ var CATALOGS = {
 		designCritiquePage: {
 			"a_critique_is_still_running_click_to_watch_it": "有评审仍在进行 — 点击查看",
 			"across_the_flow": "整个流程",
+			"click_to_enlarge": "点击放大",
 			"close_esc": "关闭（Esc）",
 			"couldn_t_see": "无法查看",
 			"couldn_t_tell_what_that_is_give_me_a_figma_link": "无法识别这是什么。请提供 Figma 链接、GitHub/GitLab/Bitbucket 仓库、本地绝对路径，或已在运行的 URL。",
 			"critique_ready": "评审完成",
+			"critique_untitled": "评审",
 			"design_critique": "Design Critique",
 			"enlarge": "放大",
 			"full_size": "原始尺寸",
 			"full_size_view": "查看原图",
+			"history_count": "历史记录（{{n}}）",
 			"i_got_in_but_there_s_nothing_in_there_i_can": "我进去了，但里面没有我能渲染的东西。还是直接丢截图给我吧。",
 			"new": "新建",
 			"no_screens_to_show_the_critic_couldn_t_get_pixel": "没有可显示的界面 — 评审无法获取此项的像素。请查看面板中的“无法查看”。",
 			"nothing_major": "无重大问题",
+			"numbered_pins_mark_issues_on_this_screen": "编号图钉标出此界面上的问题",
 			"on_screen": "● 单个界面",
 			"only_added_the_first_room_the_limit_is_max_screens": "只添加了前 {{room}} 张 — 上限为 {{max}} 张屏幕。",
+			"pick_a_step_above": "在上方选择一个步骤",
 			"point_me_at_a_running_url": "指向一个运行中的网址",
 			"point_me_at_a_screen_or_a_whole_flow_and_i_ll_re": "给我一个界面 — 或整个流程 — 我会像设计师朋友一样解读：哪些做得好、哪些可以打磨、以及为什么。",
 			"running": "运行中",
+			"screen_heading": "界面",
+			"screens_in_order": "按顺序排列的界面",
 			"see_an_example": "查看示例",
 			"send_screenshots": "发送截图",
 			"show_this_screen": "显示此界面",
 			"something_went_wrong": "something went wrong",
 			"start_a_new_critique_anything_already_running_ke": "开始新的评审 — 进行中的不受影响",
+			"step_n": "第 {{n}} 步",
 			"still_working_on_this_one_it_s_kept_running_come": "Still working on this one. It’s kept running — come back in a minute.",
 			"still_working_on_this_one_it_s_kept_running_come_2": "Still working on this one. It’s kept running — come back to this page in a minute and it’ll pick up where it left off.",
 			"switch_critique": "切换评审",
@@ -1928,12 +2997,42 @@ var CATALOGS = {
 			"what_s_working": "做得好的地方",
 			"what_you_ll_get": "你将获得",
 			"your_critiques": "你的评审",
-			"your_question_click_to_see_the_answer": "你的提问 — 点击查看回答"
+			"your_question_click_to_see_the_answer": "你的提问 — 点击查看回答",
+			"rail_uploading": "正在上传…",
+			"rail_reading": "正在读取你的设计…",
+			"rail_flow_other": "由 {{n}} 个界面组成的流程——我也会检查它们之间的跳转。",
+			"rail_one_screen": "一个界面。",
+			"rail_pending_figma": "一个 Figma 文件——评判前先渲染。",
+			"rail_pending_repo": "一个代码仓库——评判前先渲染。",
+			"rail_pending_local": "本地代码——评判前先渲染。",
+			"rail_pending_url": "一个运行中的应用——评判前先渲染。",
+			"rail_pending_design": "一个设计——评判前先渲染。",
+			"rail_getting_ready": "正在准备界面。",
+			"critique_ready_fallback": "评审已完成",
+			"ask_too_long": "耗时太久——请再问一次。",
+			"ask_went_wrong": "出了点问题。",
+			"entry_meta_screens_other": "{{n}} 个界面 · {{when}}",
+			"findings_count_other": "{{n}} 条问题",
+			"nothing_flagged": "未发现问题",
+			"design_critique_fallback": "设计评审",
+			"flow_screens_count_other": "{{n}} 个界面",
+			"screen_n": "界面 {{n}}",
+			"get_overall_read": "对整体表现的总体评价",
+			"get_whats_working": "做得好的地方，好让它在下一轮修改中保留下来",
+			"get_top_things": "最该收紧的几处，并在界面上标出",
+			"no_critiques_narrow": "还没有评审。请在下方放入截图。",
+			"no_critiques_wide": "还没有评审。请把截图放到面板中 →",
+			"the_design_alt": "设计图"
 		},
 		findingRow: {
 			"based_on": "依据",
+			"finding": "发现",
+			"fix": "修复方法",
+			"suggestion": "建议",
 			"what_i_saw": "我看到的",
-			"where": "位置"
+			"where": "位置",
+			"steps_range": "第 {{range}} 步",
+			"flow_badge": "流程"
 		},
 		manifest: {
 			"use_case_1": "根据可见区域，以严重程度和设计准则为依据，评审单个界面或完整产品流程。",
@@ -1951,7 +3050,7 @@ var CATALOGS = {
 			"page_label": "Design Critique"
 		},
 		scopingPicker: {
-			"critique_this_flow_count_screens": "Critique this flow · {{count}} screens",
+			"critique_this_flow_count_screens_other": "评审此流程 · {{count}} 个界面",
 			"critique_this_screen": "Critique this screen",
 			"drag_to_reorder": "拖动重新排序",
 			"move_earlier": "前移",
@@ -1962,19 +3061,39 @@ var CATALOGS = {
 			"screens": "界面",
 			"start_over": "重新开始",
 			"suggested_flows": "推荐流程",
-			"what_should_i_audit": "我该评审什么？"
+			"what_should_i_audit": "我该评审什么？",
+			"screens_found_count_other": "找到 {{n}} 个界面 · 可渲染 {{m}} 个",
+			"flow_n": "流程 {{n}}",
+			"picked_count_other": "已选 {{n}} 个",
+			"hint_order": "数字是我查看它们的顺序——拖动某行可调整顺序，也可以用键盘上的 ‹ ›。",
+			"hint_pick": "点击界面即可选中。选中多个即可作为一个流程进行评审。",
+			"cant_render_title": "这个界面无法渲染",
+			"cant_render_short": "无法渲染",
+			"group_fallback": "界面",
+			"tag_from_links": "来自链接",
+			"tag_guess": "推测"
 		},
 		utils: {
-			"i_ll_capture_it_and_measure_real_contrast_and_si": "I’ll capture it and measure real contrast and sizes.",
-			"i_ll_clone_it_and_list_the_screens_only_pages_th": "I’ll clone it and list the screens. Only pages that render without a server can be seen.",
-			"i_ll_list_the_screens_only_pages_that_render_wit": "I’ll list the screens. Only pages that render without a server can be seen.",
+			"i_ll_capture_it_and_measure_real_contrast_and_si": "我会截取它，并测量真实对比度和尺寸。",
+			"i_ll_clone_it_and_list_the_screens_only_pages_th": "我会克隆它并列出界面。只有无需服务器即可渲染的页面才能看到。",
+			"i_ll_list_the_screens_only_pages_that_render_wit": "我会列出界面。只有无需服务器即可渲染的页面才能看到。",
 			"i_ll_pull_the_frames": "I’ll pull the frames.",
-			"it_must_be_running_right_now_i_ll_capture_it_liv": "it must be running right now. I’ll capture it live and measure real contrast and sizes.",
-			"not_something_i_recognise_give_me_a_figma_link_a": "Not something I recognise. Give me a Figma link, a GitHub repo, an absolute local path, or a URL that’s already serving."
+			"it_must_be_running_right_now_i_ll_capture_it_liv": "它必须正在运行。我会实时截取，并测量真实对比度和尺寸。",
+			"not_something_i_recognise_give_me_a_figma_link_a": "我无法识别。请提供 Figma 链接、GitHub 仓库、本地绝对路径，或已在提供服务的 URL。",
+			"screen_fallback": "界面"
 		},
 		waitingScreen: {
 			"cancel_this_run": "取消本次运行",
-			"stop_this_run_and_discard_it": "停止并丢弃本次运行"
+			"stop_this_run_and_discard_it": "停止并丢弃本次运行",
+			"getting_screens_ready": "正在准备界面…",
+			"title_scanning": "正在查找要审查的界面",
+			"title_uploading_screens_other": "正在上传 {{n}} 个界面…",
+			"title_uploading_one": "正在上传你的截图…",
+			"title_reading_flow_other": "正在读取你的流程 · {{n}} 个界面",
+			"title_reading_screen": "正在读取你的界面",
+			"title_getting_pixels": "先获取真实像素",
+			"foot_still_going": "仍在进行——界面较多的流程可能需要几分钟。你可以离开此页面；评审会继续进行，回来时就能看到。",
+			"foot_navigate_away": "你可以离开此页面——评审会继续进行。"
 		},
 		common: {
 			"send_failed": "发送失败",
@@ -2011,12 +3130,49 @@ function currentLocale() {
 	}
 }
 var PLACEHOLDER = /\{\{\s*(\w+)\s*\}\}/g;
+var pluralRules = /* @__PURE__ */ new Map();
+function pluralCategory(locale, count) {
+	let rules = pluralRules.get(locale);
+	if (!rules) {
+		rules = new Intl.PluralRules(locale);
+		pluralRules.set(locale, rules);
+	}
+	return rules.select(count);
+}
+/** The keys to try in `locale`'s catalog, most specific first. */
+function candidates(locale, key, vars) {
+	const count = vars && own(vars, "count") ? vars.count : void 0;
+	if (typeof count !== "number" || !Number.isFinite(count)) return [key];
+	const forms = [`${key}_${pluralCategory(locale, count)}`, key];
+	return count === 0 ? [`${key}_zero`, ...forms] : forms;
+}
 function t(key, vars) {
 	for (const locale of localeChain(currentLocale())) {
-		const text = lookup(CATALOGS[locale], key);
+		let text;
+		for (const candidate of candidates(locale, key, vars)) {
+			text = lookup(CATALOGS[locale], candidate);
+			if (text !== void 0) break;
+		}
 		if (text !== void 0) return text.replace(PLACEHOLDER, (whole, name) => vars && own(vars, name) ? String(vars[name]) : whole);
 	}
 	return key;
+}
+var numberFormats = /* @__PURE__ */ new Map();
+/** A number in the host's active language (`1,234`, `১২৩`), as the dashboard's
+*  `fmtNumber` spells it; a non-finite value reads `—`. */
+function fmtNumber(value) {
+	if (!Number.isFinite(value)) return "—";
+	const locale = currentLocale();
+	let format = numberFormats.get(locale);
+	if (!format) {
+		try {
+			format = new Intl.NumberFormat(locale, { localeMatcher: "lookup" });
+		} catch {
+			format = new Intl.NumberFormat("en");
+		}
+		numberFormats.set(locale, format);
+	}
+	return format.format(value);
 }
 // src/constants.ts
 /**
@@ -2092,28 +3248,6 @@ var SEV = {
 	}
 };
 var sevOf = (s) => SEV[s] || SEV.cosmetic;
-/**
-* The target kind, in ENGLISH. **Do not localise this table.**
-*
-* `prompts.ts` imports it and splices it into the discovery prompt ("I need to
-* know what screens are IN this <kind>"), which is English throughout. A
-* localised value here would put one non-English noun inside an English
-* instruction — worse than leaving it alone, because the model then has to guess
-* which language the reply should be in. The repo already treats prompt text as
-* non-copy: `eslint.i18n.config.js` ignores `src/apps/<app>/prompts.ts` outright, and
-* the strict config derives its exemptions from that same array.
-*
-* The right home for this map is therefore `prompts.ts` itself, next to its only
-* legitimate consumer — that move is left to whoever owns that file, since the
-* three UI call sites listed on `kindLabel()` have to move over in the same
-* change.
-*/
-var KIND_LABEL = {
-	figma: "Figma file",
-	repo: "repo",
-	local: "local code",
-	url: "running app"
-};
 /**
 * The same four kinds as catalog keys, for the places the kind is SHOWN rather
 * than sent to the model. Split from `KIND_LABEL` rather than replacing it
@@ -2428,6 +3562,103 @@ var SAMPLE_REPORT = {
 	keep: ["Single-column forms with generous field spacing — easy to move through.", "The cart states the total plainly, with no surprise fees later in the flow."],
 	couldNotSee: ["Validation and error states (none were reachable in the captured pages)."]
 };
+// src/menuKeyboard.ts
+/**
+* Keyboard behaviour for the History menu (`role="menu"`, WAI-ARIA menu
+* pattern): focus enters the first item on open, ArrowDown / ArrowUp move
+* between the enabled items and wrap at both ends, Home / End jump to the
+* boundary items, and Tab / Shift+Tab wrap at the boundary items instead of
+* leaving a still-open menu. Escape is not handled here: the page owns
+* dismissal (close, then focus back on the button).
+*
+* A restatement of the dashboard's `hooks/useMenuKeyboard.ts` for a bundle,
+* which cannot import it. What the dashboard's hook adds and this one does not:
+* standing down while a remote Crew is in front, and its WebKit IME latch for
+* the key that commits a candidate after `compositionend`. Here a key the IME is
+* still composing (`isComposing`) is left alone, as in `focusTrap.ts`.
+*/
+/** The enabled rows of a menu container: menu items, `role="button"` rows and
+*  native buttons, minus `disabled` / `aria-disabled="true"` ones. */
+function menuItemsOf(container) {
+	if (!container) return [];
+	return Array.from(container.querySelectorAll("[role=\"menuitem\"],[role=\"menuitemradio\"],[role=\"menuitemcheckbox\"],[role=\"button\"],button")).filter((el) => !el.hasAttribute("disabled") && el.getAttribute("aria-disabled") !== "true");
+}
+/** A text field, text area or contenteditable: its arrow keys move a caret. */
+function isEditable(el) {
+	if (!el) return false;
+	if (el instanceof HTMLTextAreaElement) return true;
+	if (el instanceof HTMLInputElement) return ![
+		"button",
+		"checkbox",
+		"radio",
+		"submit",
+		"reset",
+		"range",
+		"color",
+		"file",
+		"image"
+	].includes(el.type);
+	return el instanceof HTMLElement && el.isContentEditable;
+}
+/** Handle one keydown against the menu contract; true when it was consumed. */
+function handleMenuKeydown(e, getItems) {
+	if (e.isComposing) return false;
+	if (e.key === "ArrowDown" || e.key === "ArrowUp" || e.key === "Home" || e.key === "End") {
+		if (e.altKey || e.ctrlKey || e.metaKey) return false;
+		const items = getItems();
+		if (!items.length) return false;
+		e.preventDefault();
+		if (e.key === "Home") {
+			items[0].focus();
+			return true;
+		}
+		if (e.key === "End") {
+			items[items.length - 1].focus();
+			return true;
+		}
+		const idx = items.indexOf(document.activeElement);
+		items[idx === -1 ? e.key === "ArrowDown" ? 0 : items.length - 1 : (idx + (e.key === "ArrowDown" ? 1 : -1) + items.length) % items.length].focus();
+		return true;
+	}
+	if (e.key !== "Tab") return false;
+	const items = getItems();
+	if (!items.length) return false;
+	const first = items[0];
+	const last = items[items.length - 1];
+	if (e.shiftKey && document.activeElement === first) {
+		e.preventDefault();
+		last.focus();
+		return true;
+	}
+	if (!e.shiftKey && document.activeElement === last) {
+		e.preventDefault();
+		first.focus();
+		return true;
+	}
+	return false;
+}
+/** While `enabled`, drive the open menu in `containerRef` from a document-level
+*  keydown listener, and move focus onto its first item when it opens. Keys
+*  typed into an editable field outside the menu are left to that field. */
+function useMenuKeyboard(opts) {
+	const { enabled, containerRef, focusFirstOnOpen = true } = opts;
+	useEffect(() => {
+		if (!enabled) return;
+		const items = () => menuItemsOf(containerRef.current);
+		if (focusFirstOnOpen) items()[0]?.focus();
+		const onKey = (e) => {
+			const active = document.activeElement;
+			if (active && !containerRef.current?.contains(active) && isEditable(active)) return;
+			handleMenuKeydown(e, items);
+		};
+		document.addEventListener("keydown", onKey);
+		return () => document.removeEventListener("keydown", onKey);
+	}, [
+		enabled,
+		focusFirstOnOpen,
+		containerRef
+	]);
+}
 // src/styles.ts
 var S = {
 	shell: {
@@ -4275,9 +5506,9 @@ function lastAssistant(messages) {
 	return "";
 }
 function shortLabel(s) {
-	const t = String(s || "").replace(/\s*[([].*?[)\]]\s*/g, " ").replace(/\s+/g, " ").trim();
-	if (!t) return "Screen";
-	return t.length > 18 ? t.slice(0, 17).trimEnd() + "…" : t;
+	const t$3 = String(s || "").replace(/\s*[([].*?[)\]]\s*/g, " ").replace(/\s+/g, " ").trim();
+	if (!t$3) return t("utils.screen_fallback");
+	return t$3.length > 18 ? t$3.slice(0, 17).trimEnd() + "…" : t$3;
 }
 /**
 * Relative age of a critique run, through the shared formatting seam.
@@ -4643,7 +5874,7 @@ function FindingRow({ finding: f, isOpen, isActive, flowScoped, pinNum, stepRang
 					background: s.color,
 					color: readableOn(s.color)
 				},
-				children: stepRange
+				children: stepRange || t("findingRow.flow_badge")
 			}) : /* @__PURE__ */ jsx("span", {
 				style: {
 					...S.numBadge,
@@ -4665,7 +5896,7 @@ function FindingRow({ finding: f, isOpen, isActive, flowScoped, pinNum, stepRang
 					},
 					children: [/* @__PURE__ */ jsx("span", {
 						style: S.fTitle,
-						children: withMarks(f.title || "Finding")
+						children: withMarks(f.title || t("findingRow.finding"))
 					}), /* @__PURE__ */ jsx(ChevronRight, {
 						size: 15,
 						style: {
@@ -4697,9 +5928,9 @@ function FindingRow({ finding: f, isOpen, isActive, flowScoped, pinNum, stepRang
 							style: S.fMeta,
 							children: f.category
 						}) : null,
-						flowScoped ? /* @__PURE__ */ jsx("span", {
+						flowScoped && stepRange ? /* @__PURE__ */ jsx("span", {
 							style: S.fMeta,
-							children: "· steps " + stepRange
+							children: "· " + t("findingRow.steps_range", { range: stepRange })
 						}) : null
 					]
 				})]
@@ -4717,7 +5948,7 @@ function FindingRow({ finding: f, isOpen, isActive, flowScoped, pinNum, stepRang
 				}), withMarks(f.evidence)] }) : null,
 				f.fix ? /* @__PURE__ */ jsxs("div", { children: [/* @__PURE__ */ jsx("div", {
 					style: S.fLabel,
-					children: /accessib/i.test(f.category || "") ? "Fix" : "Suggestion"
+					children: /accessib/i.test(f.category || "") ? t("findingRow.fix") : t("findingRow.suggestion")
 				}), withMarks(f.fix)] }) : null,
 				Array.isArray(f.rules) && f.rules.length ? /* @__PURE__ */ jsxs("div", { children: [/* @__PURE__ */ jsx("div", {
 					style: S.fLabel,
@@ -4778,9 +6009,13 @@ function WaitingScreen({ phase, elapsed, writing, reduceMotion, screens, pending
 		children: [/* @__PURE__ */ jsx(Spinner, {
 			size: 18,
 			reduceMotion
-		}), /* @__PURE__ */ jsx("span", { children: pendingKind && KIND_WAIT[pendingKind] || "Getting the screens ready…" })]
+		}), /* @__PURE__ */ jsx("span", { children: pendingKind && KIND_WAIT[pendingKind] || t("waitingScreen.getting_screens_ready") })]
 	});
-	const title = phase === "scanning" ? "Looking for screens to audit" : phase === "uploading" ? many ? "Uploading " + screens.length + " screens…" : "Uploading your screenshot…" : many ? "Reading your flow · " + screens.length + " screens" : screens.length ? "Reading your screen" : "Getting real pixels first";
+	const count = {
+		count: screens.length,
+		n: fmtNumber(screens.length)
+	};
+	const title = phase === "scanning" ? t("waitingScreen.title_scanning") : phase === "uploading" ? many ? t("waitingScreen.title_uploading_screens", count) : t("waitingScreen.title_uploading_one") : many ? t("waitingScreen.title_reading_flow", count) : screens.length ? t("waitingScreen.title_reading_screen") : t("waitingScreen.title_getting_pixels");
 	return /* @__PURE__ */ jsx("div", {
 		style: S.waitWrap,
 		children: /* @__PURE__ */ jsxs("div", {
@@ -4826,21 +6061,39 @@ function WaitingScreen({ phase, elapsed, writing, reduceMotion, screens, pending
 				}),
 				/* @__PURE__ */ jsx("div", {
 					style: S.waitFoot,
-					children: elapsed > 90 ? "Still going — a dense flow can take a couple of minutes. You can navigate away; the critique keeps running and will be here when you come back." : "You can navigate away — the critique keeps running."
+					children: elapsed > 90 ? t("waitingScreen.foot_still_going") : t("waitingScreen.foot_navigate_away")
 				})
 			]
 		})
 	});
 }
 // src/Composer.tsx
+/**
+* The start button's label for a pasted link: one whole-sentence key per kind,
+* so a translation can bend the noun and order the words its own way. Literal
+* keys keep each one visible to the key-reference gate; an unknown kind reads
+* "Critique this".
+*/
+function startKindLabel(kind) {
+	switch (kind) {
+		case "figma": return t("composer.start_kind_figma");
+		case "repo": return t("composer.start_kind_repo");
+		case "local": return t("composer.start_kind_local");
+		case "url": return t("composer.start_kind_url");
+		default: return t("composer.start_this");
+	}
+}
 function Composer(p) {
 	const ime = useImeGuard();
 	const { staged, refText, dragging, blocked, showAuth, busy, err, hint, inputRef } = p;
 	const canStart = !busy && (staged.length > 0 || !!refText.trim());
 	const det = detectKind(refText);
-	const startLabel = staged.length > 1 ? t("composer.critique_this_flow_count_screens", { count: staged.length }) : staged.length === 1 ? t("composer.critique_this_screen") : refText.trim() ? "Critique " + (KIND_LABEL[(det || {}).kind] || "this") : "Critique";
+	const startLabel = staged.length > 1 ? t("composer.critique_this_flow_count_screens", { count: staged.length }) : staged.length === 1 ? t("composer.critique_this_screen") : refText.trim() ? startKindLabel((det || {}).kind) : t("composer.start_plain");
 	const recog = !staged.length && refText.trim() ? recognise(det) : null;
-	const subLine = staged.length ? staged.length > 1 ? staged.length + " screens · this order is the flow order — reorder or remove before you start." : "1 screen · add another to critique it as a flow." : "";
+	const subLine = staged.length ? staged.length > 1 ? t("composer.staged_flow_hint", {
+		count: staged.length,
+		n: fmtNumber(staged.length)
+	}) : t("composer.staged_one_hint") : "";
 	const middle = staged.length ? /* @__PURE__ */ jsxs("div", {
 		style: S.stagedRegion,
 		children: [staged.map((s, i) => /* @__PURE__ */ jsxs("div", {
@@ -4856,13 +6109,13 @@ function Composer(p) {
 				}),
 				/* @__PURE__ */ jsx("span", {
 					style: S.stepChip,
-					children: staged.length > 1 ? "Step " + (i + 1) : "1"
+					children: staged.length > 1 ? t("composer.step_n", { n: fmtNumber(i + 1) }) : fmtNumber(1)
 				}),
 				/* @__PURE__ */ jsx("button", {
 					style: S.killBtn,
 					onClick: () => p.dropStaged(i),
 					title: t("composer.remove"),
-					"aria-label": "Remove " + s.file.name,
+					"aria-label": t("composer.remove_name", { name: s.file.name }),
 					children: /* @__PURE__ */ jsx(X, { size: 13 })
 				}),
 				/* @__PURE__ */ jsxs("div", {
@@ -4953,7 +6206,7 @@ function Composer(p) {
 				}),
 				/* @__PURE__ */ jsx("h2", {
 					style: S.cardTitle,
-					children: blocked ? "I couldn’t get in" : "What should I critique?"
+					children: blocked ? t("composer.title_blocked") : t("composer.title_ask")
 				}),
 				blocked ? /* @__PURE__ */ jsxs("div", {
 					style: S.blockedBox,
@@ -4997,7 +6250,7 @@ function Composer(p) {
 								blocked.auth ? /* @__PURE__ */ jsx("button", {
 									style: S.linkBtn,
 									onClick: () => p.setShowAuth((v) => !v),
-									children: showAuth ? "Hide access steps" : "Fix my access"
+									children: showAuth ? t("composer.hide_access_steps") : t("composer.fix_my_access")
 								}) : null,
 								blocked.fix === "retry" || blocked.auth ? /* @__PURE__ */ jsx("button", {
 									style: S.linkBtn,
@@ -5065,7 +6318,8 @@ function Composer(p) {
 					},
 					value: refText,
 					disabled: staged.length > 0 || busy,
-					placeholder: staged.length ? "Using your screenshots — clear them to critique a link instead" : "Figma link · git repo · a folder on this machine · a running URL (localhost or a deployed preview)",
+					"aria-label": t("composer.link_label"),
+					placeholder: staged.length ? t("composer.link_placeholder_staged") : t("composer.link_placeholder"),
 					onChange: (e) => p.setRefText(e.target.value),
 					...ime.bindEnter({ onEnter: () => p.start() })
 				}),
@@ -5076,7 +6330,7 @@ function Composer(p) {
 					},
 					disabled: !canStart,
 					onClick: p.start,
-					title: canStart ? "Start the critique" : "Add screenshots or paste a link first",
+					title: canStart ? t("composer.start_the_critique") : t("composer.add_screenshots_or_paste_a_link_first"),
 					children: [/* @__PURE__ */ jsx(PencilRuler, { size: 16 }), startLabel]
 				}),
 				recog ? /* @__PURE__ */ jsxs("p", {
@@ -5095,7 +6349,7 @@ function Composer(p) {
 				}) : null,
 				/* @__PURE__ */ jsx("p", {
 					style: S.cardHint,
-					children: recog ? null : "I render everything before judging it — never from code alone. If your app is already running, paste its URL and I can measure real colours and sizes instead of estimating them."
+					children: recog ? null : t("composer.render_before_judging")
 				})
 			]
 		})
@@ -5108,7 +6362,7 @@ function ScopingPicker(p) {
 	const { scope, picked, refBrief, dragId } = p;
 	const groups = /* @__PURE__ */ new Map();
 	scope.screens.forEach((s) => {
-		const g = s.group || "screens";
+		const g = s.group || t("scopingPicker.group_fallback");
 		if (!groups.has(g)) groups.set(g, []);
 		groups.get(g).push(s);
 	});
@@ -5127,7 +6381,11 @@ function ScopingPicker(p) {
 					children: [
 						scope.framework ? /* @__PURE__ */ jsx("b", { children: scope.framework }) : null,
 						scope.framework ? " · " : "",
-						scope.screens.length + " screens found · " + seeable + " I can render"
+						t("scopingPicker.screens_found_count", {
+							count: scope.screens.length,
+							n: fmtNumber(scope.screens.length),
+							m: fmtNumber(seeable)
+						})
 					]
 				}),
 				scope.note ? /* @__PURE__ */ jsx("p", {
@@ -5159,7 +6417,7 @@ function ScopingPicker(p) {
 								children: [
 									/* @__PURE__ */ jsx("div", {
 										style: S.flowName,
-										children: f.label || "Flow " + (i + 1)
+										children: f.label || t("scopingPicker.flow_n", { n: fmtNumber(i + 1) })
 									}),
 									/* @__PURE__ */ jsx("div", {
 										style: S.flowSteps,
@@ -5181,7 +6439,7 @@ function ScopingPicker(p) {
 										borderColor: "var(--accent)"
 									} : {}
 								},
-								children: f.basis === "observed" ? "from links" : "guess"
+								children: f.basis === "observed" ? t("scopingPicker.tag_from_links") : t("scopingPicker.tag_guess")
 							})]
 						}, i);
 					})
@@ -5194,7 +6452,10 @@ function ScopingPicker(p) {
 								fontWeight: 600,
 								textTransform: "none"
 							},
-							children: "· " + picked.length + " picked"
+							children: "· " + t("scopingPicker.picked_count", {
+								count: picked.length,
+								n: fmtNumber(picked.length)
+							})
 						})]
 					}),
 					/* @__PURE__ */ jsx("p", {
@@ -5202,7 +6463,7 @@ function ScopingPicker(p) {
 							...S.pickWhy,
 							margin: "0 0 7px 2px"
 						},
-						children: picked.length > 1 ? "Numbers are the order I’ll walk them — drag a row to reorder, or use ‹ › from the keyboard." : "Click a screen to pick it. Pick several to critique them as a flow."
+						children: picked.length > 1 ? t("scopingPicker.hint_order") : t("scopingPicker.hint_pick")
 					}),
 					/* @__PURE__ */ jsx("div", {
 						style: S.scopeScrollFlex,
@@ -5231,7 +6492,7 @@ function ScopingPicker(p) {
 										p.togglePick(s.id);
 									}
 								},
-								title: off ? s.why || "I can’t render this one" : s.ref || s.id,
+								title: off ? s.why || t("scopingPicker.cant_render_title") : s.ref || s.id,
 								draggable: canDrag,
 								onDragStart: canDrag ? (e) => {
 									p.setDragId(s.id);
@@ -5301,7 +6562,7 @@ function ScopingPicker(p) {
 									}) : null,
 									/* @__PURE__ */ jsx("span", {
 										style: S.pickWhy,
-										children: off ? s.why || "can’t render" : s.ref || ""
+										children: off ? s.why || t("scopingPicker.cant_render_short") : s.ref || ""
 									})
 								]
 							}, s.id);
@@ -5449,6 +6710,7 @@ function AskLayer(p) {
 					value: askDraft,
 					autoFocus: true,
 					disabled: p.pending,
+					"aria-label": t("askLayer.question_label"),
 					placeholder: !activeAsk || !activeAsk.turns.length ? t("askLayer.what_dont_you_understand_about_this") : activeAsk.turns[activeAsk.turns.length - 1].failed ? t("askLayer.ask_again") : t("askLayer.ask_a_follow_up"),
 					onChange: (e) => p.setAskDraft(e.target.value),
 					...ime.bindEnter({
@@ -5585,6 +6847,16 @@ function ZoomLightbox({ src, onClose, children }) {
 	});
 }
 // src/DesignCritiquePage.tsx
+/** The rail's "rendering it" line for a pasted link, one whole-sentence key per kind. */
+function railPendingLabel(kind) {
+	switch (kind) {
+		case "figma": return t("designCritiquePage.rail_pending_figma");
+		case "repo": return t("designCritiquePage.rail_pending_repo");
+		case "local": return t("designCritiquePage.rail_pending_local");
+		case "url": return t("designCritiquePage.rail_pending_url");
+		default: return t("designCritiquePage.rail_pending_design");
+	}
+}
 var CANCELLED = () => Object.assign(/* @__PURE__ */ new Error("cancelled"), { cancelled: true });
 var TIMEOUT = () => Object.assign(/* @__PURE__ */ new Error("still running"), { timeout: true });
 function DesignCritiquePage() {
@@ -5629,9 +6901,11 @@ function DesignCritiquePage() {
 	const [writing, setWriting] = useState(false);
 	const [pendingKind, setPendingKind] = useState(null);
 	const reduceMotion = useReduceMotion();
-	const { toasts, notify } = useToasts();
+	const { toasts } = useToasts();
 	const inputRef = useRef(null);
 	const rootRef = useRef(null);
+	const historyBtnRef = useRef(null);
+	const historyMenuRef = useRef(null);
 	const rowRefs = useRef({});
 	const startedAtRef = useRef(0);
 	const aliveRef = useRef(true);
@@ -5697,6 +6971,33 @@ function DesignCritiquePage() {
 		window.addEventListener("keydown", k);
 		return () => window.removeEventListener("keydown", k);
 	}, [zoom]);
+	useMenuKeyboard({
+		enabled: menuOpen,
+		containerRef: historyMenuRef
+	});
+	useEffect(() => {
+		if (!menuOpen) return;
+		const onKey = (e) => {
+			if (e.key !== "Escape") return;
+			setMenuOpen(false);
+			historyBtnRef.current?.focus();
+		};
+		const onDown = (e) => {
+			const t = e.target;
+			if (historyMenuRef.current?.contains(t) || historyBtnRef.current?.contains(t)) return;
+			setMenuOpen(false);
+		};
+		window.addEventListener("keydown", onKey);
+		document.addEventListener("pointerdown", onDown);
+		return () => {
+			window.removeEventListener("keydown", onKey);
+			document.removeEventListener("pointerdown", onDown);
+		};
+	}, [menuOpen]);
+	const pickFromHistory = (e) => {
+		selectCritique(e);
+		historyBtnRef.current?.focus();
+	};
 	const pollForReport = async (slotKey) => {
 		const began = Date.now();
 		let misses = 0;
@@ -5868,7 +7169,7 @@ function DesignCritiquePage() {
 		if (isWatching(slotKey)) showReport(rep, screens, next.find((e) => e.slotKey === slotKey) || next[0]);
 		else setJustFinished({
 			slotKey,
-			read: rep.overallRead || "Critique ready",
+			read: rep.overallRead || t("designCritiquePage.critique_ready_fallback"),
 			screens,
 			report: rep
 		});
@@ -5894,7 +7195,6 @@ function DesignCritiquePage() {
 			slotKey,
 			message
 		}]);
-		notify("Critique failed: " + (e instanceof Error ? e.message : String(e)), { type: "error" });
 	};
 	const ask = async (prompt, uploaded, foreground = true) => {
 		let slotKey = "";
@@ -6481,7 +7781,7 @@ function DesignCritiquePage() {
 		} catch (e) {
 			const flag = e;
 			if (flag && flag.cancelled) return;
-			const msg = flag && flag.timeout ? "That took too long — ask again." : e instanceof Error ? e.message : "Something went wrong.";
+			const msg = flag && flag.timeout ? t("designCritiquePage.ask_too_long") : e instanceof Error ? e.message : t("designCritiquePage.ask_went_wrong");
 			setAsks((prev) => prev.map((a) => a.id === askId ? {
 				...a,
 				turns: a.turns.map((t) => t.t === stamp ? {
@@ -6705,7 +8005,7 @@ function DesignCritiquePage() {
 	if (!isFlow) screenFindings.forEach((f, i) => pinNo.set(f, i + 1));
 	const stepRange = (f) => {
 		const st = Array.isArray(f.steps) ? f.steps.slice().sort((a, b) => a - b) : [];
-		if (!st.length) return "flow";
+		if (!st.length) return "";
 		if (st.length === 1) return String(st[0]);
 		if (st.length === 2 && st[1] === st[0] + 1) return st[0] + "→" + st[1];
 		return st[0] + "–" + st[st.length - 1];
@@ -6781,7 +8081,11 @@ function DesignCritiquePage() {
 	}, "ok")];
 	const entryMeta = (e) => {
 		const n = e.screens && e.screens.length || (e.thumbUrl ? 1 : 0);
-		return (n > 1 ? n + " screens · " : n === 1 ? "1 screen · " : "") + relTime(e.ts);
+		return n > 0 ? t("designCritiquePage.entry_meta_screens", {
+			count: n,
+			n: fmtNumber(n),
+			when: relTime(e.ts)
+		}) : relTime(e.ts);
 	};
 	const railHead = /* @__PURE__ */ jsxs("div", {
 		style: S.railHead,
@@ -6828,15 +8132,32 @@ function DesignCritiquePage() {
 				phase !== "new" && critiques.length ? /* @__PURE__ */ jsxs("div", {
 					style: { position: "relative" },
 					children: [/* @__PURE__ */ jsxs("button", {
+						ref: historyBtnRef,
 						style: S.railBtn,
 						onClick: () => setMenuOpen((o) => !o),
 						title: t("designCritiquePage.switch_critique"),
-						children: ["History (" + critiques.length + ")", /* @__PURE__ */ jsx(ChevronDown, { size: 12 })]
+						"aria-expanded": menuOpen,
+						"aria-haspopup": "menu",
+						"aria-controls": "dc-history-menu",
+						children: [t("designCritiquePage.history_count", { n: fmtNumber(critiques.length) }), /* @__PURE__ */ jsx(ChevronDown, { size: 12 })]
 					}), menuOpen ? /* @__PURE__ */ jsx("div", {
 						style: S.menu,
-						children: critiques.map((e) => /* @__PURE__ */ jsxs(Clickable, {
+						id: "dc-history-menu",
+						role: "menu",
+						ref: historyMenuRef,
+						tabIndex: -1,
+						"aria-label": t("designCritiquePage.switch_critique"),
+						children: critiques.map((e) => /* @__PURE__ */ jsxs("div", {
+							role: "menuitem",
+							tabIndex: 0,
 							style: S.menuItem,
-							onClick: () => selectCritique(e),
+							onClick: () => pickFromHistory(e),
+							onKeyDown: (ev) => {
+								if (ev.key === "Enter" || ev.key === " ") {
+									ev.preventDefault();
+									pickFromHistory(e);
+								}
+							},
 							title: e.pending ? t("designCritiquePage.a_critique_is_still_running_click_to_watch_it") : void 0,
 							"aria-busy": e.pending || void 0,
 							children: [
@@ -6855,7 +8176,7 @@ function DesignCritiquePage() {
 											...S.menuRead,
 											...e.pending ? S.pendingRead : {}
 										},
-										children: e.pending ? t("designCritiquePage.running") : e.read || "Critique"
+										children: e.pending ? t("designCritiquePage.running") : e.read || t("designCritiquePage.critique_untitled")
 									}), /* @__PURE__ */ jsx("div", {
 										style: S.menuTime,
 										children: entryMeta(e)
@@ -6951,7 +8272,7 @@ function DesignCritiquePage() {
 				onClick: () => setScreenIdx(screens.indexOf(sc)),
 				title: t("designCritiquePage.show_this_screen"),
 				children: [
-					/* @__PURE__ */ jsx("span", { children: "Step " + sc.step + " · " }),
+					/* @__PURE__ */ jsx("span", { children: t("designCritiquePage.step_n", { n: fmtNumber(sc.step) }) + " · " }),
 					/* @__PURE__ */ jsx("span", {
 						style: S.stepName,
 						title: sc.label,
@@ -6968,7 +8289,10 @@ function DesignCritiquePage() {
 							...S.stepCount,
 							color: "var(--muted)"
 						},
-						children: mine.length ? mine.length + (mine.length === 1 ? " finding" : " findings") : "nothing flagged"
+						children: mine.length ? t("designCritiquePage.findings_count", {
+							count: mine.length,
+							n: fmtNumber(mine.length)
+						}) : t("designCritiquePage.nothing_flagged")
 					})
 				]
 			}), mine.map(renderRow)] }, "st" + sc.step);
@@ -6979,11 +8303,14 @@ function DesignCritiquePage() {
 		railBody = /* @__PURE__ */ jsxs(Fragment, { children: [
 			/* @__PURE__ */ jsx("p", {
 				style: S.readLine,
-				children: withMarks(report.overallRead || "Design critique")
+				children: withMarks(report.overallRead || t("designCritiquePage.design_critique_fallback"))
 			}, "read"),
 			report.health || isFlow ? /* @__PURE__ */ jsx("div", {
 				style: S.health,
-				children: [report.health, isFlow ? " · " + screens.length + " screens" : ""].filter(Boolean).join("")
+				children: [report.health, isFlow ? " · " + t("designCritiquePage.flow_screens_count", {
+					count: screens.length,
+					n: fmtNumber(screens.length)
+				}) : ""].filter(Boolean).join("")
 			}, "hh") : null,
 			/* @__PURE__ */ jsx("div", {
 				style: S.chips,
@@ -7035,15 +8362,18 @@ function DesignCritiquePage() {
 	} else if (busy) railBody = /* @__PURE__ */ jsxs(Fragment, { children: [
 		/* @__PURE__ */ jsx("p", {
 			style: S.readLine,
-			children: phase === "uploading" ? "Uploading…" : "Reading your design…"
+			children: phase === "uploading" ? t("designCritiquePage.rail_uploading") : t("designCritiquePage.rail_reading")
 		}, "w"),
 		/* @__PURE__ */ jsx("div", {
 			style: S.health,
-			children: screens.length > 1 ? "A flow of " + screens.length + " screens — I’ll also check the jumps between them." : screens.length ? "One screen." : pendingKind ? "A " + (KIND_LABEL[pendingKind] || "design") + " — rendering it before judging it." : "Getting the screens ready."
+			children: screens.length > 1 ? t("designCritiquePage.rail_flow", {
+				count: screens.length,
+				n: fmtNumber(screens.length)
+			}) : screens.length ? t("designCritiquePage.rail_one_screen") : pendingKind ? railPendingLabel(pendingKind) : t("designCritiquePage.rail_getting_ready")
 		}, "sub"),
 		screens.length ? /* @__PURE__ */ jsxs("div", { children: [/* @__PURE__ */ jsx("div", {
 			style: S.sectionH,
-			children: screens.length > 1 ? "Screens in order" : "Screen"
+			children: screens.length > 1 ? t("designCritiquePage.screens_in_order") : t("designCritiquePage.screen_heading")
 		}), screens.map((sc, i) => /* @__PURE__ */ jsxs("div", {
 			style: {
 				...S.seeItem,
@@ -7064,16 +8394,16 @@ function DesignCritiquePage() {
 					textOverflow: "ellipsis",
 					whiteSpace: "nowrap"
 				},
-				children: sc.label || "Screen " + (i + 1)
+				children: sc.label || t("designCritiquePage.screen_n", { n: fmtNumber(i + 1) })
 			})]
 		}, i))] }, "l") : null,
 		/* @__PURE__ */ jsxs("div", { children: [/* @__PURE__ */ jsx("div", {
 			style: S.sectionH,
 			children: t("designCritiquePage.what_you_ll_get")
 		}), [
-			"An overall read of how it’s doing",
-			"What’s working, so it survives the next pass",
-			"The top things to tighten, with pins on the screen"
+			t("designCritiquePage.get_overall_read"),
+			t("designCritiquePage.get_whats_working"),
+			t("designCritiquePage.get_top_things")
 		].map((tx, i) => /* @__PURE__ */ jsx("div", {
 			style: S.seeItem,
 			children: "· " + tx
@@ -7114,7 +8444,7 @@ function DesignCritiquePage() {
 							...S.listRead,
 							...e.pending ? S.pendingRead : {}
 						},
-						children: e.pending ? t("designCritiquePage.running") : e.read || "Critique"
+						children: e.pending ? t("designCritiquePage.running") : e.read || t("designCritiquePage.critique_untitled")
 					}), /* @__PURE__ */ jsx("div", {
 						style: S.listTime,
 						children: entryMeta(e)
@@ -7133,7 +8463,7 @@ function DesignCritiquePage() {
 			]
 		}, e.id)) }, "list") : /* @__PURE__ */ jsx("div", {
 			style: S.emptyList,
-			children: "No critiques yet." + (narrow ? " Drop a screenshot below." : " Drop a screenshot in the panel →")
+			children: narrow ? t("designCritiquePage.no_critiques_narrow") : t("designCritiquePage.no_critiques_wide")
 		}, "empty")
 	] });
 	const railFailures = backgroundFailures.length ? /* @__PURE__ */ jsx("div", {
@@ -7200,7 +8530,7 @@ function DesignCritiquePage() {
 						setScreenIdx(i);
 						setActive(null);
 					},
-					title: "Step " + sc.step + " · " + sc.label,
+					title: t("designCritiquePage.step_n", { n: fmtNumber(sc.step) }) + " · " + sc.label,
 					"aria-current": on ? "true" : "false",
 					children: [/* @__PURE__ */ jsxs("div", {
 						style: {
@@ -7249,11 +8579,15 @@ function DesignCritiquePage() {
 				children: [/* @__PURE__ */ jsx("img", {
 					src: thumbUrl,
 					style: S.previewImg,
-					alt: shown ? shown.label : "the design"
+					alt: shown ? shown.label : t("designCritiquePage.the_design_alt")
 				}), markers]
 			}), /* @__PURE__ */ jsxs("div", {
 				style: S.pvbar,
-				children: [/* @__PURE__ */ jsx(Maximize2, { size: 12 }), "Click to enlarge" + (markers.length ? " · numbered pins mark issues on this screen" : "") + (isFlow ? " · pick a step above" : "")]
+				children: [/* @__PURE__ */ jsx(Maximize2, { size: 12 }), [
+					t("designCritiquePage.click_to_enlarge"),
+					markers.length ? t("designCritiquePage.numbered_pins_mark_issues_on_this_screen") : "",
+					isFlow ? t("designCritiquePage.pick_a_step_above") : ""
+				].filter(Boolean).join(" · ")]
 			})]
 		})] });
 	} else if (phase === "report" && report) canvasInner = /* @__PURE__ */ jsx("div", {
