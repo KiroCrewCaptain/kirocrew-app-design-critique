@@ -86,7 +86,7 @@ var CATALOGS = {
 			"clear_all": "সব মুছুন",
 			"critique_this_flow_count_screens_one": "এই ফ্লোর ক্রিটিক করো · {{count}}টি স্ক্রিন",
 			"critique_this_flow_count_screens_other": "এই ফ্লোর ক্রিটিক করো · {{count}}টি স্ক্রিন",
-			"critique_this_screen": "Critique this screen",
+			"critique_this_screen": "এই স্ক্রিনের ক্রিটিক করুন",
 			"drop_screenshots_or_click_to_browse": "স্ক্রিনশট ড্রপ করুন — বা ব্রাউজ করতে ক্লিক করুন",
 			"fix_my_access": "আমার অ্যাক্সেস ঠিক করো",
 			"fix_the_link": "লিঙ্কটি ঠিক করুন",
@@ -100,7 +100,7 @@ var CATALOGS = {
 			"start_the_critique": "ক্রিটিক শুরু করো",
 			"step_n": "ধাপ {{n}}",
 			"try_again": "আবার চেষ্টা করুন",
-			"unrecognised": "Unrecognised",
+			"unrecognised": "চেনা যায়নি",
 			"use_a_local_folder_instead": "পরিবর্তে একটি লোকাল ফোল্ডার ব্যবহার করুন",
 			"start_kind_figma": "Figma ফাইলের সমালোচনা করো",
 			"start_kind_repo": "রিপোজিটরির সমালোচনা করো",
@@ -190,17 +190,17 @@ var CATALOGS = {
 			"see_an_example": "একটি উদাহরণ দেখুন",
 			"send_screenshots": "স্ক্রিনশট পাঠান",
 			"show_this_screen": "এই স্ক্রিনটি দেখান",
-			"something_went_wrong": "something went wrong",
+			"something_went_wrong": "কিছু একটা ভুল হয়েছে",
 			"start_a_new_critique_anything_already_running_ke": "নতুন একটি ক্রিটিক শুরু করুন — চলমান যেকোনো কিছু চলতে থাকবে",
 			"step_n": "ধাপ {{n}}",
-			"still_working_on_this_one_it_s_kept_running_come": "Still working on this one. It’s kept running — come back in a minute.",
-			"still_working_on_this_one_it_s_kept_running_come_2": "Still working on this one. It’s kept running — come back to this page in a minute and it’ll pick up where it left off.",
+			"still_working_on_this_one_it_s_kept_running_come": "এখনও এটার কাজ চলছে। এটি চলতেই থাকবে — এক মিনিট পরে ফিরে আসুন।",
+			"still_working_on_this_one_it_s_kept_running_come_2": "এখনও এটার কাজ চলছে। এটি চলতেই থাকবে — এক মিনিট পরে এই পেজে ফিরে এলে যেখানে থেমেছিল সেখান থেকে আবার শুরু হবে।",
 			"switch_critique": "ক্রিটিক পাল্টান",
-			"that_critique_didn_t_finish": "That critique didn’t finish.",
-			"that_s_more_than_20_screens_send_fewer": "That’s more than 20 screens — send fewer.",
+			"that_critique_didn_t_finish": "সেই ক্রিটিক শেষ হয়নি।",
+			"that_s_more_than_20_screens_send_fewer": "এটা 20টির বেশি স্ক্রিন — কম পাঠান।",
 			"that_s_the_limit_of_max_screens": "এটাই {{max}} স্ক্রিনের সীমা।",
-			"that_scan_didn_t_finish": "That scan didn’t finish.",
-			"those_weren_t_image_files": "Those weren’t image files.",
+			"that_scan_didn_t_finish": "সেই স্ক্যান শেষ হয়নি।",
+			"those_weren_t_image_files": "ওগুলো ইমেজ ফাইল ছিল না।",
 			"what_i_d_tighten": "যা আমি আরও নিখুঁত করতাম",
 			"what_s_working": "যা কাজ করছে",
 			"what_you_ll_get": "আপনি যা পাবেন",
@@ -234,7 +234,11 @@ var CATALOGS = {
 			"get_top_things": "শক্ত করার প্রধান বিষয়গুলো, স্ক্রিনে চিহ্নসহ",
 			"no_critiques_narrow": "এখনও কোনো সমালোচনা নেই। নিচে একটি স্ক্রিনশট দাও।",
 			"no_critiques_wide": "এখনও কোনো সমালোচনা নেই। প্যানেলে একটি স্ক্রিনশট দাও →",
-			"the_design_alt": "ডিজাইন"
+			"the_design_alt": "ডিজাইন",
+			"that_run_is_no_longer_available_start_a_new_critique": "সেই রানটি আর পাওয়া যাচ্ছে না — নতুন ক্রিটিক শুরু করুন।",
+			"the_critic_replied_but_not_in_a_readable_format": "ক্রিটিক উত্তর দিয়েছে, কিন্তু পড়ার মতো ফরম্যাটে নয়।",
+			"lost_contact": "যোগাযোগ বিচ্ছিন্ন হয়েছে",
+			"no_file_paths_returned": "কোনো ফাইল পাথ ফেরত আসেনি"
 		},
 		findingRow: {
 			"based_on": "যার ভিত্তিতে",
@@ -264,13 +268,13 @@ var CATALOGS = {
 		scopingPicker: {
 			"critique_this_flow_count_screens_one": "এই ফ্লোর ক্রিটিক করো · {{count}}টি স্ক্রিন",
 			"critique_this_flow_count_screens_other": "এই ফ্লোর ক্রিটিক করো · {{count}}টি স্ক্রিন",
-			"critique_this_screen": "Critique this screen",
+			"critique_this_screen": "এই স্ক্রিনের ক্রিটিক করুন",
 			"drag_to_reorder": "ক্রম পাল্টাতে টেনে আনুন",
 			"move_earlier": "আগে সরান",
 			"move_later": "পরে সরান",
 			"optional_brief_who_is_it_for_and_what_is_the_mai": "ঐচ্ছিক ব্রিফ: এটি কার জন্য, এবং মূল কাজটি কী?",
 			"optional_who_is_it_for_and_what_s_the_main_task": "ঐচ্ছিক: এটি কার জন্য, এবং মূল কাজটি কী?",
-			"pick_at_least_one_screen": "Pick at least one screen",
+			"pick_at_least_one_screen": "অন্তত একটি স্ক্রিন বেছে নিন",
 			"screens": "স্ক্রিন",
 			"start_over": "আবার শুরু করুন",
 			"suggested_flows": "প্রস্তাবিত ফ্লো",
@@ -314,7 +318,9 @@ var CATALOGS = {
 		},
 		common: {
 			"send_failed": "পাঠানো যায়নি",
-			"unexpected_server_response": "সার্ভার থেকে অপ্রত্যাশিত সাড়া"
+			"unexpected_server_response": "সার্ভার থেকে অপ্রত্যাশিত সাড়া",
+			"lost_contact_with_the_scan": "স্ক্যানের সঙ্গে যোগাযোগ বিচ্ছিন্ন হয়েছে",
+			"that_run_did_not_finish": "সেই রানটি শেষ হয়নি"
 		}
 	},
 	de: {
@@ -336,7 +342,7 @@ var CATALOGS = {
 			"clear_all": "Alle entfernen",
 			"critique_this_flow_count_screens_one": "Diesen Flow kritisieren · {{count}} Screen",
 			"critique_this_flow_count_screens_other": "Diesen Flow kritisieren · {{count}} Screens",
-			"critique_this_screen": "Critique this screen",
+			"critique_this_screen": "Diesen Screen kritisieren",
 			"drop_screenshots_or_click_to_browse": "Screenshots ablegen — oder zum Durchsuchen klicken",
 			"fix_my_access": "Meinen Zugriff reparieren",
 			"fix_the_link": "Link korrigieren",
@@ -350,7 +356,7 @@ var CATALOGS = {
 			"start_the_critique": "Kritik starten",
 			"step_n": "Schritt {{n}}",
 			"try_again": "Erneut versuchen",
-			"unrecognised": "Unrecognised",
+			"unrecognised": "Nicht erkannt",
 			"use_a_local_folder_instead": "Stattdessen einen lokalen Ordner verwenden",
 			"start_kind_figma": "Figma-Datei kritisieren",
 			"start_kind_repo": "Repo kritisieren",
@@ -440,17 +446,17 @@ var CATALOGS = {
 			"see_an_example": "Beispiel ansehen",
 			"send_screenshots": "Screenshots senden",
 			"show_this_screen": "Diesen Screen anzeigen",
-			"something_went_wrong": "something went wrong",
+			"something_went_wrong": "etwas ist schiefgelaufen",
 			"start_a_new_critique_anything_already_running_ke": "Neue Kritik starten — bereits laufende Kritiken laufen weiter",
 			"step_n": "Schritt {{n}}",
-			"still_working_on_this_one_it_s_kept_running_come": "Still working on this one. It’s kept running — come back in a minute.",
-			"still_working_on_this_one_it_s_kept_running_come_2": "Still working on this one. It’s kept running — come back to this page in a minute and it’ll pick up where it left off.",
+			"still_working_on_this_one_it_s_kept_running_come": "Ich arbeite noch daran. Es läuft weiter — schau in einer Minute wieder vorbei.",
+			"still_working_on_this_one_it_s_kept_running_come_2": "Ich arbeite noch daran. Es läuft weiter — komm in einer Minute auf diese Seite zurück, dann geht es dort weiter, wo es aufgehört hat.",
 			"switch_critique": "Kritik wechseln",
-			"that_critique_didn_t_finish": "That critique didn’t finish.",
-			"that_s_more_than_20_screens_send_fewer": "That’s more than 20 screens — send fewer.",
+			"that_critique_didn_t_finish": "Diese Kritik wurde nicht abgeschlossen.",
+			"that_s_more_than_20_screens_send_fewer": "Das sind mehr als 20 Screens — sende weniger.",
 			"that_s_the_limit_of_max_screens": "Das ist das Limit von {{max}} Screens.",
-			"that_scan_didn_t_finish": "That scan didn’t finish.",
-			"those_weren_t_image_files": "Those weren’t image files.",
+			"that_scan_didn_t_finish": "Dieser Scan wurde nicht abgeschlossen.",
+			"those_weren_t_image_files": "Das waren keine Bilddateien.",
 			"what_i_d_tighten": "Was ich verfeinern würde",
 			"what_s_working": "Was funktioniert",
 			"what_you_ll_get": "Was Sie erhalten",
@@ -484,7 +490,11 @@ var CATALOGS = {
 			"get_top_things": "Die wichtigsten Punkte zum Nachschärfen, mit Markierungen auf dem Bildschirm",
 			"no_critiques_narrow": "Noch keine Kritiken. Lege unten einen Screenshot ab.",
 			"no_critiques_wide": "Noch keine Kritiken. Lege einen Screenshot im Bereich ab →",
-			"the_design_alt": "Das Design"
+			"the_design_alt": "Das Design",
+			"that_run_is_no_longer_available_start_a_new_critique": "Dieser Lauf ist nicht mehr verfügbar — starte eine neue Kritik.",
+			"the_critic_replied_but_not_in_a_readable_format": "Der Kritiker hat geantwortet, aber nicht in einem lesbaren Format.",
+			"lost_contact": "Verbindung verloren",
+			"no_file_paths_returned": "keine Dateipfade zurückgegeben"
 		},
 		findingRow: {
 			"based_on": "Basierend auf",
@@ -514,13 +524,13 @@ var CATALOGS = {
 		scopingPicker: {
 			"critique_this_flow_count_screens_one": "Diesen Flow kritisieren · {{count}} Screen",
 			"critique_this_flow_count_screens_other": "Diesen Flow kritisieren · {{count}} Screens",
-			"critique_this_screen": "Critique this screen",
+			"critique_this_screen": "Diesen Screen kritisieren",
 			"drag_to_reorder": "Zum Umsortieren ziehen",
 			"move_earlier": "Nach vorne",
 			"move_later": "Nach hinten",
 			"optional_brief_who_is_it_for_and_what_is_the_mai": "Optionaler Kurzbrief: für wen ist es, und was ist die Hauptaufgabe?",
 			"optional_who_is_it_for_and_what_s_the_main_task": "Optional: für wen ist es, und was ist die Hauptaufgabe?",
-			"pick_at_least_one_screen": "Pick at least one screen",
+			"pick_at_least_one_screen": "Wähle mindestens einen Screen aus",
 			"screens": "Screens",
 			"start_over": "Neu beginnen",
 			"suggested_flows": "Vorgeschlagene Flows",
@@ -564,7 +574,9 @@ var CATALOGS = {
 		},
 		common: {
 			"send_failed": "Senden fehlgeschlagen",
-			"unexpected_server_response": "Unerwartete Serverantwort"
+			"unexpected_server_response": "Unerwartete Serverantwort",
+			"lost_contact_with_the_scan": "Verbindung zum Scan verloren",
+			"that_run_did_not_finish": "dieser Lauf wurde nicht abgeschlossen"
 		}
 	},
 	en: {
@@ -692,7 +704,11 @@ var CATALOGS = {
 			"get_top_things": "The top things to tighten, with pins on the screen",
 			"no_critiques_narrow": "No critiques yet. Drop a screenshot below.",
 			"no_critiques_wide": "No critiques yet. Drop a screenshot in the panel →",
-			"the_design_alt": "The design"
+			"the_design_alt": "The design",
+			"that_run_is_no_longer_available_start_a_new_critique": "That run is no longer available — start a new critique.",
+			"the_critic_replied_but_not_in_a_readable_format": "The critic replied but not in a readable format.",
+			"lost_contact": "lost contact",
+			"no_file_paths_returned": "no file paths returned"
 		},
 		findingRow: {
 			"based_on": "Based on",
@@ -814,7 +830,9 @@ var CATALOGS = {
 		},
 		common: {
 			"send_failed": "Send failed",
-			"unexpected_server_response": "Unexpected server response"
+			"unexpected_server_response": "Unexpected server response",
+			"lost_contact_with_the_scan": "lost contact with the scan",
+			"that_run_did_not_finish": "that run did not finish"
 		}
 	},
 	es: {
@@ -837,7 +855,7 @@ var CATALOGS = {
 			"critique_this_flow_count_screens_one": "Criticar este flujo · {{count}} pantalla",
 			"critique_this_flow_count_screens_many": "Criticar este flujo · {{count}} pantallas",
 			"critique_this_flow_count_screens_other": "Criticar este flujo · {{count}} pantallas",
-			"critique_this_screen": "Critique this screen",
+			"critique_this_screen": "Criticar esta pantalla",
 			"drop_screenshots_or_click_to_browse": "Suelta capturas — o haz clic para explorar",
 			"fix_my_access": "Arreglar mi acceso",
 			"fix_the_link": "Corregir el enlace",
@@ -851,7 +869,7 @@ var CATALOGS = {
 			"start_the_critique": "Empezar la crítica",
 			"step_n": "Paso {{n}}",
 			"try_again": "Reintentar",
-			"unrecognised": "Unrecognised",
+			"unrecognised": "No reconocido",
 			"use_a_local_folder_instead": "Usar una carpeta local en su lugar",
 			"start_kind_figma": "Criticar el archivo de Figma",
 			"start_kind_repo": "Criticar el repositorio",
@@ -942,17 +960,17 @@ var CATALOGS = {
 			"see_an_example": "Ver un ejemplo",
 			"send_screenshots": "Enviar capturas",
 			"show_this_screen": "Mostrar esta pantalla",
-			"something_went_wrong": "something went wrong",
+			"something_went_wrong": "algo salió mal",
 			"start_a_new_critique_anything_already_running_ke": "Inicia una nueva crítica — lo que ya esté en marcha continúa",
 			"step_n": "Paso {{n}}",
 			"still_working_on_this_one_it_s_kept_running_come": "Sigo trabajando en esto. Continúa en ejecución — vuelve en un minuto.",
 			"still_working_on_this_one_it_s_kept_running_come_2": "Sigo trabajando en esto. Continúa en ejecución — vuelve a esta página en un minuto y retomará donde lo dejó.",
 			"switch_critique": "Cambiar de crítica",
-			"that_critique_didn_t_finish": "That critique didn’t finish.",
+			"that_critique_didn_t_finish": "Esa crítica no terminó.",
 			"that_s_more_than_20_screens_send_fewer": "Son más de 20 pantallas — envía menos.",
 			"that_s_the_limit_of_max_screens": "Ese es el límite de {{max}} pantallas.",
-			"that_scan_didn_t_finish": "That scan didn’t finish.",
-			"those_weren_t_image_files": "Those weren’t image files.",
+			"that_scan_didn_t_finish": "Ese análisis no terminó.",
+			"those_weren_t_image_files": "Esos no eran archivos de imagen.",
 			"what_i_d_tighten": "Qué ajustaría",
 			"what_s_working": "Qué funciona",
 			"what_you_ll_get": "Qué obtendrás",
@@ -990,7 +1008,11 @@ var CATALOGS = {
 			"get_top_things": "Lo más importante que ajustar, con marcas en la pantalla",
 			"no_critiques_narrow": "Aún no hay críticas. Suelta una captura abajo.",
 			"no_critiques_wide": "Aún no hay críticas. Suelta una captura en el panel →",
-			"the_design_alt": "El diseño"
+			"the_design_alt": "El diseño",
+			"that_run_is_no_longer_available_start_a_new_critique": "Esa ejecución ya no está disponible — empieza una nueva crítica.",
+			"the_critic_replied_but_not_in_a_readable_format": "El crítico respondió, pero no en un formato legible.",
+			"lost_contact": "se perdió la conexión",
+			"no_file_paths_returned": "no se devolvieron rutas de archivo"
 		},
 		findingRow: {
 			"based_on": "Basado en",
@@ -1021,13 +1043,13 @@ var CATALOGS = {
 			"critique_this_flow_count_screens_one": "Criticar este flujo · {{count}} pantalla",
 			"critique_this_flow_count_screens_many": "Criticar este flujo · {{count}} pantallas",
 			"critique_this_flow_count_screens_other": "Criticar este flujo · {{count}} pantallas",
-			"critique_this_screen": "Critique this screen",
+			"critique_this_screen": "Criticar esta pantalla",
 			"drag_to_reorder": "Arrastra para reordenar",
 			"move_earlier": "Mover antes",
 			"move_later": "Mover después",
 			"optional_brief_who_is_it_for_and_what_is_the_mai": "Resumen opcional: ¿para quién es y cuál es la tarea principal?",
 			"optional_who_is_it_for_and_what_s_the_main_task": "Opcional: ¿para quién es y cuál es la tarea principal?",
-			"pick_at_least_one_screen": "Pick at least one screen",
+			"pick_at_least_one_screen": "Elige al menos una pantalla",
 			"screens": "Pantallas",
 			"start_over": "Empezar de nuevo",
 			"suggested_flows": "Flujos sugeridos",
@@ -1075,7 +1097,9 @@ var CATALOGS = {
 		},
 		common: {
 			"send_failed": "Error al enviar",
-			"unexpected_server_response": "Respuesta inesperada del servidor"
+			"unexpected_server_response": "Respuesta inesperada del servidor",
+			"lost_contact_with_the_scan": "se perdió la conexión con el análisis",
+			"that_run_did_not_finish": "esa ejecución no terminó"
 		}
 	},
 	fr: {
@@ -1098,7 +1122,7 @@ var CATALOGS = {
 			"critique_this_flow_count_screens_one": "Critiquer ce parcours · {{count}} écran",
 			"critique_this_flow_count_screens_many": "Critiquer ce parcours · {{count}} écrans",
 			"critique_this_flow_count_screens_other": "Critiquer ce parcours · {{count}} écrans",
-			"critique_this_screen": "Critique this screen",
+			"critique_this_screen": "Critiquer cet écran",
 			"drop_screenshots_or_click_to_browse": "Déposez des captures — ou cliquez pour parcourir",
 			"fix_my_access": "Réparer mon accès",
 			"fix_the_link": "Corriger le lien",
@@ -1112,7 +1136,7 @@ var CATALOGS = {
 			"start_the_critique": "Lancer la critique",
 			"step_n": "Étape {{n}}",
 			"try_again": "Réessayer",
-			"unrecognised": "Unrecognised",
+			"unrecognised": "Non reconnu",
 			"use_a_local_folder_instead": "Utiliser plutôt un dossier local",
 			"start_kind_figma": "Critiquer le fichier Figma",
 			"start_kind_repo": "Critiquer le dépôt",
@@ -1203,17 +1227,17 @@ var CATALOGS = {
 			"see_an_example": "Voir un exemple",
 			"send_screenshots": "Envoyer les captures",
 			"show_this_screen": "Afficher cet écran",
-			"something_went_wrong": "something went wrong",
+			"something_went_wrong": "une erreur s’est produite",
 			"start_a_new_critique_anything_already_running_ke": "Lancer une nouvelle critique — celles déjà en cours se poursuivent",
 			"step_n": "Étape {{n}}",
-			"still_working_on_this_one_it_s_kept_running_come": "Still working on this one. It’s kept running — come back in a minute.",
-			"still_working_on_this_one_it_s_kept_running_come_2": "Still working on this one. It’s kept running — come back to this page in a minute and it’ll pick up where it left off.",
+			"still_working_on_this_one_it_s_kept_running_come": "Toujours en cours. L’analyse continue — revenez dans une minute.",
+			"still_working_on_this_one_it_s_kept_running_come_2": "Toujours en cours. L’analyse continue — revenez sur cette page dans une minute et elle reprendra là où elle s’était arrêtée.",
 			"switch_critique": "Changer de critique",
-			"that_critique_didn_t_finish": "That critique didn’t finish.",
-			"that_s_more_than_20_screens_send_fewer": "That’s more than 20 screens — send fewer.",
+			"that_critique_didn_t_finish": "Cette critique n’a pas abouti.",
+			"that_s_more_than_20_screens_send_fewer": "Cela fait plus de 20 écrans — envoyez-en moins.",
 			"that_s_the_limit_of_max_screens": "C’est la limite de {{max}} écrans.",
-			"that_scan_didn_t_finish": "That scan didn’t finish.",
-			"those_weren_t_image_files": "Those weren’t image files.",
+			"that_scan_didn_t_finish": "Cette analyse n’a pas abouti.",
+			"those_weren_t_image_files": "Ce n’étaient pas des fichiers image.",
 			"what_i_d_tighten": "Ce que je resserrerais",
 			"what_s_working": "Ce qui fonctionne",
 			"what_you_ll_get": "Ce que vous obtiendrez",
@@ -1251,7 +1275,11 @@ var CATALOGS = {
 			"get_top_things": "Les points principaux à resserrer, avec des repères sur l’écran",
 			"no_critiques_narrow": "Aucune critique pour l’instant. Dépose une capture ci-dessous.",
 			"no_critiques_wide": "Aucune critique pour l’instant. Dépose une capture dans le panneau →",
-			"the_design_alt": "Le design"
+			"the_design_alt": "Le design",
+			"that_run_is_no_longer_available_start_a_new_critique": "Cette exécution n’est plus disponible — lancez une nouvelle critique.",
+			"the_critic_replied_but_not_in_a_readable_format": "Le critique a répondu, mais pas dans un format lisible.",
+			"lost_contact": "connexion perdue",
+			"no_file_paths_returned": "aucun chemin de fichier renvoyé"
 		},
 		findingRow: {
 			"based_on": "D'après",
@@ -1282,13 +1310,13 @@ var CATALOGS = {
 			"critique_this_flow_count_screens_one": "Critiquer ce parcours · {{count}} écran",
 			"critique_this_flow_count_screens_many": "Critiquer ce parcours · {{count}} écrans",
 			"critique_this_flow_count_screens_other": "Critiquer ce parcours · {{count}} écrans",
-			"critique_this_screen": "Critique this screen",
+			"critique_this_screen": "Critiquer cet écran",
 			"drag_to_reorder": "Glisser pour réorganiser",
 			"move_earlier": "Déplacer avant",
 			"move_later": "Déplacer après",
 			"optional_brief_who_is_it_for_and_what_is_the_mai": "Brief facultatif : à qui s'adresse-t-il et quelle est la tâche principale ?",
 			"optional_who_is_it_for_and_what_s_the_main_task": "Facultatif : à qui s'adresse-t-il et quelle est la tâche principale ?",
-			"pick_at_least_one_screen": "Pick at least one screen",
+			"pick_at_least_one_screen": "Choisissez au moins un écran",
 			"screens": "Écrans",
 			"start_over": "Recommencer",
 			"suggested_flows": "Parcours suggérés",
@@ -1336,7 +1364,9 @@ var CATALOGS = {
 		},
 		common: {
 			"send_failed": "Échec de l’envoi",
-			"unexpected_server_response": "Réponse inattendue du serveur"
+			"unexpected_server_response": "Réponse inattendue du serveur",
+			"lost_contact_with_the_scan": "connexion perdue avec l’analyse",
+			"that_run_did_not_finish": "cette exécution n’a pas abouti"
 		}
 	},
 	hi: {
@@ -1358,7 +1388,7 @@ var CATALOGS = {
 			"clear_all": "सभी हटाएँ",
 			"critique_this_flow_count_screens_one": "इस फ़्लो की समीक्षा करो · {{count}} स्क्रीन",
 			"critique_this_flow_count_screens_other": "इस फ़्लो की समीक्षा करो · {{count}} स्क्रीन",
-			"critique_this_screen": "Critique this screen",
+			"critique_this_screen": "इस स्क्रीन की समीक्षा करें",
 			"drop_screenshots_or_click_to_browse": "स्क्रीनशॉट यहाँ छोड़ें — या ब्राउज़ करने के लिए क्लिक करें",
 			"fix_my_access": "मेरी पहुँच ठीक करो",
 			"fix_the_link": "लिंक ठीक करें",
@@ -1372,7 +1402,7 @@ var CATALOGS = {
 			"start_the_critique": "समीक्षा शुरू करो",
 			"step_n": "चरण {{n}}",
 			"try_again": "फिर से कोशिश करें",
-			"unrecognised": "Unrecognised",
+			"unrecognised": "पहचाना नहीं गया",
 			"use_a_local_folder_instead": "इसके बजाय लोकल फ़ोल्डर इस्तेमाल करें",
 			"start_kind_figma": "Figma फ़ाइल की समीक्षा करो",
 			"start_kind_repo": "रिपॉज़िटरी की समीक्षा करो",
@@ -1462,17 +1492,17 @@ var CATALOGS = {
 			"see_an_example": "एक उदाहरण देखें",
 			"send_screenshots": "स्क्रीनशॉट भेजें",
 			"show_this_screen": "यह स्क्रीन दिखाएँ",
-			"something_went_wrong": "something went wrong",
+			"something_went_wrong": "कुछ गड़बड़ हो गई",
 			"start_a_new_critique_anything_already_running_ke": "नई समीक्षा शुरू करें — जो पहले से चल रहा है वह चलता रहेगा",
 			"step_n": "चरण {{n}}",
-			"still_working_on_this_one_it_s_kept_running_come": "Still working on this one. It’s kept running — come back in a minute.",
-			"still_working_on_this_one_it_s_kept_running_come_2": "Still working on this one. It’s kept running — come back to this page in a minute and it’ll pick up where it left off.",
+			"still_working_on_this_one_it_s_kept_running_come": "अभी भी इस पर काम चल रहा है। यह चलता रहेगा — एक मिनट में वापस आएँ।",
+			"still_working_on_this_one_it_s_kept_running_come_2": "अभी भी इस पर काम चल रहा है। यह चलता रहेगा — एक मिनट में इस पेज पर वापस आएँ, यह वहीं से जारी रहेगा जहाँ रुका था।",
 			"switch_critique": "समीक्षा बदलें",
-			"that_critique_didn_t_finish": "That critique didn’t finish.",
-			"that_s_more_than_20_screens_send_fewer": "That’s more than 20 screens — send fewer.",
+			"that_critique_didn_t_finish": "वह समीक्षा पूरी नहीं हुई।",
+			"that_s_more_than_20_screens_send_fewer": "यह 20 से ज़्यादा स्क्रीन हैं — कम भेजें।",
 			"that_s_the_limit_of_max_screens": "यह {{max}} स्क्रीन की सीमा है।",
-			"that_scan_didn_t_finish": "That scan didn’t finish.",
-			"those_weren_t_image_files": "Those weren’t image files.",
+			"that_scan_didn_t_finish": "वह स्कैन पूरा नहीं हुआ।",
+			"those_weren_t_image_files": "वे इमेज फ़ाइलें नहीं थीं।",
 			"what_i_d_tighten": "क्या कसना है",
 			"what_s_working": "क्या अच्छा चल रहा है",
 			"what_you_ll_get": "तुम्हें क्या मिलेगा",
@@ -1506,7 +1536,11 @@ var CATALOGS = {
 			"get_top_things": "कसने लायक मुख्य बातें, स्क्रीन पर निशानों के साथ",
 			"no_critiques_narrow": "अभी कोई समीक्षा नहीं। नीचे एक स्क्रीनशॉट डालें।",
 			"no_critiques_wide": "अभी कोई समीक्षा नहीं। पैनल में एक स्क्रीनशॉट डालें →",
-			"the_design_alt": "डिज़ाइन"
+			"the_design_alt": "डिज़ाइन",
+			"that_run_is_no_longer_available_start_a_new_critique": "वह रन अब उपलब्ध नहीं है — नई समीक्षा शुरू करें।",
+			"the_critic_replied_but_not_in_a_readable_format": "समीक्षक ने जवाब दिया, लेकिन पढ़ने योग्य फ़ॉर्मैट में नहीं।",
+			"lost_contact": "संपर्क टूट गया",
+			"no_file_paths_returned": "कोई फ़ाइल पाथ नहीं लौटा"
 		},
 		findingRow: {
 			"based_on": "किस आधार पर",
@@ -1536,13 +1570,13 @@ var CATALOGS = {
 		scopingPicker: {
 			"critique_this_flow_count_screens_one": "इस फ़्लो की समीक्षा करो · {{count}} स्क्रीन",
 			"critique_this_flow_count_screens_other": "इस फ़्लो की समीक्षा करो · {{count}} स्क्रीन",
-			"critique_this_screen": "Critique this screen",
+			"critique_this_screen": "इस स्क्रीन की समीक्षा करें",
 			"drag_to_reorder": "क्रम बदलने के लिए खींचें",
 			"move_earlier": "पहले ले जाएँ",
 			"move_later": "बाद में ले जाएँ",
 			"optional_brief_who_is_it_for_and_what_is_the_mai": "वैकल्पिक ब्रीफ़: यह किसके लिए है, और मुख्य काम क्या है?",
 			"optional_who_is_it_for_and_what_s_the_main_task": "वैकल्पिक: यह किसके लिए है, और मुख्य काम क्या है?",
-			"pick_at_least_one_screen": "Pick at least one screen",
+			"pick_at_least_one_screen": "कम से कम एक स्क्रीन चुनें",
 			"screens": "स्क्रीन",
 			"start_over": "फिर से शुरू करें",
 			"suggested_flows": "सुझाए गए फ़्लो",
@@ -1586,7 +1620,9 @@ var CATALOGS = {
 		},
 		common: {
 			"send_failed": "भेजना विफल",
-			"unexpected_server_response": "सर्वर से अनपेक्षित प्रतिक्रिया"
+			"unexpected_server_response": "सर्वर से अनपेक्षित प्रतिक्रिया",
+			"lost_contact_with_the_scan": "स्कैन से संपर्क टूट गया",
+			"that_run_did_not_finish": "वह रन पूरा नहीं हुआ"
 		}
 	},
 	it: {
@@ -1609,7 +1645,7 @@ var CATALOGS = {
 			"critique_this_flow_count_screens_one": "Critica questo flusso · {{count}} schermata",
 			"critique_this_flow_count_screens_many": "Critica questo flusso · {{count}} schermate",
 			"critique_this_flow_count_screens_other": "Critica questo flusso · {{count}} schermate",
-			"critique_this_screen": "Critique this screen",
+			"critique_this_screen": "Critica questa schermata",
 			"drop_screenshots_or_click_to_browse": "Trascina gli screenshot — o clicca per sfogliare",
 			"fix_my_access": "Sistema il mio accesso",
 			"fix_the_link": "Correggi il link",
@@ -1623,7 +1659,7 @@ var CATALOGS = {
 			"start_the_critique": "Avvia la critica",
 			"step_n": "Passo {{n}}",
 			"try_again": "Riprova",
-			"unrecognised": "Unrecognised",
+			"unrecognised": "Non riconosciuto",
 			"use_a_local_folder_instead": "Usa invece una cartella locale",
 			"start_kind_figma": "Critica il file Figma",
 			"start_kind_repo": "Critica il repository",
@@ -1714,17 +1750,17 @@ var CATALOGS = {
 			"see_an_example": "Guarda un esempio",
 			"send_screenshots": "Invia gli screenshot",
 			"show_this_screen": "Mostra questa schermata",
-			"something_went_wrong": "something went wrong",
+			"something_went_wrong": "qualcosa è andato storto",
 			"start_a_new_critique_anything_already_running_ke": "Avvia una nuova critica — quelle già in corso proseguono",
 			"step_n": "Passo {{n}}",
-			"still_working_on_this_one_it_s_kept_running_come": "Still working on this one. It’s kept running — come back in a minute.",
-			"still_working_on_this_one_it_s_kept_running_come_2": "Still working on this one. It’s kept running — come back to this page in a minute and it’ll pick up where it left off.",
+			"still_working_on_this_one_it_s_kept_running_come": "Ci sto ancora lavorando. Continua a girare — torna tra un minuto.",
+			"still_working_on_this_one_it_s_kept_running_come_2": "Ci sto ancora lavorando. Continua a girare — torna su questa pagina tra un minuto e riprenderà da dove si era fermato.",
 			"switch_critique": "Cambia critica",
-			"that_critique_didn_t_finish": "That critique didn’t finish.",
-			"that_s_more_than_20_screens_send_fewer": "That’s more than 20 screens — send fewer.",
+			"that_critique_didn_t_finish": "Quella critica non è stata completata.",
+			"that_s_more_than_20_screens_send_fewer": "Sono più di 20 schermate — inviane meno.",
 			"that_s_the_limit_of_max_screens": "Questo è il limite di {{max}} schermate.",
-			"that_scan_didn_t_finish": "That scan didn’t finish.",
-			"those_weren_t_image_files": "Those weren’t image files.",
+			"that_scan_didn_t_finish": "Quella scansione non è stata completata.",
+			"those_weren_t_image_files": "Quelli non erano file immagine.",
 			"what_i_d_tighten": "Cosa rifinirei",
 			"what_s_working": "Cosa funziona",
 			"what_you_ll_get": "Cosa otterrai",
@@ -1762,7 +1798,11 @@ var CATALOGS = {
 			"get_top_things": "Le cose principali da sistemare, con segnaposti sulla schermata",
 			"no_critiques_narrow": "Ancora nessuna critica. Trascina uno screenshot qui sotto.",
 			"no_critiques_wide": "Ancora nessuna critica. Trascina uno screenshot nel pannello →",
-			"the_design_alt": "Il design"
+			"the_design_alt": "Il design",
+			"that_run_is_no_longer_available_start_a_new_critique": "Quell’esecuzione non è più disponibile — avvia una nuova critica.",
+			"the_critic_replied_but_not_in_a_readable_format": "Il critico ha risposto, ma non in un formato leggibile.",
+			"lost_contact": "connessione persa",
+			"no_file_paths_returned": "nessun percorso di file restituito"
 		},
 		findingRow: {
 			"based_on": "Basato su",
@@ -1793,13 +1833,13 @@ var CATALOGS = {
 			"critique_this_flow_count_screens_one": "Critica questo flusso · {{count}} schermata",
 			"critique_this_flow_count_screens_many": "Critica questo flusso · {{count}} schermate",
 			"critique_this_flow_count_screens_other": "Critica questo flusso · {{count}} schermate",
-			"critique_this_screen": "Critique this screen",
+			"critique_this_screen": "Critica questa schermata",
 			"drag_to_reorder": "Trascina per riordinare",
 			"move_earlier": "Sposta prima",
 			"move_later": "Sposta dopo",
 			"optional_brief_who_is_it_for_and_what_is_the_mai": "Brief facoltativo: a chi è rivolto e qual è il compito principale?",
 			"optional_who_is_it_for_and_what_s_the_main_task": "Facoltativo: a chi è rivolto e qual è il compito principale?",
-			"pick_at_least_one_screen": "Pick at least one screen",
+			"pick_at_least_one_screen": "Scegli almeno una schermata",
 			"screens": "Schermate",
 			"start_over": "Ricomincia",
 			"suggested_flows": "Flussi suggeriti",
@@ -1847,7 +1887,9 @@ var CATALOGS = {
 		},
 		common: {
 			"send_failed": "Invio non riuscito",
-			"unexpected_server_response": "Risposta del server inaspettata"
+			"unexpected_server_response": "Risposta del server inaspettata",
+			"lost_contact_with_the_scan": "connessione con la scansione persa",
+			"that_run_did_not_finish": "quell’esecuzione non è stata completata"
 		}
 	},
 	ja: {
@@ -1868,7 +1910,7 @@ var CATALOGS = {
 			"add_screenshots_or_paste_a_link_first": "先にスクリーンショットを追加するか、リンクを貼り付けてください",
 			"clear_all": "すべてクリア",
 			"critique_this_flow_count_screens_other": "このフローを批評 · スクリーン {{count}} 件",
-			"critique_this_screen": "Critique this screen",
+			"critique_this_screen": "このスクリーンを批評",
 			"drop_screenshots_or_click_to_browse": "スクリーンショットをドラッグするか、クリックして参照",
 			"fix_my_access": "アクセスを修正",
 			"fix_the_link": "リンクを修正",
@@ -1882,7 +1924,7 @@ var CATALOGS = {
 			"start_the_critique": "批評を開始",
 			"step_n": "ステップ {{n}}",
 			"try_again": "もう一度試す",
-			"unrecognised": "Unrecognised",
+			"unrecognised": "認識できません",
 			"use_a_local_folder_instead": "代わりにローカルフォルダーを使用",
 			"start_kind_figma": "Figma ファイルを批評",
 			"start_kind_repo": "リポジトリを批評",
@@ -1971,17 +2013,17 @@ var CATALOGS = {
 			"see_an_example": "例を見る",
 			"send_screenshots": "スクリーンショットを送信",
 			"show_this_screen": "このスクリーンを表示",
-			"something_went_wrong": "something went wrong",
+			"something_went_wrong": "問題が発生しました",
 			"start_a_new_critique_anything_already_running_ke": "新しい批評を開始 — 既に実行されているものは継続",
 			"step_n": "ステップ {{n}}",
-			"still_working_on_this_one_it_s_kept_running_come": "Still working on this one. It’s kept running — come back in a minute.",
-			"still_working_on_this_one_it_s_kept_running_come_2": "Still working on this one. It’s kept running — come back to this page in a minute and it’ll pick up where it left off.",
+			"still_working_on_this_one_it_s_kept_running_come": "まだ作業中です。実行は続いています — 1 分後にもう一度確認してください。",
+			"still_working_on_this_one_it_s_kept_running_come_2": "まだ作業中です。実行は続いています — 1 分後にこのページに戻ると、中断したところから再開します。",
 			"switch_critique": "批評を切り替え",
-			"that_critique_didn_t_finish": "That critique didn’t finish.",
-			"that_s_more_than_20_screens_send_fewer": "That’s more than 20 screens — send fewer.",
+			"that_critique_didn_t_finish": "その批評は完了しませんでした。",
+			"that_s_more_than_20_screens_send_fewer": "スクリーンが 20 を超えています — 数を減らしてください。",
 			"that_s_the_limit_of_max_screens": "スクリーンの上限 {{max}} 枚に達しています。",
-			"that_scan_didn_t_finish": "That scan didn’t finish.",
-			"those_weren_t_image_files": "Those weren’t image files.",
+			"that_scan_didn_t_finish": "そのスキャンは完了しませんでした。",
+			"those_weren_t_image_files": "画像ファイルではありませんでした。",
 			"what_i_d_tighten": "改善すべき点",
 			"what_s_working": "動作している点",
 			"what_you_ll_get": "得られるもの",
@@ -2011,7 +2053,11 @@ var CATALOGS = {
 			"get_top_things": "直すべき主な点 (画面上のピン付き)",
 			"no_critiques_narrow": "まだ講評はありません。下にスクリーンショットをドロップしてください。",
 			"no_critiques_wide": "まだ講評はありません。パネルにスクリーンショットをドロップしてください →",
-			"the_design_alt": "デザイン"
+			"the_design_alt": "デザイン",
+			"that_run_is_no_longer_available_start_a_new_critique": "その実行はもう利用できません — 新しい批評を始めてください。",
+			"the_critic_replied_but_not_in_a_readable_format": "批評者は返答しましたが、読み取れる形式ではありませんでした。",
+			"lost_contact": "接続が切れました",
+			"no_file_paths_returned": "ファイルパスが返されませんでした"
 		},
 		findingRow: {
 			"based_on": "基づく",
@@ -2040,13 +2086,13 @@ var CATALOGS = {
 		},
 		scopingPicker: {
 			"critique_this_flow_count_screens_other": "このフローを批評 · スクリーン {{count}} 件",
-			"critique_this_screen": "Critique this screen",
+			"critique_this_screen": "このスクリーンを批評",
 			"drag_to_reorder": "ドラッグして並び替え",
 			"move_earlier": "前に移動",
 			"move_later": "後に移動",
 			"optional_brief_who_is_it_for_and_what_is_the_mai": "オプション：対象者は誰で、主なタスクは何ですか？",
 			"optional_who_is_it_for_and_what_s_the_main_task": "オプション：対象者は誰で、主なタスクは何ですか？",
-			"pick_at_least_one_screen": "Pick at least one screen",
+			"pick_at_least_one_screen": "スクリーンを 1 つ以上選んでください",
 			"screens": "スクリーン",
 			"start_over": "始め直す",
 			"suggested_flows": "提案されたフロー",
@@ -2086,7 +2132,9 @@ var CATALOGS = {
 		},
 		common: {
 			"send_failed": "送信に失敗しました",
-			"unexpected_server_response": "予期しないサーバーレスポンス"
+			"unexpected_server_response": "予期しないサーバーレスポンス",
+			"lost_contact_with_the_scan": "スキャンとの接続が切れました",
+			"that_run_did_not_finish": "その実行は完了しませんでした"
 		}
 	},
 	ko: {
@@ -2107,7 +2155,7 @@ var CATALOGS = {
 			"add_screenshots_or_paste_a_link_first": "먼저 스크린샷을 추가하거나 링크를 붙여넣으세요",
 			"clear_all": "모두 지우기",
 			"critique_this_flow_count_screens_other": "이 플로 비평 · 화면 {{count}}개",
-			"critique_this_screen": "Critique this screen",
+			"critique_this_screen": "이 화면 비평하기",
 			"drop_screenshots_or_click_to_browse": "스크린샷을 끌어다 놓거나 클릭해서 찾아보세요",
 			"fix_my_access": "내 액세스 수정",
 			"fix_the_link": "링크 수정",
@@ -2121,7 +2169,7 @@ var CATALOGS = {
 			"start_the_critique": "비평 시작",
 			"step_n": "{{n}}단계",
 			"try_again": "다시 시도",
-			"unrecognised": "Unrecognised",
+			"unrecognised": "인식되지 않음",
 			"use_a_local_folder_instead": "대신 로컬 폴더 사용",
 			"start_kind_figma": "Figma 파일 비평",
 			"start_kind_repo": "저장소 비평",
@@ -2210,17 +2258,17 @@ var CATALOGS = {
 			"see_an_example": "예시 보기",
 			"send_screenshots": "스크린샷 보내기",
 			"show_this_screen": "이 화면 표시",
-			"something_went_wrong": "something went wrong",
+			"something_went_wrong": "문제가 발생했습니다",
 			"start_a_new_critique_anything_already_running_ke": "새 비평 시작 — 이미 실행 중인 작업은 계속됩니다",
 			"step_n": "{{n}}단계",
-			"still_working_on_this_one_it_s_kept_running_come": "Still working on this one. It’s kept running — come back in a minute.",
-			"still_working_on_this_one_it_s_kept_running_come_2": "Still working on this one. It’s kept running — come back to this page in a minute and it’ll pick up where it left off.",
+			"still_working_on_this_one_it_s_kept_running_come": "아직 작업 중입니다. 계속 실행되고 있으니 1분 후에 다시 확인하세요.",
+			"still_working_on_this_one_it_s_kept_running_come_2": "아직 작업 중입니다. 계속 실행되고 있으니 1분 후에 이 페이지로 돌아오면 멈춘 곳에서 이어집니다.",
 			"switch_critique": "비평 전환",
-			"that_critique_didn_t_finish": "That critique didn’t finish.",
-			"that_s_more_than_20_screens_send_fewer": "That’s more than 20 screens — send fewer.",
+			"that_critique_didn_t_finish": "그 비평은 완료되지 않았습니다.",
+			"that_s_more_than_20_screens_send_fewer": "화면이 20개를 넘습니다 — 더 적게 보내세요.",
 			"that_s_the_limit_of_max_screens": "스크린 상한인 {{max}}장에 도달했습니다.",
-			"that_scan_didn_t_finish": "That scan didn’t finish.",
-			"those_weren_t_image_files": "Those weren’t image files.",
+			"that_scan_didn_t_finish": "그 스캔은 완료되지 않았습니다.",
+			"those_weren_t_image_files": "이미지 파일이 아니었습니다.",
 			"what_i_d_tighten": "다듬을 점",
 			"what_s_working": "잘 되고 있는 점",
 			"what_you_ll_get": "받게 될 내용",
@@ -2250,7 +2298,11 @@ var CATALOGS = {
 			"get_top_things": "다듬을 주요 사항 (화면에 핀 표시)",
 			"no_critiques_narrow": "아직 비평이 없습니다. 아래에 스크린샷을 놓으세요.",
 			"no_critiques_wide": "아직 비평이 없습니다. 패널에 스크린샷을 놓으세요 →",
-			"the_design_alt": "디자인"
+			"the_design_alt": "디자인",
+			"that_run_is_no_longer_available_start_a_new_critique": "그 실행은 더 이상 사용할 수 없습니다 — 새 비평을 시작하세요.",
+			"the_critic_replied_but_not_in_a_readable_format": "비평가가 답했지만 읽을 수 있는 형식이 아니었습니다.",
+			"lost_contact": "연결이 끊겼습니다",
+			"no_file_paths_returned": "파일 경로가 반환되지 않았습니다"
 		},
 		findingRow: {
 			"based_on": "근거",
@@ -2279,13 +2331,13 @@ var CATALOGS = {
 		},
 		scopingPicker: {
 			"critique_this_flow_count_screens_other": "이 플로 비평 · 화면 {{count}}개",
-			"critique_this_screen": "Critique this screen",
+			"critique_this_screen": "이 화면 비평하기",
 			"drag_to_reorder": "끌어서 순서 변경",
 			"move_earlier": "앞으로 이동",
 			"move_later": "뒤로 이동",
 			"optional_brief_who_is_it_for_and_what_is_the_mai": "간단한 설명(선택): 대상은 누구이고 주요 과업은 무엇인가요?",
 			"optional_who_is_it_for_and_what_s_the_main_task": "선택 사항: 대상은 누구이고 주요 과업은 무엇인가요?",
-			"pick_at_least_one_screen": "Pick at least one screen",
+			"pick_at_least_one_screen": "화면을 하나 이상 선택하세요",
 			"screens": "화면",
 			"start_over": "처음부터 다시",
 			"suggested_flows": "제안된 플로",
@@ -2325,7 +2377,9 @@ var CATALOGS = {
 		},
 		common: {
 			"send_failed": "전송 실패",
-			"unexpected_server_response": "예기치 않은 서버 응답"
+			"unexpected_server_response": "예기치 않은 서버 응답",
+			"lost_contact_with_the_scan": "스캔과의 연결이 끊겼습니다",
+			"that_run_did_not_finish": "그 실행은 완료되지 않았습니다"
 		}
 	},
 	pt: {
@@ -2348,7 +2402,7 @@ var CATALOGS = {
 			"critique_this_flow_count_screens_one": "Criticar este fluxo · {{count}} tela",
 			"critique_this_flow_count_screens_many": "Criticar este fluxo · {{count}} telas",
 			"critique_this_flow_count_screens_other": "Criticar este fluxo · {{count}} telas",
-			"critique_this_screen": "Critique this screen",
+			"critique_this_screen": "Criticar esta tela",
 			"drop_screenshots_or_click_to_browse": "Solte as capturas de tela — ou clique para procurar",
 			"fix_my_access": "Corrigir meu acesso",
 			"fix_the_link": "Corrigir o link",
@@ -2362,7 +2416,7 @@ var CATALOGS = {
 			"start_the_critique": "Iniciar a crítica",
 			"step_n": "Etapa {{n}}",
 			"try_again": "Tentar de novo",
-			"unrecognised": "Unrecognised",
+			"unrecognised": "Não reconhecido",
 			"use_a_local_folder_instead": "Usar uma pasta local",
 			"start_kind_figma": "Criticar o arquivo do Figma",
 			"start_kind_repo": "Criticar o repositório",
@@ -2453,17 +2507,17 @@ var CATALOGS = {
 			"see_an_example": "Ver um exemplo",
 			"send_screenshots": "Enviar capturas de tela",
 			"show_this_screen": "Mostrar esta tela",
-			"something_went_wrong": "something went wrong",
+			"something_went_wrong": "algo deu errado",
 			"start_a_new_critique_anything_already_running_ke": "Iniciar uma nova crítica — o que já estiver em andamento continua",
 			"step_n": "Etapa {{n}}",
 			"still_working_on_this_one_it_s_kept_running_come": "Ainda estou trabalhando nisso. A análise continua em execução — volte em um minuto.",
 			"still_working_on_this_one_it_s_kept_running_come_2": "Ainda estou trabalhando nisso. A análise continua em execução — volte a esta página em um minuto e ela retomará de onde parou.",
 			"switch_critique": "Trocar de crítica",
-			"that_critique_didn_t_finish": "That critique didn’t finish.",
+			"that_critique_didn_t_finish": "Essa crítica não terminou.",
 			"that_s_more_than_20_screens_send_fewer": "São mais de 20 telas — envie menos.",
 			"that_s_the_limit_of_max_screens": "Esse é o limite de {{max}} telas.",
-			"that_scan_didn_t_finish": "That scan didn’t finish.",
-			"those_weren_t_image_files": "Those weren’t image files.",
+			"that_scan_didn_t_finish": "Essa varredura não terminou.",
+			"those_weren_t_image_files": "Esses não eram arquivos de imagem.",
 			"what_i_d_tighten": "O que eu ajustaria",
 			"what_s_working": "O que está funcionando",
 			"what_you_ll_get": "O que você vai receber",
@@ -2501,7 +2555,11 @@ var CATALOGS = {
 			"get_top_things": "Os principais pontos a ajustar, com marcadores na tela",
 			"no_critiques_narrow": "Nenhuma crítica ainda. Solte uma captura abaixo.",
 			"no_critiques_wide": "Nenhuma crítica ainda. Solte uma captura no painel →",
-			"the_design_alt": "O design"
+			"the_design_alt": "O design",
+			"that_run_is_no_longer_available_start_a_new_critique": "Essa execução não está mais disponível — comece uma nova crítica.",
+			"the_critic_replied_but_not_in_a_readable_format": "O crítico respondeu, mas não em um formato legível.",
+			"lost_contact": "conexão perdida",
+			"no_file_paths_returned": "nenhum caminho de arquivo retornado"
 		},
 		findingRow: {
 			"based_on": "Com base em",
@@ -2532,13 +2590,13 @@ var CATALOGS = {
 			"critique_this_flow_count_screens_one": "Criticar este fluxo · {{count}} tela",
 			"critique_this_flow_count_screens_many": "Criticar este fluxo · {{count}} telas",
 			"critique_this_flow_count_screens_other": "Criticar este fluxo · {{count}} telas",
-			"critique_this_screen": "Critique this screen",
+			"critique_this_screen": "Criticar esta tela",
 			"drag_to_reorder": "Arraste para reordenar",
 			"move_earlier": "Mover antes",
 			"move_later": "Mover depois",
 			"optional_brief_who_is_it_for_and_what_is_the_mai": "Brief opcional: para quem é e qual é a tarefa principal?",
 			"optional_who_is_it_for_and_what_s_the_main_task": "Opcional: para quem é e qual é a tarefa principal?",
-			"pick_at_least_one_screen": "Pick at least one screen",
+			"pick_at_least_one_screen": "Escolha pelo menos uma tela",
 			"screens": "Telas",
 			"start_over": "Começar de novo",
 			"suggested_flows": "Fluxos sugeridos",
@@ -2586,7 +2644,9 @@ var CATALOGS = {
 		},
 		common: {
 			"send_failed": "Falha no envio",
-			"unexpected_server_response": "Resposta inesperada do servidor"
+			"unexpected_server_response": "Resposta inesperada do servidor",
+			"lost_contact_with_the_scan": "conexão com a varredura perdida",
+			"that_run_did_not_finish": "essa execução não terminou"
 		}
 	},
 	ru: {
@@ -2610,7 +2670,7 @@ var CATALOGS = {
 			"critique_this_flow_count_screens_few": "Разобрать этот сценарий · {{count}} экрана",
 			"critique_this_flow_count_screens_many": "Разобрать этот сценарий · {{count}} экранов",
 			"critique_this_flow_count_screens_other": "Разобрать этот сценарий · {{count}} экрана",
-			"critique_this_screen": "Critique this screen",
+			"critique_this_screen": "Разобрать этот экран",
 			"drop_screenshots_or_click_to_browse": "Перетащите скриншоты — или нажмите для выбора",
 			"fix_my_access": "Исправить доступ",
 			"fix_the_link": "Исправить ссылку",
@@ -2624,7 +2684,7 @@ var CATALOGS = {
 			"start_the_critique": "Начать разбор",
 			"step_n": "Шаг {{n}}",
 			"try_again": "Повторить",
-			"unrecognised": "Unrecognised",
+			"unrecognised": "Не распознано",
 			"use_a_local_folder_instead": "Использовать локальную папку",
 			"start_kind_figma": "Разобрать файл Figma",
 			"start_kind_repo": "Разобрать репозиторий",
@@ -2716,17 +2776,17 @@ var CATALOGS = {
 			"see_an_example": "Посмотреть пример",
 			"send_screenshots": "Отправить скриншоты",
 			"show_this_screen": "Показать этот экран",
-			"something_went_wrong": "something went wrong",
+			"something_went_wrong": "что-то пошло не так",
 			"start_a_new_critique_anything_already_running_ke": "Начать новый разбор — уже запущенные продолжат работу",
 			"step_n": "Шаг {{n}}",
-			"still_working_on_this_one_it_s_kept_running_come": "Still working on this one. It’s kept running — come back in a minute.",
-			"still_working_on_this_one_it_s_kept_running_come_2": "Still working on this one. It’s kept running — come back to this page in a minute and it’ll pick up where it left off.",
+			"still_working_on_this_one_it_s_kept_running_come": "Всё ещё работаю над этим. Разбор продолжается — загляните через минуту.",
+			"still_working_on_this_one_it_s_kept_running_come_2": "Всё ещё работаю над этим. Разбор продолжается — вернитесь на эту страницу через минуту, и он продолжится с того же места.",
 			"switch_critique": "Переключить разбор",
-			"that_critique_didn_t_finish": "That critique didn’t finish.",
-			"that_s_more_than_20_screens_send_fewer": "That’s more than 20 screens — send fewer.",
+			"that_critique_didn_t_finish": "Этот разбор не завершился.",
+			"that_s_more_than_20_screens_send_fewer": "Это больше 20 экранов — отправьте меньше.",
 			"that_s_the_limit_of_max_screens": "Это предел — {{max}} экранов.",
-			"that_scan_didn_t_finish": "That scan didn’t finish.",
-			"those_weren_t_image_files": "Those weren’t image files.",
+			"that_scan_didn_t_finish": "Это сканирование не завершилось.",
+			"those_weren_t_image_files": "Это были не файлы изображений.",
 			"what_i_d_tighten": "Что стоит доработать",
 			"what_s_working": "Что работает",
 			"what_you_ll_get": "Что вы получите",
@@ -2768,7 +2828,11 @@ var CATALOGS = {
 			"get_top_things": "Главное, что стоит подтянуть, с метками на экране",
 			"no_critiques_narrow": "Разборов пока нет. Перетащи скриншот ниже.",
 			"no_critiques_wide": "Разборов пока нет. Перетащи скриншот на панель →",
-			"the_design_alt": "дизайн"
+			"the_design_alt": "дизайн",
+			"that_run_is_no_longer_available_start_a_new_critique": "Этот запуск больше недоступен — начните новый разбор.",
+			"the_critic_replied_but_not_in_a_readable_format": "Критик ответил, но не в читаемом формате.",
+			"lost_contact": "связь потеряна",
+			"no_file_paths_returned": "пути к файлам не получены"
 		},
 		findingRow: {
 			"based_on": "На основе",
@@ -2800,13 +2864,13 @@ var CATALOGS = {
 			"critique_this_flow_count_screens_few": "Разобрать этот сценарий · {{count}} экрана",
 			"critique_this_flow_count_screens_many": "Разобрать этот сценарий · {{count}} экранов",
 			"critique_this_flow_count_screens_other": "Разобрать этот сценарий · {{count}} экрана",
-			"critique_this_screen": "Critique this screen",
+			"critique_this_screen": "Разобрать этот экран",
 			"drag_to_reorder": "Перетащите для изменения порядка",
 			"move_earlier": "Переместить раньше",
 			"move_later": "Переместить позже",
 			"optional_brief_who_is_it_for_and_what_is_the_mai": "Необязательное описание: для кого это и какая основная задача?",
 			"optional_who_is_it_for_and_what_s_the_main_task": "Необязательно: для кого это и какая основная задача?",
-			"pick_at_least_one_screen": "Pick at least one screen",
+			"pick_at_least_one_screen": "Выберите хотя бы один экран",
 			"screens": "Экраны",
 			"start_over": "Начать заново",
 			"suggested_flows": "Предлагаемые сценарии",
@@ -2858,7 +2922,9 @@ var CATALOGS = {
 		},
 		common: {
 			"send_failed": "Не удалось отправить",
-			"unexpected_server_response": "Неожиданный ответ сервера"
+			"unexpected_server_response": "Неожиданный ответ сервера",
+			"lost_contact_with_the_scan": "потеряна связь со сканированием",
+			"that_run_did_not_finish": "этот запуск не завершился"
 		}
 	},
 	"zh-CN": {
@@ -2879,7 +2945,7 @@ var CATALOGS = {
 			"add_screenshots_or_paste_a_link_first": "先添加截图或粘贴链接",
 			"clear_all": "全部清除",
 			"critique_this_flow_count_screens_other": "评审此流程 · {{count}} 个界面",
-			"critique_this_screen": "Critique this screen",
+			"critique_this_screen": "评审此界面",
 			"drop_screenshots_or_click_to_browse": "拖入截图，或点击浏览",
 			"fix_my_access": "修复我的访问权限",
 			"fix_the_link": "修正链接",
@@ -2893,7 +2959,7 @@ var CATALOGS = {
 			"start_the_critique": "开始评审",
 			"step_n": "第 {{n}} 步",
 			"try_again": "重试",
-			"unrecognised": "Unrecognised",
+			"unrecognised": "无法识别",
 			"use_a_local_folder_instead": "改用本地文件夹",
 			"start_kind_figma": "评审 Figma 文件",
 			"start_kind_repo": "评审代码仓库",
@@ -2982,17 +3048,17 @@ var CATALOGS = {
 			"see_an_example": "查看示例",
 			"send_screenshots": "发送截图",
 			"show_this_screen": "显示此界面",
-			"something_went_wrong": "something went wrong",
+			"something_went_wrong": "出了点问题",
 			"start_a_new_critique_anything_already_running_ke": "开始新的评审 — 进行中的不受影响",
 			"step_n": "第 {{n}} 步",
-			"still_working_on_this_one_it_s_kept_running_come": "Still working on this one. It’s kept running — come back in a minute.",
-			"still_working_on_this_one_it_s_kept_running_come_2": "Still working on this one. It’s kept running — come back to this page in a minute and it’ll pick up where it left off.",
+			"still_working_on_this_one_it_s_kept_running_come": "仍在处理中。它会继续运行——请一分钟后再来看看。",
+			"still_working_on_this_one_it_s_kept_running_come_2": "仍在处理中。它会继续运行——一分钟后回到此页面，会从中断的地方继续。",
 			"switch_critique": "切换评审",
-			"that_critique_didn_t_finish": "That critique didn’t finish.",
-			"that_s_more_than_20_screens_send_fewer": "That’s more than 20 screens — send fewer.",
+			"that_critique_didn_t_finish": "该评审未完成。",
+			"that_s_more_than_20_screens_send_fewer": "超过 20 个界面——请少发一些。",
 			"that_s_the_limit_of_max_screens": "已达到 {{max}} 张屏幕的上限。",
-			"that_scan_didn_t_finish": "That scan didn’t finish.",
-			"those_weren_t_image_files": "Those weren’t image files.",
+			"that_scan_didn_t_finish": "该扫描未完成。",
+			"those_weren_t_image_files": "这些不是图片文件。",
 			"what_i_d_tighten": "可以打磨的地方",
 			"what_s_working": "做得好的地方",
 			"what_you_ll_get": "你将获得",
@@ -3022,7 +3088,11 @@ var CATALOGS = {
 			"get_top_things": "最该收紧的几处，并在界面上标出",
 			"no_critiques_narrow": "还没有评审。请在下方放入截图。",
 			"no_critiques_wide": "还没有评审。请把截图放到面板中 →",
-			"the_design_alt": "设计图"
+			"the_design_alt": "设计图",
+			"that_run_is_no_longer_available_start_a_new_critique": "该运行已不可用——请开始新的评审。",
+			"the_critic_replied_but_not_in_a_readable_format": "评审者已回复，但格式无法读取。",
+			"lost_contact": "连接已断开",
+			"no_file_paths_returned": "未返回文件路径"
 		},
 		findingRow: {
 			"based_on": "依据",
@@ -3051,13 +3121,13 @@ var CATALOGS = {
 		},
 		scopingPicker: {
 			"critique_this_flow_count_screens_other": "评审此流程 · {{count}} 个界面",
-			"critique_this_screen": "Critique this screen",
+			"critique_this_screen": "评审此界面",
 			"drag_to_reorder": "拖动重新排序",
 			"move_earlier": "前移",
 			"move_later": "后移",
 			"optional_brief_who_is_it_for_and_what_is_the_mai": "可选说明：面向谁，主要任务是什么？",
 			"optional_who_is_it_for_and_what_s_the_main_task": "可选：面向谁，主要任务是什么？",
-			"pick_at_least_one_screen": "Pick at least one screen",
+			"pick_at_least_one_screen": "请至少选择一个界面",
 			"screens": "界面",
 			"start_over": "重新开始",
 			"suggested_flows": "推荐流程",
@@ -3097,7 +3167,9 @@ var CATALOGS = {
 		},
 		common: {
 			"send_failed": "发送失败",
-			"unexpected_server_response": "服务器响应异常"
+			"unexpected_server_response": "服务器响应异常",
+			"lost_contact_with_the_scan": "与扫描的连接已断开",
+			"that_run_did_not_finish": "该运行未完成"
 		}
 	}
 };
@@ -5216,12 +5288,12 @@ async function pollJob(base, jobId) {
 		try {
 			r = await jsonFetch(base + "?job=" + encodeURIComponent(jobId));
 		} catch (e) {
-			if (++misses >= 8) throw e instanceof Error ? e : /* @__PURE__ */ new Error("lost contact with the scan");
+			if (++misses >= 8) throw e instanceof Error ? e : new Error(t("common.lost_contact_with_the_scan"));
 			continue;
 		}
 		misses = 0;
 		if (r.status === "running") continue;
-		if (r.status === "error") throw new Error(r.error || "that run did not finish");
+		if (r.status === "error") throw new Error(r.error || t("common.that_run_did_not_finish"));
 		return r.result;
 	}
 }
@@ -7008,7 +7080,7 @@ function DesignCritiquePage() {
 			try {
 				d = await designCritiqueApi.getSlot(slotKey);
 			} catch {
-				if (++misses >= 8) throw new Error("That run is no longer available — start a new critique.");
+				if (++misses >= 8) throw new Error(t("designCritiquePage.that_run_is_no_longer_available_start_a_new_critique"));
 				continue;
 			}
 			misses = 0;
@@ -7018,7 +7090,7 @@ function DesignCritiquePage() {
 			if (d && !d.running && c) {
 				const p = jsonFromMessages(d.messages, looksLikeReport);
 				if (p) return p;
-				throw new Error("The critic replied but not in a readable format.");
+				throw new Error(t("designCritiquePage.the_critic_replied_but_not_in_a_readable_format"));
 			}
 		}
 		throw TIMEOUT();
@@ -7039,7 +7111,7 @@ function DesignCritiquePage() {
 			try {
 				d = await designCritiqueApi.getSlot(slotKey);
 			} catch {
-				if (++misses >= 8) throw new Error("lost contact");
+				if (++misses >= 8) throw new Error(t("designCritiquePage.lost_contact"));
 				continue;
 			}
 			misses = 0;
@@ -7239,7 +7311,7 @@ function DesignCritiquePage() {
 		setPhase("uploading");
 		try {
 			const { paths } = await designCritiqueApi.uploadFiles(files);
-			if (!paths || !paths.length) throw new Error("no file paths returned");
+			if (!paths || !paths.length) throw new Error(t("designCritiquePage.no_file_paths_returned"));
 			const uploaded = paths.map((p, i) => ({
 				step: i + 1,
 				label: "Screen " + (i + 1),

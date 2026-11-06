@@ -123,7 +123,11 @@
     "get_top_things": "The top things to tighten, with pins on the screen",
     "no_critiques_narrow": "No critiques yet. Drop a screenshot below.",
     "no_critiques_wide": "No critiques yet. Drop a screenshot in the panel →",
-    "the_design_alt": "The design"
+    "the_design_alt": "The design",
+    "that_run_is_no_longer_available_start_a_new_critique": "That run is no longer available — start a new critique.",
+    "the_critic_replied_but_not_in_a_readable_format": "The critic replied but not in a readable format.",
+    "lost_contact": "lost contact",
+    "no_file_paths_returned": "no file paths returned"
   },
   "findingRow": {
     "based_on": "Based on",
@@ -245,6 +249,8 @@
   },
   "common": {
     "send_failed": "Send failed",
-    "unexpected_server_response": "Unexpected server response"
+    "unexpected_server_response": "Unexpected server response",
+    "lost_contact_with_the_scan": "lost contact with the scan",
+    "that_run_did_not_finish": "that run did not finish"
   }
 }

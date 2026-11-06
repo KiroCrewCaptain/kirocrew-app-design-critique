@@ -95,12 +95,12 @@ async function pollJob<T>(base: string, jobId: string): Promise<T> {
       r = await jsonFetch(base + '?job=' + encodeURIComponent(jobId))
     } catch (e) {
       // Tolerate a transient blip (gateway restart) for a few cycles.
-      if (++misses >= 8) throw e instanceof Error ? e : new Error('lost contact with the scan')
+      if (++misses >= 8) throw e instanceof Error ? e : new Error(i18nT('common.lost_contact_with_the_scan'))
       continue
     }
     misses = 0
     if (r.status === 'running') continue
-    if (r.status === 'error') throw new Error(r.error || 'that run did not finish')
+    if (r.status === 'error') throw new Error(r.error || i18nT('common.that_run_did_not_finish'))
     return r.result as T
   }
 }

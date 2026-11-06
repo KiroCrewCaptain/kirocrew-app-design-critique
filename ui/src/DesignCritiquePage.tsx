@@ -233,14 +233,14 @@ export default function DesignCritiquePage() {
       let d
       try { d = await designCritiqueApi.getSlot(slotKey) }
       catch {
-        if (++misses >= 8) throw new Error('That run is no longer available — start a new critique.')
+        if (++misses >= 8) throw new Error(i18nT('designCritiquePage.that_run_is_no_longer_available_start_a_new_critique'))
         continue
       }
       misses = 0
       if (!aliveRef.current || isCancelled(slotKey)) throw CANCELLED()
       const c = lastAssistant(d && d.messages)
       if (c && c.trim() && activeSlotRef.current === slotKey) setWriting(true)
-      if (d && !d.running && c) { const p = jsonFromMessages<T>(d.messages, looksLikeReport); if (p) return p; throw new Error('The critic replied but not in a readable format.') }
+      if (d && !d.running && c) { const p = jsonFromMessages<T>(d.messages, looksLikeReport); if (p) return p; throw new Error(i18nT('designCritiquePage.the_critic_replied_but_not_in_a_readable_format')) }
     }
     throw TIMEOUT()
   }
@@ -267,7 +267,7 @@ export default function DesignCritiquePage() {
       if (!aliveRef.current) throw CANCELLED()
       let d
       try { d = await designCritiqueApi.getSlot(slotKey) }
-      catch { if (++misses >= 8) throw new Error('lost contact'); continue }
+      catch { if (++misses >= 8) throw new Error(i18nT('designCritiquePage.lost_contact')); continue }
       misses = 0
       const rows: SlotData['messages'] = (d && Array.isArray(d.messages)) ? d.messages : []
       const c = lastAssistant((rows ?? []).slice(seen))
@@ -422,7 +422,7 @@ export default function DesignCritiquePage() {
     setErr(''); setHint(''); setBlocked(null); setShowAuth(false); setMenuOpen(false); startClock(); setWriting(false); setPendingKind(null); setPhase('uploading')
     try {
       const { paths } = await designCritiqueApi.uploadFiles(files)
-      if (!paths || !paths.length) throw new Error('no file paths returned')
+      if (!paths || !paths.length) throw new Error(i18nT('designCritiquePage.no_file_paths_returned'))
       const uploaded = paths.map((p, i) => ({ step: i + 1, label: 'Screen ' + (i + 1), url: fileUrl(p) }))
       // Do the slow method fetch BEFORE deciding ownership, then re-check the run
       // sequence: if `+ New` ran while the upload/method-fetch was in flight, a

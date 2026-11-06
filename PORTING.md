@@ -184,6 +184,14 @@ and `uploads.test.ts`, less the dashboard-only HEIC and 429-relabel rows). The
 backend, the skill and the manifest have not changed on the built-in since the
 port.
 
+## Changes made here
+
+Changes that started in this repository rather than on the built-in.
+
+| Version | What a user sees | Here |
+|---|---|---|
+| `1.0.2` | A critique's failure lines (a reply in no readable format, a run that is no longer available, an upload that returned no files, a lost ask or scan, a run that did not finish) are translated; they were English literals the page showed as they were. The "didn't finish", "still working", more-than-20-screens, not-an-image, start-button, picker and "Unrecognised" lines, which every other catalog shipped in English, are translated too | `ui/src/DesignCritiquePage.tsx`, `ui/src/api.ts`, the catalogs, `ui/tests/DesignCritiqueErrorText.i18n.test.tsx` |
+
 ## Tests
 
 | Built-in test | Here | Change |
