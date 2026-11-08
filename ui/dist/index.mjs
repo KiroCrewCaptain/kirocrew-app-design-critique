@@ -6322,6 +6322,8 @@ function Composer(p) {
 								blocked.auth ? /* @__PURE__ */ jsx("button", {
 									style: S.linkBtn,
 									onClick: () => p.setShowAuth((v) => !v),
+									"aria-expanded": showAuth,
+									"aria-controls": "dc-access-steps",
 									children: showAuth ? t("composer.hide_access_steps") : t("composer.fix_my_access")
 								}) : null,
 								blocked.fix === "retry" || blocked.auth ? /* @__PURE__ */ jsx("button", {
@@ -6341,6 +6343,7 @@ function Composer(p) {
 							]
 						}),
 						blocked.auth && showAuth ? /* @__PURE__ */ jsxs("div", {
+							id: "dc-access-steps",
 							style: S.authBox,
 							children: [
 								/* @__PURE__ */ jsx("div", {
