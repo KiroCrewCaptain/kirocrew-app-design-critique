@@ -4,13 +4,10 @@ import { mdImageDest } from './fileTokens'
 /**
  * The critic persona and method, carried by the prompt rather than by an agent.
  *
- * A bundled `design-critic` agent cannot be used from a builtin: a builtin
- * manifest may declare `agents`, but discovery never serializes that field and
- * `bridges.py` resolves an app root under the user data dir, where a builtin has
- * only `app.json`. The agent is therefore never registered, and naming it on
- * `/api/chat` fails every request. (`dev_fleet` has the same latent gap with its
- * two declared skills, neither of which is registered today.) So the persona,
- * the voice rules and the method live here and run on the core agent.
+ * The manifest declares no agent, like the built-in this app was ported from,
+ * and `tests/test_manifest_contract.py` keeps it that way so a user's built-in
+ * record can be adopted onto this repository unchanged. So the persona, the
+ * voice rules and the method live here and run on the host's default agent.
  */
 const CRITIC =
   'You are an experienced designer running a heuristic design critique — a fellow designer ' +

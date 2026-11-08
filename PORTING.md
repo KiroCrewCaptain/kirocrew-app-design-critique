@@ -164,7 +164,8 @@ committed `ui/dist/index.mjs`; CI rebuilds it and fails on a difference.
 ## Fixes since the port
 
 Each change that landed on the built-in after the port (Kiro Crew `main` after
-`390c5315be`), carried here so a user on this copy has it too. Version `1.0.1`.
+`390c5315be`), carried here so a user on this copy has it too. Version `1.0.1`,
+except where a row names a later one.
 
 | Kiro Crew commit | What a user sees | Here |
 |---|---|---|
@@ -175,6 +176,7 @@ Each change that landed on the built-in after the port (Kiro Crew `main` after
 | `9cb676ad18` (#30155) | The empty history list, the "What you'll get" list, a history entry's screen count, a step's finding count, the flow screen count, the screen fallback name and the ask-error lines are translated, counts in plural form. A critique that fails in the background no longer also raises an English "Critique failed:" toast; the rail's failure notice is what shows it | `ui/src/DesignCritiquePage.tsx`, the catalogs |
 | `259187cd18` (#30519) | A flow finding's step range reads "steps 1–4" in the user's language; a flow finding with no steps shows its translated "flow" badge and no range line; an empty screen label falls back to a translated "Screen" | `ui/src/FindingRow.tsx`, `DesignCritiquePage.tsx`, `utils.ts` |
 | `8a378ff444` (#30299) | The waiting screen's title, placeholder and footer, and the scoping picker's found, picked and flow counts, fallback group and `From links` / `Guess` tags, are translated | `ui/src/WaitingScreen.tsx`, `ScopingPicker.tsx`, the catalogs |
+| `b031b3537d` (kirodotdev/KiroCrew#33014), version `1.0.3` | The blocked card's **Fix my access** button tells a screen reader whether the access steps are open, and names the steps box it opens | `aria-expanded` and `aria-controls` in `ui/src/Composer.tsx`, `ui/tests/DesignCritiqueAccessToggle.a11y.test.tsx` |
 
 The tests those changes added are in `ui/tests/` (`DesignCritiqueChrome`,
 `ComposerLabels`, `PageText`, `ScopeTags`, `StepRange`, `WaitScope` and the
