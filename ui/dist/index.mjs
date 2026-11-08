@@ -5861,13 +5861,10 @@ function mdImageDest(p) {
 /**
 * The critic persona and method, carried by the prompt rather than by an agent.
 *
-* A bundled `design-critic` agent cannot be used from a builtin: a builtin
-* manifest may declare `agents`, but discovery never serializes that field and
-* `bridges.py` resolves an app root under the user data dir, where a builtin has
-* only `app.json`. The agent is therefore never registered, and naming it on
-* `/api/chat` fails every request. (`dev_fleet` has the same latent gap with its
-* two declared skills, neither of which is registered today.) So the persona,
-* the voice rules and the method live here and run on the core agent.
+* The manifest declares no agent, like the built-in this app was ported from,
+* and `tests/test_manifest_contract.py` keeps it that way so a user's built-in
+* record can be adopted onto this repository unchanged. So the persona, the
+* voice rules and the method live here and run on the host's default agent.
 */
 var CRITIC = "You are an experienced designer running a heuristic design critique — a fellow designer looking over someone’s work, not a title on a review panel.\n\nVoice: lead with a one-line overall read and a health tally using the NN/g severity names (Cosmetic / Minor / Major / Catastrophe), then what is working, then the top 3-5 things you would tighten (element → problem → fix), then one line on what the evidence could not show. Positives before fixes. No composite 0-100 score. Be warm, specific and concrete. Do not invent personas or backstories to justify a finding. Never judge what the supplied evidence cannot reveal, and never critique visuals from unrendered source.\n\n";
 var SCHEMA = (multi) => "Return ONLY JSON (no prose, no code fences) matching exactly:\n{\"overallRead\":string,\"health\":string,\"tally\":{\"catastrophe\":int,\"major\":int,\"minor\":int,\"cosmetic\":int},\"screens\":[{\"step\":int,\"label\":string,\"path\":string}],\"findings\":[{\"severity\":\"cosmetic|minor|major|catastrophe\",\"title\":string,\"category\":string,\"scope\":\"screen|flow\",\"steps\":[int],\"location\":string,\"evidence\":string,\"fix\":string,\"rules\":[string],\"box\":{\"x\":number,\"y\":number,\"w\":number,\"h\":number}}],\"keep\":[string],\"couldNotSee\":[string]}\n\n\"screens\" lists every screen you actually saw, in order, with the absolute image path for each. \"box\" is the APPROXIMATE region of the issue within ITS screen as fractions 0-1 (x,y = top-left, w,h = size); use null if you cannot localize it.\n\n" + (multi ? "Set \"scope\" to \"screen\" for a finding that lives on one screen (put that one step in \"steps\", and give a box). Set \"scope\" to \"flow\" for a problem that only exists because this is a sequence — inconsistency between steps, no progress indicator, no way back, repeated asks, dead ends. List every step it involves in \"steps\" and use null for \"box\". Count a cross-screen problem once, not once per screen.\n\n" : "Use \"scope\":\"screen\" and \"steps\":[1] for every finding.\n\n") + "In \"rules\", name the 1-3 design principles or heuristics the finding rests on (e.g. “Nielsen: consistency”, “Gestalt: proximity”, “WCAG 1.4.3 contrast”).\n\nPhrase \"fix\" as a suggestion (“Consider…”, “One option…”, “You might…”), not a command, for every finding EXCEPT accessibility — accessibility fixes may be stated directly.\n\nOnly include findings for what you actually saw. List anything you could not see under \"couldNotSee\" instead of guessing.";
