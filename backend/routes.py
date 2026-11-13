@@ -40,7 +40,7 @@ from urllib.parse import urlparse
 
 from aiohttp import web
 
-from . import _host
+from . import _host, results
 
 # The gateway functions this app uses (see _host.py). Each is an attribute bag
 # whose names fall back to a refusing stand-in on a gateway without them.
@@ -636,9 +636,7 @@ def _bad_request(error: str, code: str) -> web.Response:
     return web.json_response({"error": error, "code": code}, status=400)
 
 
-async def _owner_gate(
-    request: web.Request, ctx: Any, operation: str
-) -> web.StreamResponse | None:
+async def _owner_gate(request: web.Request, ctx: Any, operation: str) -> web.StreamResponse | None:
     """Owner gate for the host-touching POSTs (discover, render).
 
     Both start host work: a git clone, a route scan over a host directory, a
@@ -1633,14 +1631,20 @@ def register_routes(ctx: Any) -> list[_host.Route]:
             "App Kit level 1 is missing: discover and render are refused to every "
             "dashboard caller (no owner gate)"
         )
-    missing = _host.missing()
+    missing = [
+        name
+        for name in _host.missing()
+        if not name.startswith(("document_store.", "resource_access."))
+    ]
     if missing:
         issues.append("gateway functions missing (" + ", ".join(missing) + ")")
     health = getattr(ctx, "health", None)
     mark = getattr(health, "mark_degraded", None)
     if issues and callable(mark):
         mark("; ".join(issues))
+    results.register(ctx)
     return [
+        _host.Route("POST", "/results", results.publish_result),
         _host.Route("GET", "/method", _handle_method),
         _host.Route("POST", "/discover", _handle_discover),
         _host.Route("POST", "/render", _handle_render),

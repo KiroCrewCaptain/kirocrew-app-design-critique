@@ -48,6 +48,8 @@ PINNED = {
         ("DENIED_ROOT_PARTS", "is_sensitive_path", "path_contains_sensitive"),
     ),
     "paths": ("kiro_crew.config.paths", ("config_dir",)),
+    "document_store": ("kiro_crew.apps.document_store", ("DocumentStore", "DocumentStoreError")),
+    "resource_access": ("kiro_crew.apps.resource_access", ("register_provider",)),
 }
 
 

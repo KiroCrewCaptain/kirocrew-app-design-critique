@@ -83,6 +83,16 @@ bundle and its sample images loaded from `/apps/<name>/ui/`.
 
 ## Remaining gaps
 
+Completed-result receipts additionally resolve the optional
+`kiro_crew.apps.document_store` (`DocumentStore`, `DocumentStoreError`) and
+`kiro_crew.apps.resource_access` (`register_provider`) surfaces through `_host.py`.
+They use `ctx.http_app`, `ctx.data_dir`, `ctx.lifecycle.is_enabled` and the existing
+Owner gate. Without these new core contracts, receipt publication/scoped reads
+are unavailable; existing capture and browser-history behavior is unchanged.
+The app's committed UI bundle publishes actual completed reports, never the
+in-memory discover/render job records. This feature depends on the corresponding
+Kiro Crew core release; it does not update an installed adoption pin.
+
 1. **The five gateway functions above.** Each is a private module name that a
    Kiro Crew refactor can move; the stand-ins keep that failure closed and
    reported (`ctx.health`), but the app's repo, folder and URL modes stop working

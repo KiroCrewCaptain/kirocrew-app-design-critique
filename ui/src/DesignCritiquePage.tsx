@@ -11,6 +11,7 @@ import { ErrorNotice } from '@kirocrew/app-sdk/ui'
 import { Spinner } from './Motion'
 import { S } from './styles'
 import { designCritiqueApi, fileUrl } from './api'
+import { publishCompletedResult } from './resultReceipts'
 import {
   detectKind, jsonFromMessages, looksLikeReport, lastAssistant, shortLabel, relTime, readableOn, normalizeReport, normalizeScope, resolveScreens,
   loadHistory, saveHistory, beginPendingCritique, dropPendingCritique, loadJobs, saveJob, clearJob, loadSlots, saveSlots, trackSlot, untrackSlot,
@@ -368,6 +369,17 @@ export default function DesignCritiquePage() {
     }
     endRun(slotKey)
     setCritiques(next)
+    if (at < 0 || cur[at].pending) {
+      // Publish this completed run only. Reopening old browser history does
+      // not migrate it, and a late receipt never replaces a newer report.
+      void publishCompletedResult(slotKey, screens, rep).then(resourceId => {
+        if (!resourceId) return
+        const history = loadHistory().map(entry => entry.slotKey === slotKey && !entry.pending
+          ? { ...entry, resultResourceId: resourceId } : entry)
+        saveHistory(history)
+        setCritiques(history)
+      })
+    }
     // Take over the screen only if the user is waiting for THIS run. Testing the
     // phase alone is not enough: starting a second critique puts the phase back
     // to 'analyzing', so the first run would read that as "still waiting for me"
