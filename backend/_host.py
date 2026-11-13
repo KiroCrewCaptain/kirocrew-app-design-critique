@@ -69,7 +69,9 @@ def _owner_denied() -> web.Response:
     )
 
 
-async def require_owner(ctx: Any, request: web.Request, operation: str) -> web.StreamResponse | None:
+async def require_owner(
+    ctx: Any, request: web.Request, operation: str
+) -> web.StreamResponse | None:
     """``None`` when the caller is the dashboard owner, else the refusal to return.
 
     *operation* is bare (``"discover"``): the host prefixes the app's own name
@@ -110,6 +112,8 @@ HOST_FUNCTIONS: dict[str, tuple[str, tuple[str, ...]]] = {
         ("DENIED_ROOT_PARTS", "is_sensitive_path", "path_contains_sensitive"),
     ),
     "paths": ("kiro_crew.config.paths", ("config_dir",)),
+    "document_store": ("kiro_crew.apps.document_store", ("DocumentStore", "DocumentStoreError")),
+    "resource_access": ("kiro_crew.apps.resource_access", ("register_provider",)),
 }
 
 #: The surfaces without which this app starts no subprocess and writes no file.
@@ -192,6 +196,11 @@ _STAND_INS: dict[str, dict[str, Any]] = {
         "path_contains_sensitive": _always_protected,
     },
     "paths": {"config_dir": _refuse("config_dir")},
+    "document_store": {
+        "DocumentStore": _refuse("DocumentStore"),
+        "DocumentStoreError": HostUnavailable,
+    },
+    "resource_access": {"register_provider": _refuse("register_provider")},
 }
 
 

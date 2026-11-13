@@ -5348,6 +5348,30 @@ var designCritiqueApi = {
 	method: () => jsonFetch(DC + "/method")
 };
 var fileUrl = (p) => "/api/file-raw?path=" + encodeURIComponent(p);
+// src/resultReceipts.ts
+/** Persist only a newly completed critique, without affecting browser history on failure. */
+async function publishCompletedResult(slotKey, screens, report) {
+	try {
+		const saved = await (await currentAppApi().raw("/api/apps/design-critique/results", {
+			method: "POST",
+			credentials: "same-origin",
+			headers: { "Content-Type": "application/json" },
+			body: JSON.stringify({
+				slotKey,
+				read: report.overallRead || "",
+				report,
+				screens: screens.map(({ step, label }) => ({
+					step,
+					label
+				}))
+			})
+		})).json();
+		const id = saved && typeof saved === "object" ? saved.resource_id : null;
+		return typeof id === "string" && /^[a-f0-9]{64}$/.test(id) ? id : null;
+	} catch {
+		return null;
+	}
+}
 // src/utils.ts
 function detectKind(raw) {
 	const s = String(raw || "").trim();
@@ -7238,6 +7262,15 @@ function DesignCritiquePage() {
 		}
 		endRun(slotKey);
 		setCritiques(next);
+		if (at < 0 || cur[at].pending) publishCompletedResult(slotKey, screens, rep).then((resourceId) => {
+			if (!resourceId) return;
+			const history = loadHistory().map((entry) => entry.slotKey === slotKey && !entry.pending ? {
+				...entry,
+				resultResourceId: resourceId
+			} : entry);
+			saveHistory(history);
+			setCritiques(history);
+		});
 		if (isWatching(slotKey)) showReport(rep, screens, next.find((e) => e.slotKey === slotKey) || next[0]);
 		else setJustFinished({
 			slotKey,

@@ -91,12 +91,12 @@ def test_no_data_home_without_the_paths_function() -> None:
 def test_the_route_table_loads_and_reports_what_is_missing() -> None:
     ctx = FakeCtx()
     table = routes.register_routes(ctx)
-    assert len(table) == 5
+    assert len(table) == 6
     assert ctx.health.status == "degraded"
     assert "sandbox.sandboxed_spawn_argv_async" in ctx.health.issues[0]
 
 
 def test_a_gateway_below_level_1_is_reported_too() -> None:
     ctx = LegacyCtx()
-    assert len(routes.register_routes(ctx)) == 5
+    assert len(routes.register_routes(ctx)) == 6
     assert "App Kit level 1 is missing" in ctx.health.issues[0]

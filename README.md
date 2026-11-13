@@ -154,15 +154,31 @@ giving it anything of your own.
 
 ## Settings & data
 
+Completed-result access requires a Kiro Crew release with the shared
+`apps.document_store` and `apps.resource_access` contracts. The Owner UI posts
+newly completed reports to `POST /api/apps/design-critique/results`. App tokens
+cannot publish receipts, including this app's own token. Receipts are immutable:
+the resource ID is SHA-256 of the completed run's slot key, repeating the same
+snapshot is idempotent, and a different snapshot for that ID returns 409.
+
+An exact Owner-approved grant can expose
+`/api/resource-access/{workspace}/design-critique/{resource_id}/{state|result}/read`
+with an empty body. The named configured workspace and exact resource grant
+establish the association; this app has no native workspace field. Reads return
+saved report text and screen labels, with no screenshot paths, URLs, transcript,
+capture, or evaluation launch. Older gateways keep browser-local history usable
+and refuse only this new receipt feature. Existing history is not uploaded.
+
 - **Where your data lives:** your screenshots are uploaded into Kiro Crew's
   uploads folder, `~/.kiro/crew/uploads/` (under `$KIROCREW_HOME` if you set it),
   like any file you attach to a chat. Pictures the app takes itself are saved
   there too (in `dc-render-…` folders), so your saved critiques keep their images.
   Copies of repositories (`dc-clones/`) and trial pictures (`dc-probe-…`) are
   deleted after an hour.
-- **Your critique history** (the reports and your questions) is kept in this
-  browser, not on the server, and the critique chats are hidden from your chat
-  list.
+- **Your critique history** and follow-up questions stay in this browser. On a
+  gateway supporting scoped document access, newly completed reports also get
+  an immutable server receipt in this app's private `data/results/` directory.
+  Existing browser history is not migrated. Critique chats stay hidden.
 - **What leaves your computer:** the screenshots and the critique prompt go to the
   same AI model as the rest of your Kiro Crew. When you give it a repository or a
   site, it fetches that repository or page itself; addresses inside your own

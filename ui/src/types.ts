@@ -114,6 +114,8 @@ export interface Ask {
 
 // One saved critique in History.
 export interface HistoryEntry {
+  /** Immutable server receipt for a newly completed report, when supported. */
+  resultResourceId?: string
   id: number
   ts: number
   slotKey: string
